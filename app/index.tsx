@@ -55,8 +55,9 @@ export default function App() {
   });
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1">
       <VideoView
+        className="absolute top-0 left-0 w-screen h-screen"
         style={styles.video}
         nativeControls={false}
         player={player}
@@ -93,7 +94,7 @@ export default function App() {
             // toggle by re mounting by changing key
             setAnimationKey((prev) => prev + 1);
           }}
-          style={styles.button}
+          className="bg-red-500 w-full h-full rounded-lg flex items-center justify-center"
         >
           <MotiText style={styles.btnText}>CONTINUE</MotiText>
         </Pressable>
@@ -103,13 +104,7 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   video: {
-    position: "absolute",
-    top: 0,
-    left: 0,
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
   },
