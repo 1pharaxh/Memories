@@ -13,6 +13,7 @@
     "postinstall": "npx tailwindcss -i ./global.css -o ./node_modules/.cache/nativewind/global.css"
   },
   "dependencies": {
+    "@react-navigation/material-top-tabs": "^7.1.0",
     "@react-navigation/native": "^7.0.0",
     "@rn-primitives/avatar": "~1.1.0",
     "@rn-primitives/portal": "~1.1.0",
@@ -23,12 +24,16 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "expo": "^52.0.25",
+    "expo-camera": "~16.0.16",
+    "expo-haptics": "~14.0.1",
     "expo-linking": "~7.0.4",
     "expo-navigation-bar": "~4.0.7",
     "expo-router": "~4.0.16",
     "expo-splash-screen": "~0.29.20",
     "expo-status-bar": "~2.0.1",
+    "expo-symbols": "~0.2.2",
     "expo-system-ui": "~4.0.7",
+    "expo-video": "~2.0.5",
     "lucide-react-native": "^0.378.0",
     "nativewind": "^4.1.23",
     "react": "18.3.1",
@@ -43,9 +48,7 @@
     "tailwindcss": "3.3.5",
     "tailwindcss-animate": "^1.0.7",
     "zustand": "^4.4.7",
-    "expo-symbols": "~0.2.2",
-    "expo-haptics": "~14.0.1",
-    "expo-video": "~2.0.5"
+    "react-native-pager-view": "6.5.1"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

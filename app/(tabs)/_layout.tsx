@@ -1,26 +1,37 @@
-import { Tabs } from "expo-router";
-import React from "react";
-import { TabBarIcon } from "../../components/ui/TabBarIcon";
+import {
+  MaterialTopTabNavigationEventMap,
+  MaterialTopTabNavigationOptions,
+  createMaterialTopTabNavigator,
+} from "@react-navigation/material-top-tabs";
+import { withLayoutContext } from "expo-router";
+import { ParamListBase, TabNavigationState } from "@react-navigation/native";
+import { Dimensions, SafeAreaView, View } from "react-native";
+import MyTabBar from "~/components/ui/TabBar";
+
+const { Navigator } = createMaterialTopTabNavigator();
+
+export const MaterialTopTabs = withLayoutContext<
+  MaterialTopTabNavigationOptions,
+  typeof Navigator,
+  TabNavigationState<ParamListBase>,
+  MaterialTopTabNavigationEventMap
+>(Navigator);
 
 export default function TabLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "camera" : "camera-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
-    </Tabs>
+    <View className="flex-1">
+      <MaterialTopTabs
+        tabBarPosition="bottom"
+        tabBar={(props) => <MyTabBar {...props} />}
+      >
+        <MaterialTopTabs.Screen
+          name="index"
+          options={{
+            title: "Tab One",
+          }}
+        />
+        <MaterialTopTabs.Screen name="gallery" options={{ title: "Tab Two" }} />
+      </MaterialTopTabs>
+    </View>
   );
 }
