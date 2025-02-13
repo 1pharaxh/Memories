@@ -16,8 +16,11 @@ import Animated, {
   LinearTransition,
 } from "react-native-reanimated";
 import CameraTools from "~/components/ui/CameraTools";
+import useGlobalStore from "~/store/globalStore";
 
 export default function HomeScreen() {
+  const { setTappedScreen, toggleBottomTab } = useGlobalStore();
+
   const cameraRef = React.useRef<CameraView>(null);
   const [cameraMode, setCameraMode] = React.useState<CameraMode>("picture");
   const [cameraTorch, setCameraTorch] = React.useState<boolean>(false);
@@ -30,6 +33,10 @@ export default function HomeScreen() {
 
   return (
     <Animated.View
+      onTouchEnd={() => {
+        setTappedScreen("camera");
+        toggleBottomTab();
+      }}
       layout={LinearTransition}
       entering={FadeIn.duration(1000)}
       exiting={FadeOut.duration(1000)}
@@ -38,7 +45,7 @@ export default function HomeScreen() {
       {!!!permission?.granted ? (
         <SafeAreaView className="flex-1 justify-center items-center gap-4">
           <Text className="text-white font-bold text-4xl">
-            Camera permission 😋🍑🍆
+            Camera permission 😋
           </Text>
           <Pressable
             onPress={() => router.push("/onboarding")}

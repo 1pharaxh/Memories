@@ -50,9 +50,12 @@ export default function MyTabBar({
           };
 
           const inputRange = state.routes.map((_: any, i: any) => i);
+
           const opacity = position.interpolate({
             inputRange,
-            outputRange: inputRange.map((i: number) => (i === index ? 1 : 0)),
+            outputRange: inputRange.map((i: number) =>
+              i === index ? 1 : 0.75
+            ),
           });
 
           return (
@@ -66,10 +69,12 @@ export default function MyTabBar({
               onPress={onPress}
               onLongPress={onLongPress}
             >
-              {/* <Animated.Text style={{ opacity, color: colors.text }}>
-              {label}
-            </Animated.Text> */}
-              <Text className="text-xl bg-red-500">{label}</Text>
+              <Animated.Text
+                className="text-xl bg-red-500"
+                style={{ opacity, color: colors.text }}
+              >
+                {label}
+              </Animated.Text>
             </TouchableOpacity>
           );
         })}
