@@ -5,8 +5,10 @@ import {
 } from "@react-navigation/material-top-tabs";
 import { withLayoutContext } from "expo-router";
 import { ParamListBase, TabNavigationState } from "@react-navigation/native";
-import { Dimensions, SafeAreaView, View } from "react-native";
+import { View } from "react-native";
 import MyTabBar from "~/components/ui/TabBar";
+import useGlobalStore from "~/store/globalStore";
+import { TabBarIcon } from "~/components/ui/TabBarIcon";
 
 const { Navigator } = createMaterialTopTabNavigator();
 
@@ -18,6 +20,7 @@ export const MaterialTopTabs = withLayoutContext<
 >(Navigator);
 
 export default function TabLayout() {
+  const { setShowTab } = useGlobalStore();
   return (
     <View className="flex-1">
       <MaterialTopTabs
@@ -29,8 +32,29 @@ export default function TabLayout() {
           options={{
             title: "Tab One",
           }}
+          listeners={({ navigation }) => ({
+            swipeEnd: (e) => {
+              setShowTab(false);
+            },
+            tabPress: (e) => {
+              console.log("First Tab");
+            },
+          })}
         />
-        <MaterialTopTabs.Screen name="gallery" options={{ title: "Tab Two" }} />
+        <MaterialTopTabs.Screen
+          listeners={({ navigation }) => ({
+            swipeEnd: (e) => {
+              setShowTab(false);
+            },
+            tabPress: (e) => {
+              console.log("Second Tab");
+            },
+          })}
+          name="gallery"
+          options={{
+            title: "Tab Two",
+          }}
+        />
       </MaterialTopTabs>
     </View>
   );

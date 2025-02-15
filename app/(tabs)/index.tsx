@@ -16,11 +16,8 @@ import Animated, {
   LinearTransition,
 } from "react-native-reanimated";
 import CameraTools from "~/components/ui/CameraTools";
-import useGlobalStore from "~/store/globalStore";
 
 export default function HomeScreen() {
-  const { setTappedScreen, toggleBottomTab } = useGlobalStore();
-
   const cameraRef = React.useRef<CameraView>(null);
   const [cameraMode, setCameraMode] = React.useState<CameraMode>("picture");
   const [cameraTorch, setCameraTorch] = React.useState<boolean>(false);
@@ -33,10 +30,6 @@ export default function HomeScreen() {
 
   return (
     <Animated.View
-      onTouchEnd={() => {
-        setTappedScreen("camera");
-        toggleBottomTab();
-      }}
       layout={LinearTransition}
       entering={FadeIn.duration(1000)}
       exiting={FadeOut.duration(1000)}

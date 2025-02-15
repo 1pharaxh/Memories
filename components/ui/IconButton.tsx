@@ -5,9 +5,7 @@ import { SFSymbol, SymbolView } from "expo-symbols";
 import { StyleProp, TouchableOpacity, ViewStyle } from "react-native";
 import { Link } from "expo-router";
 
-const CONTAINER_PADDING = 5;
-const CONTAINER_WIDTH = 34;
-const ICON_SIZE = 25;
+const ICON_SIZE = 22;
 
 interface IconButtonProps {
   iosName: SFSymbol;
@@ -29,15 +27,8 @@ export default function IconButton({
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.5}
-      style={[
-        {
-          backgroundColor: "#00000050",
-          padding: CONTAINER_PADDING,
-          borderRadius: (CONTAINER_WIDTH + CONTAINER_PADDING * 2) / 2,
-          width: CONTAINER_WIDTH,
-        },
-        containerStyle,
-      ]}
+      className="bg-black/50 rounded-full w-10 h-10 flex items-center justify-center"
+      style={[containerStyle]}
     >
       <SymbolView
         name={iosName}

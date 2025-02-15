@@ -12,15 +12,10 @@ import useGlobalStore from "~/store/globalStore";
 type Props = {};
 
 function GalleryPage({}: Props) {
-  const { setTappedScreen, tappedScreen, toggleBottomTab, showBottomTab } =
-    useGlobalStore();
+  const { showBottomTab } = useGlobalStore();
 
   return (
     <Animated.View
-      onTouchEnd={() => {
-        setTappedScreen("gallery");
-        toggleBottomTab();
-      }}
       layout={LinearTransition}
       entering={FadeIn.duration(1000)}
       exiting={FadeOut.duration(1000)}
@@ -28,7 +23,6 @@ function GalleryPage({}: Props) {
     >
       <SafeAreaView className="flex-1 justify-center items-center gap-4">
         <Text>Gallery Page</Text>
-        <Text>Last tapped {tappedScreen}</Text>
         <Text>Show bottom tab {JSON.stringify(showBottomTab)}</Text>
         <Link
           href="/onboarding"

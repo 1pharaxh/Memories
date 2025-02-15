@@ -1,21 +1,19 @@
 import { create } from "zustand";
 
 interface tappedScreenState {
-  tappedScreen: string;
   showBottomTab: boolean;
-  setTappedScreen: (e: string) => void;
   toggleBottomTab: () => void;
+  setShowTab: (e: boolean) => void;
   reset: () => void;
 }
 
 // Define the store
 const useGlobalStore = create<tappedScreenState>((set) => ({
-  tappedScreen: "",
   showBottomTab: true,
-  setTappedScreen: (e: string) => set({ tappedScreen: e }),
   toggleBottomTab: () =>
     set((state) => ({ showBottomTab: !state.showBottomTab })),
-  reset: () => set({ tappedScreen: "", showBottomTab: true }),
+  setShowTab: (e: boolean) => set({ showBottomTab: e }),
+  reset: () => set({ showBottomTab: true }),
 }));
 
 export default useGlobalStore;
