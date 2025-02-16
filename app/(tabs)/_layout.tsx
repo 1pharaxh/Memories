@@ -7,7 +7,6 @@ import { withLayoutContext } from "expo-router";
 import { ParamListBase, TabNavigationState } from "@react-navigation/native";
 import { View } from "react-native";
 import MyTabBar from "~/components/ui/TabBar";
-import useGlobalStore from "~/store/globalStore";
 import * as AC from "@bacons/apple-colors";
 
 const { Navigator } = createMaterialTopTabNavigator();
@@ -22,7 +21,6 @@ import { Aperture } from "~/lib/icons/Aperture";
 import { UserRound } from "~/lib/icons/UserRound";
 import { Sparkles } from "~/lib/icons/Sparkles";
 export default function TabLayout() {
-  const { setShowTab } = useGlobalStore();
   return (
     <View className="flex-1">
       <MaterialTopTabs
@@ -31,14 +29,6 @@ export default function TabLayout() {
         tabBar={(props) => <MyTabBar {...props} />}
       >
         <MaterialTopTabs.Screen
-          listeners={({ navigation }) => ({
-            swipeEnd: (e) => {
-              setShowTab(false);
-            },
-            tabPress: (e) => {
-              console.log("First Tab");
-            },
-          })}
           name="gallery"
           options={{
             title: "Memories",
@@ -61,25 +51,9 @@ export default function TabLayout() {
               <Aperture size={17} strokeWidth={2} className="text-white" />
             ),
           }}
-          listeners={({ navigation }) => ({
-            swipeEnd: (e) => {
-              setShowTab(false);
-            },
-            tabPress: (e) => {
-              console.log("Second Tab");
-            },
-          })}
         />
 
         <MaterialTopTabs.Screen
-          listeners={({ navigation }) => ({
-            swipeEnd: (e) => {
-              setShowTab(false);
-            },
-            tabPress: (e) => {
-              console.log("Third Tab");
-            },
-          })}
           name="profile"
           options={{
             sceneStyle: {

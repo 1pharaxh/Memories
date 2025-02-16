@@ -9,13 +9,10 @@ import Animated, {
   LinearTransition,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import useGlobalStore from "~/store/globalStore";
 
 type Props = {};
 
 function GalleryPage({}: Props) {
-  const { showBottomTab } = useGlobalStore();
-
   return (
     <Animated.View
       layout={LinearTransition}
@@ -27,7 +24,6 @@ function GalleryPage({}: Props) {
         <Form.Text style={{ textAlign: "center", fontSize: 14 }}>
           Gallery Page
         </Form.Text>
-        <Form.Text>Show bottom tab {JSON.stringify(showBottomTab)}</Form.Text>
 
         <Link style={{ color: AC.link }} href="/onboarding">
           back to onboarding

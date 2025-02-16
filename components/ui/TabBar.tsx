@@ -42,7 +42,40 @@ export default function MyTabBar({
     }
   }, [isExpanded]);
 
+  useEffect(() => {
+    if (state.routes[state.index].name === "index") {
+      style.value = withSpring({
+        scale: 1.1,
+        height: 110,
+        gap: 35,
+        padding: 0,
+      });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } else {
+      if (isExpanded) {
+        style.value = withSpring({
+          scale: 1.1,
+          height: 90,
+          gap: 30,
+          padding: 20,
+        });
+      } else {
+        style.value = withSpring({
+          scale: 0.85,
+          height: 75,
+          gap: 20,
+          padding: 28,
+        });
+      }
+    }
+  }, [state.routes[state.index].name]);
+
+  useEffect(() => {});
   const gestureHandler = Gesture.Pan().onUpdate((e) => {
+    // no need to handle gesture if the current route is the index route ie the camera route
+    if (state.routes[state.index].name === "index") {
+      return;
+    }
     // Determine movement direction
     const isVerticalMovement =
       Math.abs(e.translationY) > Math.abs(e.translationX);
@@ -101,8 +134,6 @@ export default function MyTabBar({
       ],
     };
   });
-
-  const middleIndex = useMemo(() => Math.floor(state.routes.length / 2), []);
 
   return (
     <GestureDetector gesture={gestureHandler}>
