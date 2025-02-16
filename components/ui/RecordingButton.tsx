@@ -6,13 +6,21 @@ import useGlobalStore from "~/store/globalStore";
 type Props = {};
 
 const RecordingButton = (props: Props) => {
-  const { isRecording, setIsRecording } = useGlobalStore();
+  const { isRecording, setIsRecording, handleTakePicture, handleTakeVideo } =
+    useGlobalStore();
   const [cameraMode, setCameraMode] = React.useState("picture");
+
   return (
     <TouchableOpacity
-      onLongPress={() => (setCameraMode("video"), setIsRecording(true))}
-      onPress={() => (setCameraMode("picture"), setIsRecording(false))}
-      onPressOut={() => (setCameraMode("picture"), setIsRecording(false))}
+      onLongPress={() => (
+        setCameraMode("video"), setIsRecording(true), handleTakeVideo(false)
+      )}
+      onPress={() => (
+        setCameraMode("picture"), setIsRecording(false), handleTakePicture()
+      )}
+      onPressOut={() => (
+        setCameraMode("picture"), setIsRecording(false), handleTakeVideo(true)
+      )}
     >
       <SymbolView
         style={{

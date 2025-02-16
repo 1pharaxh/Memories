@@ -55,7 +55,9 @@
     "tailwindcss": "3.3.5",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
-    "zustand": "^4.4.7"
+    "zustand": "^4.4.7",
+    "expo-image": "~2.0.5",
+    "expo-sharing": "~13.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

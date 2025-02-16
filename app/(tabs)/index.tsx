@@ -9,17 +9,20 @@ import { router } from "expo-router";
 import * as React from "react";
 import { Text, View, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import Animated, {
   FadeIn,
   FadeOut,
   LinearTransition,
 } from "react-native-reanimated";
 import CameraTools from "~/components/ui/CameraTools";
+import RecordingCounter from "~/components/ui/RecordingCounter";
+import PictureView from "~/components/ui/PictureView";
+import VideoViewComponent from "~/components/ui/VideoView";
+import useGlobalStore from "~/store/globalStore";
 
 export default function HomeScreen() {
   const cameraRef = React.useRef<CameraView>(null);
-  const [cameraMode, setCameraMode] = React.useState<CameraMode>("picture");
+  const [cameraMode, setCameraMode] = React.useState<CameraMode>("video");
   const [cameraTorch, setCameraTorch] = React.useState<boolean>(false);
   const [cameraFlash, setCameraFlash] = React.useState<FlashMode>("off");
   const [cameraFacing, setCameraFacing] = React.useState<"front" | "back">(
@@ -27,6 +30,39 @@ export default function HomeScreen() {
   );
   const [cameraZoom, setCameraZoom] = React.useState<number>(0);
   const [permission, requestPermission] = useCameraPermissions();
+
+  const [picture, setPicture] = React.useState<string>("");
+  const [video, setVideo] = React.useState<string>("");
+
+  const handleTakePicture = React.useCallback(async () => {
+    setCameraMode("picture");
+    const response = await cameraRef.current?.takePictureAsync({});
+    setPicture(response!.uri);
+    setCameraMode("video");
+  }, []);
+
+  const handleTakeVideo = React.useCallback(
+    async (stop: boolean) => {
+      if (stop) {
+        cameraRef.current?.stopRecording();
+        return;
+      } else {
+        const response = await cameraRef.current?.recordAsync({});
+        setVideo(response!.uri);
+      }
+    },
+    [cameraRef]
+  );
+
+  const { setHandleTakePicture, setHandleTakeVideo } = useGlobalStore();
+
+  React.useEffect(() => {
+    setHandleTakePicture(handleTakePicture);
+    setHandleTakeVideo(handleTakeVideo);
+  }, [handleTakePicture, handleTakeVideo]);
+
+  if (picture) return <PictureView picture={picture} setPicture={setPicture} />;
+  if (video) return <VideoViewComponent video={video} setVideo={setVideo} />;
 
   return (
     <Animated.View
@@ -71,7 +107,8 @@ export default function HomeScreen() {
           onCameraReady={() => console.log("camera is ready")}
         >
           <SafeAreaView style={{ flex: 1, paddingTop: 40 }}>
-            <View className="flex-1 p-2">
+            <View className="p-2">
+              <RecordingCounter />
               <CameraTools
                 cameraZoom={cameraZoom}
                 cameraFlash={cameraFlash}
