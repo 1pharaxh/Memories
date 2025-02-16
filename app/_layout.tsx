@@ -63,19 +63,20 @@ export default function RootLayout() {
             name="index"
             options={{
               headerShown: false,
+              animation: "fade",
             }}
           />
           <Stack.Screen
             name="onboarding"
             options={{
-              title: "Theme toggle Base",
-              headerRight: () => <ThemeToggle />,
-              presentation: "fullScreenModal",
-              headerShown: true,
+              headerShown: false,
               animation: "fade",
             }}
           />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="(tabs)"
+            options={{ headerShown: false, animation: "fade" }}
+          />
           <Stack.Screen name="+not-found" />
         </Stack>
         <PortalHost />

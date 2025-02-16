@@ -13,6 +13,8 @@
     "postinstall": "npx tailwindcss -i ./global.css -o ./node_modules/.cache/nativewind/global.css"
   },
   "dependencies": {
+    "@bacons/apple-colors": "^0.0.8",
+    "@react-native-segmented-control/segmented-control": "2.5.4",
     "@react-navigation/material-top-tabs": "^7.1.0",
     "@react-navigation/native": "^7.0.0",
     "@rn-primitives/avatar": "~1.1.0",
@@ -35,6 +37,7 @@
     "expo-symbols": "~0.2.2",
     "expo-system-ui": "~4.0.7",
     "expo-video": "~2.0.5",
+    "expo-web-browser": "~14.0.2",
     "fix": "^0.0.6",
     "lucide-react-native": "^0.378.0",
     "nativewind": "^4.1.23",
@@ -51,6 +54,7 @@
     "tailwind-merge": "^2.2.1",
     "tailwindcss": "3.3.5",
     "tailwindcss-animate": "^1.0.7",
+    "vaul": "^1.1.2",
     "zustand": "^4.4.7"
   },
   "devDependencies": {

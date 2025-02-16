@@ -8,6 +8,7 @@ import { ParamListBase, TabNavigationState } from "@react-navigation/native";
 import { View } from "react-native";
 import MyTabBar from "~/components/ui/TabBar";
 import useGlobalStore from "~/store/globalStore";
+import * as AC from "@bacons/apple-colors";
 
 const { Navigator } = createMaterialTopTabNavigator();
 
@@ -41,6 +42,9 @@ export default function TabLayout() {
           name="gallery"
           options={{
             title: "Memories",
+            sceneStyle: {
+              backgroundColor: AC.systemGroupedBackground,
+            },
             tabBarIcon: () => {
               return (
                 <Sparkles size={17} strokeWidth={2} className="text-white" />
@@ -78,6 +82,10 @@ export default function TabLayout() {
           })}
           name="profile"
           options={{
+            sceneStyle: {
+              backgroundColor: "transparent",
+              height: "1000%",
+            },
             title: "My Hub",
             tabBarIcon: () => {
               return (

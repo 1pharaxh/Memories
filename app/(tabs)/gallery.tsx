@@ -1,6 +1,8 @@
 import { Link } from "expo-router";
 import React from "react";
-import { Text } from "react-native";
+import * as Form from "~/components/ui/Form";
+import * as AC from "@bacons/apple-colors";
+
 import Animated, {
   FadeIn,
   FadeOut,
@@ -22,12 +24,12 @@ function GalleryPage({}: Props) {
       style={{ flex: 1 }}
     >
       <SafeAreaView className="flex-1 justify-center items-center gap-4">
-        <Text>Gallery Page</Text>
-        <Text>Show bottom tab {JSON.stringify(showBottomTab)}</Text>
-        <Link
-          href="/onboarding"
-          className="text-blue-500 border-2 p-2 rounded-full text-lg"
-        >
+        <Form.Text style={{ textAlign: "center", fontSize: 14 }}>
+          Gallery Page
+        </Form.Text>
+        <Form.Text>Show bottom tab {JSON.stringify(showBottomTab)}</Form.Text>
+
+        <Link style={{ color: AC.link }} href="/onboarding">
           back to onboarding
         </Link>
       </SafeAreaView>
