@@ -40,6 +40,12 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
         }
+      ],
+      [
+        "expo-asset",
+        {
+          "assets": ["./assets/"]
+        }
       ]
     ],
     "experiments": {

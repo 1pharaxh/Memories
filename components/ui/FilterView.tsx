@@ -1,30 +1,52 @@
 import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
-import { Alert } from "react-native";
+import { Alert, View } from "react-native";
 
-import React from "react";
+import React, { useMemo } from "react";
+import useGlobalStore from "~/store/globalStore";
 
 type Props = {};
 
 const FilterView = (props: Props) => {
+  const { filter } = useGlobalStore();
+
+  if (!filter) return null;
+
+  const fragmentShader = useMemo(() => {
+    switch (filter) {
+      case "summer":
+        return summerFragSrc;
+      case "winter":
+        return winterFragSrc;
+      default:
+        return "";
+    }
+  }, [filter]);
+  const key = `gl-view-${filter}`;
+
   return (
-    <GLView
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        height: "100%",
-        width: "100%",
-        opacity: 0.5,
-        zIndex: 1,
-      }}
-      onContextCreate={onContextCreate}
-    />
+    <View
+      style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+    >
+      <GLView
+        key={key}
+        style={{
+          height: "100%",
+          width: "100%",
+          opacity: 0.5,
+          zIndex: 1,
+        }}
+        onContextCreate={(gl) => {
+          console.log("Creating new GL context for filter:", filter);
+          onContextCreate(gl, fragmentShader);
+        }}
+      />
+    </View>
   );
 };
 
 export default FilterView;
 
-function onContextCreate(gl: ExpoWebGLRenderingContext) {
+function onContextCreate(gl: ExpoWebGLRenderingContext, fragSrc: string) {
   // Set the viewport and clear the context with a transparent background.
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
   gl.clearColor(0, 0, 0, 0);
@@ -42,18 +64,6 @@ function onContextCreate(gl: ExpoWebGLRenderingContext) {
         // Convert from clip space [-1,1] to UV space [0,1]
         vUV = (position + 1.0) * 0.5;
         gl_Position = vec4(position, 0.0, 1.0);
-      }
-    `;
-
-  // Fragment shader: creates a warm gradient from top (warm orange) to bottom (warm pink).
-  // Both colors have an alpha value for transparency.
-  const fragSrc = `
-      precision mediump float;
-      varying vec2 vUV;
-      void main() {
-        vec4 topColor = vec4(1.0, 0.65, 0.0, 0.4);   // Warm orange (RGBA: 1,0.65,0,0.4)
-        vec4 bottomColor = vec4(1.0, 0.41, 0.71, 0.4); // Warm pink (RGBA: 1,0.41,0.71,0.4)
-        gl_FragColor = mix(bottomColor, topColor, vUV.y);
       }
     `;
 
@@ -128,3 +138,28 @@ function onContextCreate(gl: ExpoWebGLRenderingContext) {
   gl.flush();
   gl.endFrameEXP();
 }
+
+// Fragment shader: creates a warm gradient from top (warm orange) to bottom (warm pink).
+// Both colors have an alpha value for transparency.
+const summerFragSrc = `
+      precision mediump float;
+      varying vec2 vUV;
+      void main() {
+        vec4 topColor = vec4(1.0, 0.65, 0.0, 0.4);   // Warm orange (RGBA: 1,0.65,0,0.4)
+        vec4 bottomColor = vec4(1.0, 0.41, 0.71, 0.4); // Warm pink (RGBA: 1,0.41,0.71,0.4)
+        gl_FragColor = mix(bottomColor, topColor, vUV.y);
+      }
+    `;
+
+const winterFragSrc = `
+    precision mediump float;
+    varying vec2 vUV;
+    void main() {
+      // Top color: a cool, dark blue with moderate transparency.
+      vec4 topColor = vec4(0.0, 0.3, 0.6, 0.4);
+      // Bottom color: a light blue, evoking a frosty winter feel.
+      vec4 bottomColor = vec4(0.6, 0.8, 1.0, 0.4);
+      // Interpolate between the bottom and top color based on the vertical coordinate.
+      gl_FragColor = mix(bottomColor, topColor, vUV.y);
+    }
+  `;

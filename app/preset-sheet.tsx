@@ -3,6 +3,7 @@ import TouchableBounce from "~/components/ui/TouchableBounce";
 import { Image, ScrollView, View } from "react-native";
 
 import MaskedView from "@react-native-masked-view/masked-view";
+import useGlobalStore from "~/store/globalStore";
 
 const backgroundImage =
   process.env.EXPO_OS === "web"
@@ -10,8 +11,9 @@ const backgroundImage =
     : `experimental_backgroundImage`;
 
 export default function Page() {
+  const { setFilter } = useGlobalStore();
   const icons = [
-    "https://github.com/expo.png",
+    "https://cdn-icons-png.flaticon.com/512/1890/1890298.png",
     "https://github.com/apple.png",
     "https://github.com/facebook.png",
     "https://github.com/1pharaxh.png",
@@ -22,7 +24,22 @@ export default function Page() {
       <Stack.Screen options={{ title: "Choose a preset" }} />
       <ScrollView horizontal contentContainerStyle={{ padding: 24, gap: 32 }}>
         {icons.map((icon) => (
-          <TouchableBounce sensory key={icon} onPress={() => {}}>
+          <TouchableBounce
+            sensory
+            key={icon}
+            onPress={() => {
+              if (
+                icon ===
+                "https://cdn-icons-png.flaticon.com/512/1890/1890298.png"
+              ) {
+                setFilter("summer");
+              }
+              if (icon === "https://github.com/apple.png") {
+                console.log("winter");
+                setFilter("winter");
+              }
+            }}
+          >
             <View
               style={{
                 borderCurve: "continuous",

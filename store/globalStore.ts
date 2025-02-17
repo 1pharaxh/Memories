@@ -5,6 +5,8 @@ interface globalStoreState {
   photo: string;
   video: string;
   cameraMode: "picture" | "video";
+  filter: "summer" | "winter" | "";
+  setFilter: (e: "summer" | "winter" | "") => void;
   setCameraMode: (e: "picture" | "video") => void;
   setIsRecording: (e: boolean) => void;
   reset: () => void;
@@ -22,6 +24,8 @@ const useGlobalStore = create<globalStoreState>((set) => ({
   photo: "",
   video: "",
   cameraMode: "picture",
+  filter: "",
+  setFilter: (e) => set({ filter: e }),
   setCameraMode: (e: "picture" | "video") => set({ cameraMode: e }),
   setIsRecording: (e) => set({ isRecording: e }),
   reset: () =>
