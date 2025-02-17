@@ -30,7 +30,7 @@ export default function IconButton({
       disabled={disabled}
       onPress={onPress}
       activeOpacity={0.5}
-      className="bg-black/50 rounded-full w-10 h-10 flex items-center justify-center"
+      className="bg-black/50 rounded-full w-12 h-12 flex items-center justify-center"
       style={[containerStyle]}
     >
       <SymbolView

@@ -69,14 +69,13 @@ export default function HomeScreen() {
 
   return (
     <Animated.View
-      key={cameraMode}
       layout={LinearTransition}
       entering={FadeIn.duration(1000)}
       exiting={FadeOut.duration(1000)}
       style={{ flex: 1 }}
     >
       {!!!permission?.granted ? (
-        <SafeAreaView className="flex-1 justify-center items-center gap-4">
+        <View className="flex-1 justify-center items-center gap-4">
           <Text className="text-white font-bold text-4xl">
             Camera permission 😋
           </Text>
@@ -97,9 +96,10 @@ export default function HomeScreen() {
               Grant camera permission
             </Text>
           </Pressable>
-        </SafeAreaView>
+        </View>
       ) : (
         <CameraView
+          key={cameraMode}
           ref={cameraRef}
           style={{ flex: 1 }}
           facing={cameraFacing}
@@ -110,20 +110,18 @@ export default function HomeScreen() {
           barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
           onCameraReady={() => console.log("camera is ready")}
         >
-          <SafeAreaView style={{ flex: 1, paddingTop: 40 }}>
-            <View className="p-2">
-              <RecordingCounter />
-              <CameraTools
-                cameraZoom={cameraZoom}
-                cameraFlash={cameraFlash}
-                cameraTorch={cameraTorch}
-                setCameraZoom={setCameraZoom}
-                setCameraFacing={setCameraFacing}
-                setCameraTorch={setCameraTorch}
-                setCameraFlash={setCameraFlash}
-              />
-            </View>
-          </SafeAreaView>
+          <View className="p-2 mt-28">
+            <RecordingCounter />
+            <CameraTools
+              cameraZoom={cameraZoom}
+              cameraFlash={cameraFlash}
+              cameraTorch={cameraTorch}
+              setCameraZoom={setCameraZoom}
+              setCameraFacing={setCameraFacing}
+              setCameraTorch={setCameraTorch}
+              setCameraFlash={setCameraFlash}
+            />
+          </View>
         </CameraView>
       )}
     </Animated.View>

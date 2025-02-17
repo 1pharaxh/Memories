@@ -20,50 +20,21 @@ export default function PictureView({ picture, setPicture }: PictureViewProps) {
       exiting={FadeOut}
     >
       <View
+        className="mt-28"
         style={{
           position: "absolute",
           right: 6,
           zIndex: 1,
-          paddingTop: 50,
           gap: 16,
         }}
       >
-        <IconButton
-          onPress={() => setPicture("")}
-          iosName={"square.dashed"}
-          androidName="close"
-        />
-        <IconButton
-          onPress={() => setPicture("")}
-          iosName={"circle.dashed"}
-          androidName="close"
-        />
-        <IconButton
-          onPress={() => setPicture("")}
-          iosName={"triangle"}
-          androidName="close"
-        />
+        <IconButton onPress={() => setPicture("")} iosName={"xmark"} />
         <IconButton
           onPress={async () => await shareAsync(picture)}
           iosName={"square.and.arrow.up"}
-          androidName="close"
         />
       </View>
 
-      <View
-        style={{
-          position: "absolute",
-          zIndex: 1,
-          paddingTop: 50,
-          left: 6,
-        }}
-      >
-        <IconButton
-          onPress={() => setPicture("")}
-          iosName={"xmark"}
-          androidName="close"
-        />
-      </View>
       <Image
         source={picture}
         style={{

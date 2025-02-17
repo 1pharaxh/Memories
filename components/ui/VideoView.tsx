@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { Alert, Button, View } from "react-native";
+import { Alert, Button, Dimensions, View } from "react-native";
 import IconButton from "./IconButton";
 import { shareAsync } from "expo-sharing";
 import Animated, {
@@ -15,9 +15,10 @@ export default function VideoViewComponent({}: VideoViewProps) {
   const ref = useRef<VideoView>(null);
   const { setCameraMode, setIsRecording, video, setVideo } = useGlobalStore();
   const [isPlaying, setIsPlaying] = useState(true);
+  const [muted, setMuted] = useState<boolean>(true);
   const player = useVideoPlayer(video, (player) => {
     player.loop = true;
-    player.muted = true;
+    player.muted = muted;
     player.play();
   });
 
@@ -42,13 +43,14 @@ export default function VideoViewComponent({}: VideoViewProps) {
       layout={LinearTransition}
       entering={FadeIn}
       exiting={FadeOut}
+      className="flex-1"
     >
       <View
+        className="mt-28"
         style={{
           position: "absolute",
           right: 6,
           zIndex: 1,
-          paddingTop: 100,
           gap: 16,
         }}
       >
@@ -62,6 +64,14 @@ export default function VideoViewComponent({}: VideoViewProps) {
           onPress={async () => await shareAsync(video)}
           iosName={"square.and.arrow.up"}
         />
+
+        <IconButton
+          onPress={async () => {
+            player.muted = !muted;
+            setMuted(!muted);
+          }}
+          iosName={!muted ? "speaker.wave.2" : "speaker.slash"}
+        />
         <IconButton
           iosName={isPlaying ? "pause" : "play"}
           onPress={() => {
@@ -74,16 +84,22 @@ export default function VideoViewComponent({}: VideoViewProps) {
           }}
         />
       </View>
-      <VideoView
-        ref={ref}
-        style={{
-          width: "100%",
-          height: "100%",
-        }}
-        player={player}
-        allowsFullscreen
-        nativeControls={true}
-      />
+      <View className="flex-1">
+        <VideoView
+          className="absolute top-0 left-0 w-20 h-40"
+          style={{
+            width: Dimensions.get("window").width,
+            height: Dimensions.get("window").height,
+          }}
+          nativeControls={false}
+          ref={ref}
+          player={player}
+          allowsFullscreen={true}
+          contentFit="cover"
+          allowsPictureInPicture={true}
+          startsPictureInPictureAutomatically={true}
+        />
+      </View>
     </Animated.View>
   );
 }
