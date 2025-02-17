@@ -9,22 +9,25 @@ const ICON_SIZE = 22;
 
 interface IconButtonProps {
   iosName: SFSymbol;
-  androidName: ComponentProps<typeof Ionicons>["name"];
   containerStyle?: StyleProp<ViewStyle>;
   onPress?: () => void;
   width?: number;
   height?: number;
+  tintColor?: string;
+  disabled?: boolean;
 }
 export default function IconButton({
   onPress,
-  androidName,
   iosName,
   containerStyle,
   height,
   width,
+  tintColor = "white",
+  disabled = false,
 }: IconButtonProps) {
   return (
     <TouchableOpacity
+      disabled={disabled}
       onPress={onPress}
       activeOpacity={0.5}
       className="bg-black/50 rounded-full w-10 h-10 flex items-center justify-center"
@@ -42,15 +45,7 @@ export default function IconButton({
               }
             : {}
         }
-        tintColor={"white"}
-        fallback={
-          <Ionicons
-            size={ICON_SIZE}
-            name={androidName}
-            style={{}}
-            color={"white"}
-          />
-        }
+        tintColor={tintColor}
       />
     </TouchableOpacity>
   );

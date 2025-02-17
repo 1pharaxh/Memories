@@ -2,30 +2,35 @@ import { create } from "zustand";
 
 interface globalStoreState {
   isRecording: boolean;
+  photo: string;
+  video: string;
+  cameraMode: "picture" | "video";
+  setCameraMode: (e: "picture" | "video") => void;
   setIsRecording: (e: boolean) => void;
   reset: () => void;
   handleTakePicture: () => void;
-  handleTakeVideo: (s: boolean) => void;
+  handleTakeVideo: () => void;
   setHandleTakePicture: (e: () => void) => void;
-  setHandleTakeVideo: (e: (s: boolean) => void) => void;
-  photo: string;
+  setHandleTakeVideo: (e: () => void) => void;
   setPhoto: (e: string) => void;
-  video: string;
   setVideo: (e: string) => void;
 }
 
 // Define the store
 const useGlobalStore = create<globalStoreState>((set) => ({
   isRecording: false,
+  photo: "",
+  video: "",
+  cameraMode: "picture",
+  setCameraMode: (e: "picture" | "video") => set({ cameraMode: e }),
   setIsRecording: (e) => set({ isRecording: e }),
   reset: () =>
     set({
       isRecording: false,
       handleTakePicture: () => {},
-      handleTakeVideo: (s: boolean) => {},
+      handleTakeVideo: () => {},
       setHandleTakePicture: (e) => set({ handleTakePicture: e }),
-      setHandleTakeVideo: (e: (s: boolean) => void) =>
-        set({ handleTakeVideo: e }),
+      setHandleTakeVideo: (e: () => void) => set({ handleTakeVideo: e }),
       photo: "",
       setPhoto: (e) => set({ photo: e }),
       video: "",
@@ -34,10 +39,9 @@ const useGlobalStore = create<globalStoreState>((set) => ({
   handleTakePicture: () => {},
   handleTakeVideo: () => {},
   setHandleTakePicture: (e) => set({ handleTakePicture: e }),
-  setHandleTakeVideo: (e: (s: boolean) => void) => set({ handleTakeVideo: e }),
-  photo: "",
+  setHandleTakeVideo: (e: () => void) => set({ handleTakeVideo: e }),
+
   setPhoto: (e) => set({ photo: e }),
-  video: "",
   setVideo: (e) => set({ video: e }),
 }));
 

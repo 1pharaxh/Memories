@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import IconButton from "./IconButton";
 import { FlashMode } from "expo-camera";
+import useGlobalStore from "~/store/globalStore";
 
 interface CameraToolsProps {
   cameraZoom: number;
@@ -20,6 +21,8 @@ export default function CameraTools({
   setCameraTorch,
   setCameraFlash,
 }: CameraToolsProps) {
+  const { isRecording, setCameraMode, setIsRecording, cameraMode } =
+    useGlobalStore();
   return (
     <View
       style={{
@@ -30,37 +33,33 @@ export default function CameraTools({
       }}
     >
       <IconButton
+        disabled={isRecording}
         onPress={() => setCameraTorch((prevValue) => !prevValue)}
         iosName={
           cameraTorch ? "flashlight.off.circle" : "flashlight.slash.circle"
         }
-        androidName={cameraTorch ? "flash" : "flash-off"}
       />
       <IconButton
+        disabled={isRecording}
         onPress={() =>
           setCameraFacing((prevValue) =>
             prevValue === "back" ? "front" : "back"
           )
         }
         iosName={"arrow.triangle.2.circlepath.camera"}
-        androidName="close"
         width={25}
         height={21}
       />
       <IconButton
+        disabled={isRecording}
         onPress={() =>
           setCameraFlash((prevValue) => (prevValue === "off" ? "on" : "off"))
         }
         iosName={cameraFlash === "on" ? "bolt.circle" : "bolt.slash.circle"}
-        androidName={cameraFlash === "on" ? "flash" : "flash-off"}
       />
+
       <IconButton
-        onPress={() => {}}
-        iosName={"speaker"}
-        // iosName={"speaker.slash"}
-        androidName="volume-high"
-      />
-      <IconButton
+        disabled={isRecording}
         onPress={() => {
           // increment by .01
           if (cameraZoom < 1) {
@@ -68,9 +67,9 @@ export default function CameraTools({
           }
         }}
         iosName={"plus.magnifyingglass"}
-        androidName="close"
       />
       <IconButton
+        disabled={isRecording}
         onPress={() => {
           // decrement by .01
           if (cameraZoom > 0) {
@@ -78,7 +77,21 @@ export default function CameraTools({
           }
         }}
         iosName={"minus.magnifyingglass"}
-        androidName="close"
+      />
+      <IconButton
+        disabled={isRecording}
+        tintColor={cameraMode === "video" ? "red" : "white"}
+        onPress={() => {
+          if (cameraMode === "video") {
+            console.log("setting camera mode to picture");
+            setIsRecording(false);
+            setCameraMode("picture");
+          } else {
+            console.log("setting camera mode to video");
+            setCameraMode("video");
+          }
+        }}
+        iosName={cameraMode === "video" ? "video.circle" : "camera.circle"}
       />
     </View>
   );

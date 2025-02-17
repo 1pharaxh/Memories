@@ -22,7 +22,6 @@ import useGlobalStore from "~/store/globalStore";
 
 export default function HomeScreen() {
   const cameraRef = React.useRef<CameraView>(null);
-  const [cameraMode, setCameraMode] = React.useState<CameraMode>("video");
   const [cameraTorch, setCameraTorch] = React.useState<boolean>(false);
   const [cameraFlash, setCameraFlash] = React.useState<FlashMode>("off");
   const [cameraFacing, setCameraFacing] = React.useState<"front" | "back">(
@@ -31,26 +30,6 @@ export default function HomeScreen() {
   const [cameraZoom, setCameraZoom] = React.useState<number>(0);
   const [permission, requestPermission] = useCameraPermissions();
 
-  const handleTakePicture = React.useCallback(async () => {
-    setCameraMode("picture");
-    const response = await cameraRef.current?.takePictureAsync({});
-    setPhoto(response!.uri);
-    setCameraMode("video");
-  }, []);
-
-  const handleTakeVideo = React.useCallback(
-    async (stop: boolean) => {
-      if (stop) {
-        cameraRef.current?.stopRecording();
-        return;
-      } else {
-        const response = await cameraRef.current?.recordAsync({});
-        setVideo(response!.uri);
-      }
-    },
-    [cameraRef]
-  );
-
   const {
     setHandleTakePicture,
     setHandleTakeVideo,
@@ -58,7 +37,27 @@ export default function HomeScreen() {
     photo,
     setVideo,
     video,
+    cameraMode,
+    setCameraMode,
+    isRecording,
+    setIsRecording,
   } = useGlobalStore();
+
+  const handleTakePicture = React.useCallback(async () => {
+    const response = await cameraRef.current?.takePictureAsync({});
+    setPhoto(response!.uri);
+  }, []);
+
+  const handleTakeVideo = React.useCallback(async () => {
+    if (isRecording) {
+      cameraRef.current?.stopRecording();
+      setIsRecording(false);
+    } else {
+      setIsRecording(true);
+      const response = await cameraRef.current?.recordAsync({});
+      setVideo(response!.uri);
+    }
+  }, [isRecording]);
 
   React.useEffect(() => {
     setHandleTakePicture(handleTakePicture);
@@ -66,10 +65,11 @@ export default function HomeScreen() {
   }, [handleTakePicture, handleTakeVideo]);
 
   if (photo) return <PictureView picture={photo} setPicture={setPhoto} />;
-  if (video) return <VideoViewComponent video={video} setVideo={setVideo} />;
+  if (video) return <VideoViewComponent />;
 
   return (
     <Animated.View
+      key={cameraMode}
       layout={LinearTransition}
       entering={FadeIn.duration(1000)}
       exiting={FadeOut.duration(1000)}

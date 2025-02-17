@@ -8,22 +8,24 @@ import Animated, {
   FadeOut,
   LinearTransition,
 } from "react-native-reanimated";
+import useGlobalStore from "~/store/globalStore";
 
-interface VideoViewProps {
-  video: string;
-  setVideo: (e: string) => void;
-}
-export default function VideoViewComponent({
-  video,
-  setVideo,
-}: VideoViewProps) {
+interface VideoViewProps {}
+export default function VideoViewComponent({}: VideoViewProps) {
   const ref = useRef<VideoView>(null);
+  const { setCameraMode, setIsRecording, video, setVideo } = useGlobalStore();
   const [isPlaying, setIsPlaying] = useState(true);
   const player = useVideoPlayer(video, (player) => {
     player.loop = true;
     player.muted = true;
     player.play();
   });
+
+  const resetAndClose = () => {
+    setVideo("");
+    setCameraMode("picture");
+    setIsRecording(false);
+  };
 
   useEffect(() => {
     const subscription = player.addListener("playingChange", (event) => {
@@ -51,18 +53,17 @@ export default function VideoViewComponent({
         }}
       >
         <IconButton
-          onPress={() => setVideo("")}
+          onPress={() => {
+            resetAndClose();
+          }}
           iosName={"xmark"}
-          androidName="close"
         />
         <IconButton
           onPress={async () => await shareAsync(video)}
           iosName={"square.and.arrow.up"}
-          androidName="close"
         />
         <IconButton
           iosName={isPlaying ? "pause" : "play"}
-          androidName={isPlaying ? "pause" : "play"}
           onPress={() => {
             if (isPlaying) {
               player.pause();
