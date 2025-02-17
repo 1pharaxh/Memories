@@ -9,23 +9,34 @@ type Props = {};
 const FilterView = (props: Props) => {
   const { filter } = useGlobalStore();
 
-  if (!filter) return null;
-
   const fragmentShader = useMemo(() => {
     switch (filter) {
       case "summer":
         return summerFragSrc;
       case "winter":
         return winterFragSrc;
+      case "vintage":
+        return vintageFragSrc;
+      case "nighttime":
+        return nighttimeFragSrc;
+      case "neon":
+        return neonFragSrc;
       default:
-        return "";
+        return summerFragSrc;
     }
   }, [filter]);
   const key = `gl-view-${filter}`;
 
   return (
     <View
-      style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: filter ? "flex" : "none",
+      }}
     >
       <GLView
         key={key}
@@ -163,3 +174,39 @@ const winterFragSrc = `
       gl_FragColor = mix(bottomColor, topColor, vUV.y);
     }
   `;
+
+const vintageFragSrc = `
+  precision mediump float;
+  varying vec2 vUV;
+  void main() {
+    // Bottom: light cream tone
+    vec4 bottomColor = vec4(0.93, 0.84, 0.73, 0.4);
+    // Top: deep sepia brown
+    vec4 topColor = vec4(0.4, 0.26, 0.13, 0.4);
+    gl_FragColor = mix(bottomColor, topColor, vUV.y);
+  }
+`;
+
+const nighttimeFragSrc = `
+  precision mediump float;
+  varying vec2 vUV;
+  void main() {
+    // Bottom: muted purple
+    vec4 bottomColor = vec4(0.2, 0.0, 0.3, 0.5);
+    // Top: very dark navy
+    vec4 topColor = vec4(0.0, 0.0, 0.2, 0.5);
+    gl_FragColor = mix(bottomColor, topColor, vUV.y);
+  }
+`;
+
+const neonFragSrc = `
+  precision mediump float;
+  varying vec2 vUV;
+  void main() {
+    // Bottom: vibrant pink
+    vec4 bottomColor = vec4(1.0, 0.0, 1.0, 0.5);
+    // Top: electric blue
+    vec4 topColor = vec4(0.0, 1.0, 1.0, 0.5);
+    gl_FragColor = mix(bottomColor, topColor, vUV.y);
+  }
+`;

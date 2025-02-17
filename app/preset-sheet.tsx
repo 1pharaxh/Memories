@@ -28,15 +28,30 @@ export default function Page() {
             sensory
             key={icon}
             onPress={() => {
-              if (
-                icon ===
-                "https://cdn-icons-png.flaticon.com/512/1890/1890298.png"
-              ) {
-                setFilter("summer");
-              }
-              if (icon === "https://github.com/apple.png") {
-                console.log("winter");
-                setFilter("winter");
+              switch (icon) {
+                case "https://cdn-icons-png.flaticon.com/512/1890/1890298.png":
+                  setFilter("summer");
+                  break;
+
+                case "https://github.com/apple.png":
+                  setFilter("winter");
+                  break;
+
+                case "https://github.com/facebook.png":
+                  setFilter("vintage");
+                  break;
+
+                case "https://github.com/1pharaxh.png":
+                  setFilter("neon");
+                  break;
+
+                case "https://github.com/gugugaga.png":
+                  setFilter("nighttime");
+                  break;
+
+                default:
+                  setFilter("");
+                  break;
               }
             }}
           >

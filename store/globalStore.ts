@@ -5,8 +5,10 @@ interface globalStoreState {
   photo: string;
   video: string;
   cameraMode: "picture" | "video";
-  filter: "summer" | "winter" | "";
-  setFilter: (e: "summer" | "winter" | "") => void;
+  filter: "summer" | "winter" | "neon" | "vintage" | "nighttime" | "";
+  setFilter: (
+    e: "summer" | "winter" | "neon" | "vintage" | "nighttime" | ""
+  ) => void;
   setCameraMode: (e: "picture" | "video") => void;
   setIsRecording: (e: boolean) => void;
   reset: () => void;
