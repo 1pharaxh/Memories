@@ -13,6 +13,19 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import TabBarIcon from "./TabBarIcon";
 import { useColorScheme } from "nativewind";
+import useGlobalStore from "~/store/globalStore";
+import TabBarEditIcons from "./TabBarEditIcons";
+import {
+  triggerCameraHaptic,
+  triggerCollapseHaptic,
+  triggerExpandHaptic,
+} from "~/lib/haptics";
+import {
+  editTabBarExpand,
+  tabBarCameraExpand,
+  tabBarCollapse,
+  tabBarExpand,
+} from "~/lib/animations";
 export default function MyTabBar({
   state,
   descriptors,
@@ -34,43 +47,21 @@ export default function MyTabBar({
   const [isExpanded, setIsExpanded] = useState<boolean>(true);
   const { colorScheme } = useColorScheme();
 
-  useEffect(() => {
-    if (isExpanded) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } else {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-    }
-  }, [isExpanded]);
+  const { photo, video } = useGlobalStore();
 
   useEffect(() => {
     if (state.routes[state.index].name === "index") {
-      style.value = withSpring({
-        scale: 1.1,
-        height: 110,
-        gap: 35,
-        padding: 0,
-      });
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      style.value = withSpring(tabBarCameraExpand);
+      triggerCameraHaptic();
     } else {
       if (isExpanded) {
-        style.value = withSpring({
-          scale: 1.1,
-          height: 90,
-          gap: 30,
-          padding: 20,
-        });
+        style.value = withSpring(tabBarExpand);
       } else {
-        style.value = withSpring({
-          scale: 0.85,
-          height: 75,
-          gap: 20,
-          padding: 28,
-        });
+        style.value = withSpring(tabBarCollapse);
       }
     }
   }, [state.routes[state.index].name]);
 
-  useEffect(() => {});
   const gestureHandler = Gesture.Pan().onUpdate((e) => {
     // no need to handle gesture if the current route is the index route ie the camera route
     if (state.routes[state.index].name === "index") {
@@ -85,21 +76,13 @@ export default function MyTabBar({
     // Handle vertical movement
     if (isVerticalMovement && Math.abs(e.translationY) > 10) {
       if (e.translationY > 0) {
-        style.value = withSpring({
-          scale: 0.85,
-          height: 75,
-          gap: 20,
-          padding: 28,
-        });
+        style.value = withSpring(tabBarCollapse);
         runOnJS(setIsExpanded)(false);
+        runOnJS(triggerCollapseHaptic)();
       } else {
-        style.value = withSpring({
-          scale: 1.1,
-          height: 90,
-          gap: 30,
-          padding: 20,
-        });
+        style.value = withSpring(tabBarExpand);
         runOnJS(setIsExpanded)(true);
+        runOnJS(triggerExpandHaptic)();
       }
     }
 
@@ -135,31 +118,49 @@ export default function MyTabBar({
     };
   });
 
+  useEffect(() => {
+    if (photo || video) {
+      // expand the tab bar when a photo or video is taken
+      style.value = withSpring(editTabBarExpand);
+    } else {
+      // collapse the tab bar when the photo or video is cleared
+      style.value = withSpring(tabBarExpand);
+    }
+  }, [photo, video]);
+
   return (
     <GestureDetector gesture={gestureHandler}>
       <View className="flex flex-row absolute bottom-0 h-1/4 items-end justify-center pb-6 w-full">
         <Animated.View
           style={animatedStyle}
-          className="mx-auto min-w-fit max-w-[80%] mt-8 flex flex-row rounded-[5rem] items-center justify-between px-7"
+          className="mx-auto min-w-fit mt-8 flex flex-row rounded-[5rem] items-center justify-between px-7"
         >
           <BlurView
             intensity={60}
             tint="dark"
             className="absolute top-0 left-0 right-0 bottom-0 overflow-hidden rounded-[5rem]"
           />
-          {state.routes.map((route: any, index: number) => (
-            <TabBarIcon
-              colorScheme={colorScheme}
-              descriptors={descriptors}
-              index={index}
-              isExpanded={isExpanded}
-              navigation={navigation}
-              position={position}
-              route={route}
-              state={state}
-              key={route.key}
-            />
-          ))}
+          {!photo && !video
+            ? state.routes.map((route: any, index: number) => (
+                <TabBarIcon
+                  colorScheme={colorScheme}
+                  descriptors={descriptors}
+                  index={index}
+                  isExpanded={isExpanded}
+                  navigation={navigation}
+                  position={position}
+                  route={route}
+                  state={state}
+                  key={route.key}
+                />
+              ))
+            : ["Filter", "Text", "Animations", "Crop", "Me"].map((w, idx) => (
+                <TabBarEditIcons
+                  colorScheme={colorScheme}
+                  label={w}
+                  key={idx}
+                />
+              ))}
         </Animated.View>
       </View>
     </GestureDetector>

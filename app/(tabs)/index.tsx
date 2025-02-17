@@ -31,13 +31,10 @@ export default function HomeScreen() {
   const [cameraZoom, setCameraZoom] = React.useState<number>(0);
   const [permission, requestPermission] = useCameraPermissions();
 
-  const [picture, setPicture] = React.useState<string>("");
-  const [video, setVideo] = React.useState<string>("");
-
   const handleTakePicture = React.useCallback(async () => {
     setCameraMode("picture");
     const response = await cameraRef.current?.takePictureAsync({});
-    setPicture(response!.uri);
+    setPhoto(response!.uri);
     setCameraMode("video");
   }, []);
 
@@ -54,14 +51,21 @@ export default function HomeScreen() {
     [cameraRef]
   );
 
-  const { setHandleTakePicture, setHandleTakeVideo } = useGlobalStore();
+  const {
+    setHandleTakePicture,
+    setHandleTakeVideo,
+    setPhoto,
+    photo,
+    setVideo,
+    video,
+  } = useGlobalStore();
 
   React.useEffect(() => {
     setHandleTakePicture(handleTakePicture);
     setHandleTakeVideo(handleTakeVideo);
   }, [handleTakePicture, handleTakeVideo]);
 
-  if (picture) return <PictureView picture={picture} setPicture={setPicture} />;
+  if (photo) return <PictureView picture={photo} setPicture={setPhoto} />;
   if (video) return <VideoViewComponent video={video} setVideo={setVideo} />;
 
   return (

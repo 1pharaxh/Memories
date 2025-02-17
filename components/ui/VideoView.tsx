@@ -11,7 +11,7 @@ import Animated, {
 
 interface VideoViewProps {
   video: string;
-  setVideo: React.Dispatch<React.SetStateAction<string>>;
+  setVideo: (e: string) => void;
 }
 export default function VideoViewComponent({
   video,

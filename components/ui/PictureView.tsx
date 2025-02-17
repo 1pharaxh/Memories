@@ -10,7 +10,7 @@ import Animated, {
 
 interface PictureViewProps {
   picture: string;
-  setPicture: React.Dispatch<React.SetStateAction<string>>;
+  setPicture: (e: string) => void;
 }
 export default function PictureView({ picture, setPicture }: PictureViewProps) {
   return (

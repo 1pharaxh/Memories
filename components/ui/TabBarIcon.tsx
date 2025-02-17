@@ -1,11 +1,9 @@
 import React from "react";
 import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
 import { Platform, TouchableOpacity } from "react-native";
 import TabBarText from "./TabBarText";
-import { SymbolView } from "expo-symbols";
-import { Text } from "./text";
 import RecordingButton from "./RecordingButton";
+import { impactAsync, ImpactFeedbackStyle } from "expo-haptics";
 
 export default function TabBarIcon({
   state,
@@ -37,8 +35,8 @@ export default function TabBarIcon({
 
   const isFocused = state.index === index;
 
-  const onPress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+  const onPress = async () => {
+    await impactAsync(ImpactFeedbackStyle.Medium);
     const event = navigation.emit({
       type: "tabPress",
       target: route.key,
@@ -50,8 +48,8 @@ export default function TabBarIcon({
     }
   };
 
-  const onLongPress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+  const onLongPress = async () => {
+    await impactAsync(ImpactFeedbackStyle.Heavy);
     navigation.emit({
       type: "tabLongPress",
       target: route.key,
