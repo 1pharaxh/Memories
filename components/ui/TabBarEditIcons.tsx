@@ -4,6 +4,7 @@ import { Platform, TouchableOpacity } from "react-native";
 import TabBarText from "./TabBarText";
 import { Aperture } from "~/lib/icons/Aperture";
 import * as Haptics from "expo-haptics";
+import { Link, useRouter } from "expo-router";
 
 type TabBarEditIconsProps = {
   label: string;
@@ -11,10 +12,13 @@ type TabBarEditIconsProps = {
 };
 
 const TabBarEditIcons = ({ label, colorScheme }: TabBarEditIconsProps) => {
+  const router = useRouter();
+
   const onPress = async () => {
     try {
       // Trigger haptics first
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+      router.push("/preset-sheet");
     } catch (error) {
       console.error("Haptics error:", error);
     }
@@ -24,6 +28,7 @@ const TabBarEditIcons = ({ label, colorScheme }: TabBarEditIconsProps) => {
     try {
       // Trigger haptics first
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+      router.push("/preset-sheet");
     } catch (error) {
       console.error("Haptics error:", error);
     }

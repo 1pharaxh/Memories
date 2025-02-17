@@ -6,17 +6,19 @@ import {
   Theme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { Stack } from "expo-router";
+import Stack from "~/components/ui/Stack";
+import * as AC from "@bacons/apple-colors";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { Platform } from "react-native";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "@rn-primitives/portal";
-import { ThemeToggle } from "~/components/ThemeToggle";
+import * as Form from "~/components/ui/Form";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { IconSymbol } from "~/components/ui/IconSymbol";
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
   colors: NAV_THEME.light,
@@ -73,6 +75,27 @@ export default function RootLayout() {
           />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
+
+          <Stack.Screen
+            name="preset-sheet"
+            sheet
+            options={{
+              headerLargeTitle: false,
+              // Quarter sheet with no pulling allowed
+              headerTransparent: false,
+              sheetGrabberVisible: false,
+              sheetAllowedDetents: [0.25],
+              headerRight: () => (
+                <Form.Link headerRight href="/(tabs)" dismissTo>
+                  <IconSymbol
+                    name="xmark.circle.fill"
+                    color={AC.systemGray}
+                    size={28}
+                  />
+                </Form.Link>
+              ),
+            }}
+          />
         </Stack>
         <PortalHost />
       </ThemeProvider>

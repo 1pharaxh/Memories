@@ -8,8 +8,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
-import * as Haptics from "expo-haptics";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import TabBarIcon from "./TabBarIcon";
 import { useColorScheme } from "nativewind";
@@ -50,6 +49,14 @@ export default function MyTabBar({
   const { photo, video } = useGlobalStore();
 
   useEffect(() => {
+    if (isExpanded) {
+      triggerExpandHaptic();
+    } else {
+      triggerCollapseHaptic();
+    }
+  }, [isExpanded]);
+
+  useEffect(() => {
     if (state.routes[state.index].name === "index") {
       style.value = withSpring(tabBarCameraExpand);
       triggerCameraHaptic();
@@ -78,11 +85,9 @@ export default function MyTabBar({
       if (e.translationY > 0) {
         style.value = withSpring(tabBarCollapse);
         runOnJS(setIsExpanded)(false);
-        runOnJS(triggerCollapseHaptic)();
       } else {
         style.value = withSpring(tabBarExpand);
         runOnJS(setIsExpanded)(true);
-        runOnJS(triggerExpandHaptic)();
       }
     }
 

@@ -1,7 +1,7 @@
 import * as Haptics from "expo-haptics";
 export const triggerExpandHaptic = async () => {
   try {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   } catch (error) {
     console.error("Expand haptic error:", error);
   }
@@ -9,7 +9,7 @@ export const triggerExpandHaptic = async () => {
 
 export const triggerCollapseHaptic = async () => {
   try {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
   } catch (error) {
     console.error("Collapse haptic error:", error);
   }

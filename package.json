@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@bacons/apple-colors": "^0.0.8",
+    "@react-native-masked-view/masked-view": "^0.3.2",
     "@react-native-segmented-control/segmented-control": "2.5.4",
     "@react-navigation/material-top-tabs": "^7.1.0",
     "@react-navigation/native": "^7.0.0",
@@ -29,9 +30,11 @@
     "expo-blur": "~14.0.3",
     "expo-camera": "~16.0.16",
     "expo-haptics": "~14.0.1",
+    "expo-image": "~2.0.5",
     "expo-linking": "~7.0.4",
     "expo-navigation-bar": "~4.0.7",
     "expo-router": "~4.0.16",
+    "expo-sharing": "~13.0.1",
     "expo-splash-screen": "~0.29.20",
     "expo-status-bar": "~2.0.1",
     "expo-symbols": "~0.2.2",
@@ -55,9 +58,7 @@
     "tailwindcss": "3.3.5",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
-    "zustand": "^4.4.7",
-    "expo-image": "~2.0.5",
-    "expo-sharing": "~13.0.1"
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
