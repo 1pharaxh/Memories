@@ -9,6 +9,7 @@ import Animated, {
   LinearTransition,
 } from "react-native-reanimated";
 import useGlobalStore from "~/store/globalStore";
+import FilterView from "./FilterView";
 
 interface VideoViewProps {}
 export default function VideoViewComponent({}: VideoViewProps) {
@@ -50,7 +51,7 @@ export default function VideoViewComponent({}: VideoViewProps) {
         style={{
           position: "absolute",
           right: 6,
-          zIndex: 1,
+          zIndex: 2,
           gap: 16,
         }}
       >
@@ -85,6 +86,8 @@ export default function VideoViewComponent({}: VideoViewProps) {
         />
       </View>
       <View className="flex-1">
+        <FilterView />
+
         <VideoView
           className="absolute top-0 left-0 w-20 h-40"
           style={{

@@ -7,6 +7,8 @@ import Animated, {
   FadeOut,
   LinearTransition,
 } from "react-native-reanimated";
+import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
+import FilterView from "./FilterView";
 
 interface PictureViewProps {
   picture: string;
@@ -24,7 +26,7 @@ export default function PictureView({ picture, setPicture }: PictureViewProps) {
         style={{
           position: "absolute",
           right: 6,
-          zIndex: 1,
+          zIndex: 2,
           gap: 16,
         }}
       >
@@ -43,6 +45,8 @@ export default function PictureView({ picture, setPicture }: PictureViewProps) {
           borderRadius: 5,
         }}
       />
+
+      <FilterView />
     </Animated.View>
   );
 }
