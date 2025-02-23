@@ -7,7 +7,6 @@ import Animated, {
   FadeOut,
   LinearTransition,
 } from "react-native-reanimated";
-import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
 import FilterView from "./FilterView";
 
 interface PictureViewProps {

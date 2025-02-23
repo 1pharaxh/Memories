@@ -23,7 +23,9 @@ export type TouchableScaleProps = Omit<
     | "warning"
     | "light"
     | "medium"
-    | "heavy";
+    | "heavy"
+    | "rigid"
+    | "soft";
 };
 
 /**
@@ -52,6 +54,10 @@ export default function TouchableBounce({
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     } else if (sensory === "heavy") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    } else if (sensory === "rigid") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
+    } else if (sensory === "soft") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
     }
   }, [sensory]);
 

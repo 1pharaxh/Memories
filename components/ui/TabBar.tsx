@@ -9,7 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
 import React, { useEffect, useState } from "react";
-
+import { ArrowLeft } from "~/lib/icons/ArrowLeft";
 import TabBarIcon from "./TabBarIcon";
 import { useColorScheme } from "nativewind";
 import useGlobalStore from "~/store/globalStore";
@@ -25,6 +25,7 @@ import {
   tabBarCollapse,
   tabBarExpand,
 } from "~/lib/animations";
+import TouchableBounce from "./TouchableBounce";
 export default function MyTabBar({
   state,
   descriptors,
@@ -145,6 +146,11 @@ export default function MyTabBar({
             tint="dark"
             className="absolute top-0 left-0 right-0 bottom-0 overflow-hidden rounded-[5rem]"
           />
+          {/* {photo || video ? (
+            <TouchableBounce className="abosulte" sensory onPress={() => {}}>
+              <ArrowLeft size={17} strokeWidth={2} className="text-white" />
+            </TouchableBounce>
+          ) : null} */}
           {!photo && !video
             ? state.routes.map((route: any, index: number) => (
                 <TabBarIcon
