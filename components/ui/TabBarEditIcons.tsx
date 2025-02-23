@@ -1,10 +1,10 @@
 import { BlurView } from "expo-blur";
 import React from "react";
-import { Platform, TouchableOpacity } from "react-native";
+import { Platform } from "react-native";
 import TabBarText from "./TabBarText";
 import { Aperture } from "~/lib/icons/Aperture";
-import * as Haptics from "expo-haptics";
 import { Link, useRouter } from "expo-router";
+import TouchableBounce from "./TouchableBounce";
 
 type TabBarEditIconsProps = {
   label: string;
@@ -17,7 +17,6 @@ const TabBarEditIcons = ({ label, colorScheme }: TabBarEditIconsProps) => {
   const onPress = async () => {
     try {
       // Trigger haptics first
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
       router.push("/preset-sheet");
     } catch (error) {
       console.error("Haptics error:", error);
@@ -27,14 +26,14 @@ const TabBarEditIcons = ({ label, colorScheme }: TabBarEditIconsProps) => {
   const onLongPress = async () => {
     try {
       // Trigger haptics first
-      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
       router.push("/preset-sheet");
     } catch (error) {
       console.error("Haptics error:", error);
     }
   };
   return (
-    <TouchableOpacity
+    <TouchableBounce
+      sensory="rigid"
       onPress={onPress}
       onLongPress={onLongPress}
       className="flex aspect-square cursor-pointer items-center justify-center rounded-full min-h-10"
@@ -49,7 +48,7 @@ const TabBarEditIcons = ({ label, colorScheme }: TabBarEditIconsProps) => {
       </BlurView>
 
       <TabBarText className="text-white text-xs mt-2">{label}</TabBarText>
-    </TouchableOpacity>
+    </TouchableBounce>
   );
 };
 

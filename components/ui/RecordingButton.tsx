@@ -1,4 +1,5 @@
 import { SymbolView } from "expo-symbols";
+import { View } from "lucide-react-native";
 import React from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import useGlobalStore from "~/store/globalStore";
@@ -37,6 +38,7 @@ const RecordingButton = (props: Props) => {
         weight="thin"
         type="hierarchical"
         tintColor={"white"}
+        fallback={<View></View>}
       >
         <SymbolView
           name={"circle.fill"}

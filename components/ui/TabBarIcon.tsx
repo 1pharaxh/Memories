@@ -1,9 +1,9 @@
 import React from "react";
 import { BlurView } from "expo-blur";
-import { Platform, TouchableOpacity } from "react-native";
+import { Platform } from "react-native";
 import TabBarText from "./TabBarText";
 import RecordingButton from "./RecordingButton";
-import { impactAsync, ImpactFeedbackStyle } from "expo-haptics";
+import TouchableBounce from "./TouchableBounce";
 
 export default function TabBarIcon({
   state,
@@ -36,7 +36,6 @@ export default function TabBarIcon({
   const isFocused = state.index === index;
 
   const onPress = async () => {
-    await impactAsync(ImpactFeedbackStyle.Medium);
     const event = navigation.emit({
       type: "tabPress",
       target: route.key,
@@ -49,7 +48,6 @@ export default function TabBarIcon({
   };
 
   const onLongPress = async () => {
-    await impactAsync(ImpactFeedbackStyle.Heavy);
     navigation.emit({
       type: "tabLongPress",
       target: route.key,
@@ -70,7 +68,8 @@ export default function TabBarIcon({
     return <RecordingButton key={route.name} />;
   } else {
     return (
-      <TouchableOpacity
+      <TouchableBounce
+        sensory="medium"
         className="flex aspect-square cursor-pointer items-center justify-center rounded-full min-h-10"
         key={route.name}
         accessibilityRole={Platform.OS === "web" ? "link" : "button"}
@@ -97,7 +96,7 @@ export default function TabBarIcon({
             {label}
           </TabBarText>
         )}
-      </TouchableOpacity>
+      </TouchableBounce>
     );
   }
 }
