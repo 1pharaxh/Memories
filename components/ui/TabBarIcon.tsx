@@ -91,11 +91,7 @@ export default function TabBarIcon({
               size: 24,
             })}
         </BlurView>
-        {isExpanded && (
-          <TabBarText className="text-white text-xs mt-2" opacity={opacity}>
-            {label}
-          </TabBarText>
-        )}
+        {isExpanded && <TabBarText opacity={opacity}>{label}</TabBarText>}
       </TouchableBounce>
     );
   }
