@@ -38,7 +38,12 @@ export default function Page() {
 
   const createAnimatedStyle = (icon: string) =>
     useAnimatedStyle(() => ({
-      opacity: withSpring(selected === icon ? 1 : 0.5, {
+      opacity: withSpring(selected === icon ? 1 : 0.85, {
+        mass: 0.5,
+        damping: 11,
+        stiffness: 100,
+      }),
+      borderWidth: withSpring(selected === icon ? 2 : 0, {
         mass: 0.5,
         damping: 11,
         stiffness: 100,
@@ -47,10 +52,17 @@ export default function Page() {
 
   const onPress = useCallback(
     (icon: string) => {
-      setfragmentShader(icon);
-      setSelected(icon);
+      if (selected === icon) {
+        // toggle
+        setSelected(null);
+        setfragmentShader("");
+        return;
+      } else {
+        setfragmentShader(icon);
+        setSelected(icon);
+      }
     },
-    [setfragmentShader, setSelected]
+    [setfragmentShader, setSelected, selected]
   );
 
   return (
@@ -70,8 +82,8 @@ export default function Page() {
               <Animated.View
                 className={cx(
                   selected === icon
-                    ? "border-2 border-secondary"
-                    : "border border-gray-200",
+                    ? "border border-primary/60"
+                    : "border border-secondary/60",
                   "rounded-full"
                 )}
                 style={[
