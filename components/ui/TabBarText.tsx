@@ -1,3 +1,4 @@
+import { cx } from "class-variance-authority";
 import React, { useEffect, useRef } from "react";
 import { Animated, TextProps } from "react-native";
 
@@ -31,6 +32,7 @@ export default function TabBarText({
   return (
     <Animated.Text
       {...rest}
+      className={cx("text-white text-xs mt-2 text-center", rest.className)}
       style={[style, { opacity, transform: [{ translateY }] }]}
     >
       {children}

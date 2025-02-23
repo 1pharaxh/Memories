@@ -47,7 +47,7 @@ const TabBarEditIcons = ({ label, colorScheme }: TabBarEditIconsProps) => {
         <Aperture size={17} strokeWidth={2} className="text-white" />
       </BlurView>
 
-      <TabBarText className="text-white text-xs mt-2">{label}</TabBarText>
+      <TabBarText>{label}</TabBarText>
     </TouchableBounce>
   );
 };

@@ -5,10 +5,8 @@ interface globalStoreState {
   photo: string;
   video: string;
   cameraMode: "picture" | "video";
-  filter: "summer" | "winter" | "neon" | "vintage" | "nighttime" | "";
-  setFilter: (
-    e: "summer" | "winter" | "neon" | "vintage" | "nighttime" | ""
-  ) => void;
+  fragmentShader: string;
+  setfragmentShader: (e: string) => void;
   setCameraMode: (e: "picture" | "video") => void;
   setIsRecording: (e: boolean) => void;
   reset: () => void;
@@ -26,8 +24,8 @@ const useGlobalStore = create<globalStoreState>((set) => ({
   photo: "",
   video: "",
   cameraMode: "picture",
-  filter: "",
-  setFilter: (e) => set({ filter: e }),
+  fragmentShader: "",
+  setfragmentShader: (e) => set({ fragmentShader: e }),
   setCameraMode: (e: "picture" | "video") => set({ cameraMode: e }),
   setIsRecording: (e) => set({ isRecording: e }),
   reset: () =>

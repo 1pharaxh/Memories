@@ -1,42 +1,30 @@
 import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
-import { Alert, View } from "react-native";
+import { Alert, View, ViewProps } from "react-native";
 
-import React, { useMemo } from "react";
+import React from "react";
 import useGlobalStore from "~/store/globalStore";
 
-type Props = {};
-
+type Props = ViewProps & {};
 const FilterView = (props: Props) => {
-  const { filter } = useGlobalStore();
-
-  const fragmentShader = useMemo(() => {
-    switch (filter) {
-      case "summer":
-        return summerFragSrc;
-      case "winter":
-        return winterFragSrc;
-      case "vintage":
-        return vintageFragSrc;
-      case "nighttime":
-        return nighttimeFragSrc;
-      case "neon":
-        return neonFragSrc;
-      default:
-        return summerFragSrc;
-    }
-  }, [filter]);
-  const key = `gl-view-${filter}`;
+  const { style, ...restProps } = props;
+  const { fragmentShader } = useGlobalStore();
+  const key = `gl-view-${fragmentShader}`;
 
   return (
     <View
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        display: filter ? "flex" : "none",
-      }}
+      {...restProps}
+      style={[
+        {
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: fragmentShader ? "flex" : "none",
+        },
+        // Allow overriding styles
+        style,
+      ]}
     >
       <GLView
         key={key}
@@ -47,7 +35,6 @@ const FilterView = (props: Props) => {
           zIndex: 1,
         }}
         onContextCreate={(gl) => {
-          console.log("Creating new GL context for filter:", filter);
           onContextCreate(gl, fragmentShader);
         }}
       />
@@ -57,7 +44,10 @@ const FilterView = (props: Props) => {
 
 export default FilterView;
 
-function onContextCreate(gl: ExpoWebGLRenderingContext, fragSrc: string) {
+export function onContextCreate(
+  gl: ExpoWebGLRenderingContext,
+  fragSrc: string
+) {
   // Set the viewport and clear the context with a transparent background.
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
   gl.clearColor(0, 0, 0, 0);
@@ -152,7 +142,7 @@ function onContextCreate(gl: ExpoWebGLRenderingContext, fragSrc: string) {
 
 // Fragment shader: creates a warm gradient from top (warm orange) to bottom (warm pink).
 // Both colors have an alpha value for transparency.
-const summerFragSrc = `
+export const summerFragSrc = `
       precision mediump float;
       varying vec2 vUV;
       void main() {
@@ -162,7 +152,7 @@ const summerFragSrc = `
       }
     `;
 
-const winterFragSrc = `
+export const winterFragSrc = `
     precision mediump float;
     varying vec2 vUV;
     void main() {
@@ -175,7 +165,7 @@ const winterFragSrc = `
     }
   `;
 
-const vintageFragSrc = `
+export const vintageFragSrc = `
   precision mediump float;
   varying vec2 vUV;
   void main() {
@@ -187,7 +177,7 @@ const vintageFragSrc = `
   }
 `;
 
-const nighttimeFragSrc = `
+export const nighttimeFragSrc = `
   precision mediump float;
   varying vec2 vUV;
   void main() {
@@ -199,7 +189,7 @@ const nighttimeFragSrc = `
   }
 `;
 
-const neonFragSrc = `
+export const neonFragSrc = `
   precision mediump float;
   varying vec2 vUV;
   void main() {
