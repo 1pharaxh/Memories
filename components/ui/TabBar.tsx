@@ -161,7 +161,7 @@ export default function MyTabBar({
                 <ArrowLeft size={17} strokeWidth={2} className="text-white" />
               </TouchableOpacity>
 
-              <TabBarText className="text-lg mt-0 right-8">Edit</TabBarText>
+              <TabBarText className="!text-lg !mt-0 !right-8">Edit</TabBarText>
             </View>
           ) : null}
           {!photo && !video
