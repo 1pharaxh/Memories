@@ -32,7 +32,10 @@ export default function TabBarText({
   return (
     <Animated.Text
       {...rest}
-      className={cx("text-white text-xs mt-2 text-center", rest.className)}
+      className={cx(
+        "text-white text-xs mt-2 text-center w-full",
+        rest.className
+      )}
       style={[style, { opacity, transform: [{ translateY }] }]}
     >
       {children}
