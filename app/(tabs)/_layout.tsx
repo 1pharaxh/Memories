@@ -20,7 +20,9 @@ export const MaterialTopTabs = withLayoutContext<
 import { Aperture } from "~/lib/icons/Aperture";
 import { UserRound } from "~/lib/icons/UserRound";
 import { Sparkles } from "~/lib/icons/Sparkles";
+import useGlobalStore from "~/store/globalStore";
 export default function TabLayout() {
+  const { photo, video } = useGlobalStore();
   return (
     <View className="flex-1">
       <MaterialTopTabs
@@ -47,6 +49,7 @@ export default function TabLayout() {
           name="index"
           options={{
             title: "Snap",
+            swipeEnabled: photo || video ? false : true,
             tabBarIcon: ({ focused, color }) => (
               <Aperture size={17} strokeWidth={2} className="text-white" />
             ),

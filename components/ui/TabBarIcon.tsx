@@ -1,6 +1,6 @@
 import React from "react";
 import { BlurView } from "expo-blur";
-import { Platform } from "react-native";
+import { Platform, View } from "react-native";
 import TabBarText from "./TabBarText";
 import RecordingButton from "./RecordingButton";
 import TouchableBounce from "./TouchableBounce";
@@ -70,7 +70,6 @@ export default function TabBarIcon({
     return (
       <TouchableBounce
         sensory="medium"
-        className="flex aspect-square cursor-pointer items-center justify-center rounded-full min-h-10"
         key={route.name}
         accessibilityRole={Platform.OS === "web" ? "link" : "button"}
         accessibilityState={isFocused ? { selected: true } : {}}
@@ -79,23 +78,21 @@ export default function TabBarIcon({
         onPress={onPress}
         onLongPress={onLongPress}
       >
-        <BlurView
-          intensity={isFocused ? 50 : 30}
-          tint={colorScheme === "light" ? "prominent" : "extraLight"}
-          className="rounded-full overflow-hidden h-12 w-12 justify-center items-center"
-        >
-          {tabBarIcon &&
-            tabBarIcon({
-              focused: isFocused,
-              color: isFocused ? "#ffffff" : "#ffffff80",
-              size: 24,
-            })}
-        </BlurView>
-        {isExpanded && (
-          <TabBarText className="text-white text-xs mt-2" opacity={opacity}>
-            {label}
-          </TabBarText>
-        )}
+        <View className="flex items-center justify-center flex-col">
+          <BlurView
+            intensity={isFocused ? 50 : 30}
+            tint={colorScheme === "light" ? "prominent" : "extraLight"}
+            className="rounded-full overflow-hidden h-12 w-12 justify-center items-center flex"
+          >
+            {tabBarIcon &&
+              tabBarIcon({
+                focused: isFocused,
+                color: isFocused ? "#ffffff" : "#ffffff80",
+                size: 24,
+              })}
+          </BlurView>
+          {isExpanded && <TabBarText opacity={opacity}>{label}</TabBarText>}
+        </View>
       </TouchableBounce>
     );
   }
