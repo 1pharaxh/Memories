@@ -1,7 +1,6 @@
 import { Image } from "expo-image";
-import { Alert, View } from "react-native";
-import IconButton from "./IconButton";
-import { shareAsync } from "expo-sharing";
+import { View } from "react-native";
+
 import Animated, {
   FadeIn,
   FadeOut,
@@ -11,9 +10,8 @@ import FilterView from "./FilterView";
 
 interface PictureViewProps {
   picture: string;
-  setPicture: (e: string) => void;
 }
-export default function PictureView({ picture, setPicture }: PictureViewProps) {
+export default function PictureView({ picture }: PictureViewProps) {
   return (
     <Animated.View
       layout={LinearTransition}
@@ -28,13 +26,7 @@ export default function PictureView({ picture, setPicture }: PictureViewProps) {
           zIndex: 2,
           gap: 16,
         }}
-      >
-        <IconButton onPress={() => setPicture("")} iosName={"xmark"} />
-        <IconButton
-          onPress={async () => await shareAsync(picture)}
-          iosName={"square.and.arrow.up"}
-        />
-      </View>
+      ></View>
 
       <Image
         source={picture}

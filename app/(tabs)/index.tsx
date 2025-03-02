@@ -64,7 +64,7 @@ export default function HomeScreen() {
     setHandleTakeVideo(handleTakeVideo);
   }, [handleTakePicture, handleTakeVideo]);
 
-  if (photo) return <PictureView picture={photo} setPicture={setPhoto} />;
+  if (photo) return <PictureView picture={photo} />;
   if (video) return <VideoViewComponent />;
 
   return (

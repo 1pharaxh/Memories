@@ -61,10 +61,6 @@ export default function VideoViewComponent({}: VideoViewProps) {
           }}
           iosName={"xmark"}
         />
-        <IconButton
-          onPress={async () => await shareAsync(video)}
-          iosName={"square.and.arrow.up"}
-        />
 
         <IconButton
           onPress={async () => {
