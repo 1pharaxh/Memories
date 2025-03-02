@@ -38,7 +38,7 @@ const TabBarEditIcons = ({ label, colorScheme }: TabBarEditIconsProps) => {
       onLongPress={onLongPress}
       accessibilityRole={Platform.OS === "web" ? "link" : "button"}
     >
-      <View className="flex items-center justify-center flex-col">
+      <View className="flex items-center justify-center flex-col -mb-14">
         <BlurView
           intensity={30}
           tint={colorScheme === "light" ? "prominent" : "extraLight"}

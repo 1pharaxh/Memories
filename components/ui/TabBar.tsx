@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -25,7 +25,8 @@ import {
   tabBarCollapse,
   tabBarExpand,
 } from "~/lib/animations";
-import TouchableBounce from "./TouchableBounce";
+import { cx } from "class-variance-authority";
+import TabBarText from "./TabBarText";
 export default function MyTabBar({
   state,
   descriptors,
@@ -42,12 +43,13 @@ export default function MyTabBar({
     height: 90,
     gap: 30,
     padding: 20,
+    borderRadius: "5rem",
   });
 
   const [isExpanded, setIsExpanded] = useState<boolean>(true);
   const { colorScheme } = useColorScheme();
 
-  const { photo, video } = useGlobalStore();
+  const { photo, video, setPhoto, setVideo } = useGlobalStore();
 
   useEffect(() => {
     if (isExpanded) {
@@ -58,17 +60,24 @@ export default function MyTabBar({
   }, [isExpanded]);
 
   useEffect(() => {
-    if (state.routes[state.index].name === "index") {
-      style.value = withSpring(tabBarCameraExpand);
-      triggerCameraHaptic();
+    if (photo || video) {
+      // expand the tab bar when a photo or video is taken
+      style.value = withSpring(editTabBarExpand);
     } else {
-      if (isExpanded) {
-        style.value = withSpring(tabBarExpand);
+      // collapse the tab bar when the photo or video is cleared
+      if (state.routes[state.index].name === "index") {
+        style.value = withSpring(tabBarCameraExpand);
+        triggerCameraHaptic();
+        return;
       } else {
-        style.value = withSpring(tabBarCollapse);
+        if (isExpanded) {
+          style.value = withSpring(tabBarExpand);
+        } else {
+          style.value = withSpring(tabBarCollapse);
+        }
       }
     }
-  }, [state.routes[state.index].name]);
+  }, [state.routes[state.index].name, photo, video, isExpanded]);
 
   const gestureHandler = Gesture.Pan().onUpdate((e) => {
     // no need to handle gesture if the current route is the index route ie the camera route
@@ -116,6 +125,7 @@ export default function MyTabBar({
       height: style.value.height,
       gap: style.value.gap,
       paddingHorizontal: style.value.padding,
+      borderRadius: style.value.borderRadius,
       transform: [
         {
           scale: style.value.scale,
@@ -124,33 +134,36 @@ export default function MyTabBar({
     };
   });
 
-  useEffect(() => {
-    if (photo || video) {
-      // expand the tab bar when a photo or video is taken
-      style.value = withSpring(editTabBarExpand);
-    } else {
-      // collapse the tab bar when the photo or video is cleared
-      style.value = withSpring(tabBarExpand);
-    }
-  }, [photo, video]);
-
   return (
     <GestureDetector gesture={gestureHandler}>
       <View className="flex flex-row absolute bottom-0 h-1/4 items-end justify-center pb-6 w-full">
         <Animated.View
           style={animatedStyle}
-          className="mx-auto min-w-fit mt-8 flex flex-row rounded-[5rem] items-center justify-between px-7"
+          className="mx-auto min-w-fit mt-8 flex flex-row items-center justify-between px-7"
         >
           <BlurView
             intensity={60}
             tint="dark"
-            className="absolute top-0 left-0 right-0 bottom-0 overflow-hidden rounded-[5rem]"
+            className={cx(
+              "absolute top-0 left-0 right-0 bottom-0 overflow-hidden",
+              photo || video ? "rounded-[3rem]" : "rounded-[5rem]"
+            )}
           />
-          {/* {photo || video ? (
-            <TouchableBounce className="abosulte" sensory onPress={() => {}}>
-              <ArrowLeft size={17} strokeWidth={2} className="text-white" />
-            </TouchableBounce>
-          ) : null} */}
+          {photo || video ? (
+            <View className="absolute top-5 left-10 w-full flex flex-row items-center justify-between z-10">
+              <TouchableOpacity
+                className="h-fit w-fit flex items-center justify-center z-20"
+                onPress={() => {
+                  setPhoto("");
+                  setVideo("");
+                }}
+              >
+                <ArrowLeft size={17} strokeWidth={2} className="text-white" />
+              </TouchableOpacity>
+
+              <TabBarText className="text-lg mt-0 right-8">Edit</TabBarText>
+            </View>
+          ) : null}
           {!photo && !video
             ? state.routes.map((route: any, index: number) => (
                 <TabBarIcon
