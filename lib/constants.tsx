@@ -1,3 +1,9 @@
+import { Blend } from "./icons/Blend";
+import { Crop } from "./icons/Crop";
+import { ALargeSmall } from "./icons/Alargesmall";
+import { Brush } from "./icons/Brush";
+import { Sticker } from "./icons/Sticker";
+
 export const NAV_THEME = {
   light: {
     background: "hsl(0 0% 100%)", // background
@@ -54,5 +60,46 @@ export const FILTER_PRESETS = [
       1.5, 0, 0, 0, -0.2, 0, 1.5, 0, 0, -0.2, 0, 0, 1.5, 0, -0.2, 0, 0, 0, 1, 0,
     ],
     gradientColors: ["#FF00FF", "#00FFFF"],
+  },
+];
+
+export enum FilterType {
+  Filter = "Filter",
+  Text = "Text",
+  Draw = "Draw",
+  Crop = "Crop",
+  Stickers = "Stickers",
+}
+
+export const PRESET_OPTIONS = [
+  {
+    name: "Filter",
+    type: FilterType.Filter,
+    sheetTitle: "Choose a filter",
+    icon: <Blend size={17} strokeWidth={2} className="text-white" />,
+  },
+  {
+    name: "Text",
+    type: FilterType.Text,
+    sheetTitle: "Choose a font and write",
+    icon: <ALargeSmall size={17} strokeWidth={2} className="text-white" />,
+  },
+  {
+    name: "Draw",
+    type: FilterType.Draw,
+    sheetTitle: "Draw on your image",
+    icon: <Brush size={17} strokeWidth={2} className="text-white" />,
+  },
+  {
+    name: "Crop",
+    type: FilterType.Crop,
+    sheetTitle: "Crop your image",
+    icon: <Crop size={17} strokeWidth={2} className="text-white" />,
+  },
+  {
+    name: "Stickers",
+    type: FilterType.Stickers,
+    sheetTitle: "Choose a sticker",
+    icon: <Sticker size={17} strokeWidth={2} className="text-white" />,
   },
 ];

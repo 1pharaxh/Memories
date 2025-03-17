@@ -30,6 +30,7 @@ import {
 } from "~/lib/animations";
 import { cx } from "class-variance-authority";
 import TabBarText from "./TabBarText";
+import { PRESET_OPTIONS } from "~/lib/constants";
 export default function MyTabBar({
   state,
   descriptors,
@@ -190,7 +191,7 @@ export default function MyTabBar({
                   key={route.key}
                 />
               ))
-            : ["Filter", "Text", "Animations", "Crop", "Me"].map((w, idx) => (
+            : PRESET_OPTIONS.map((w, idx) => (
                 <TabBarEditIcons
                   colorScheme={colorScheme}
                   label={w}
