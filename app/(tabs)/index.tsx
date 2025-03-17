@@ -19,6 +19,7 @@ import RecordingCounter from "~/components/ui/RecordingCounter";
 import PictureView from "~/components/ui/PictureView";
 import VideoViewComponent from "~/components/ui/VideoView";
 import useGlobalStore from "~/store/globalStore";
+import MediaView from "~/components/ui/MediaView/MediaView";
 
 export default function HomeScreen() {
   const cameraRef = React.useRef<CameraView>(null);
@@ -64,7 +65,7 @@ export default function HomeScreen() {
     setHandleTakeVideo(handleTakeVideo);
   }, [handleTakePicture, handleTakeVideo]);
 
-  if (photo) return <PictureView picture={photo} />;
+  if (photo) return <MediaView type="picture" />;
   if (video) return <VideoViewComponent />;
 
   return (

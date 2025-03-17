@@ -30,7 +30,7 @@ const RecordingCounter = (props: Props) => {
           exiting={FadeOut.springify()}
         >
           <Text>
-            <AnimatedCount number={count} />;
+            <AnimatedCount number={count} />
           </Text>
         </Animated.View>
       )}
