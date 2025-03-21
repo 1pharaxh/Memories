@@ -36,14 +36,14 @@ export default function ImageView(props: ImageViewProps) {
     if (!font) return [];
     return font
       .getGlyphIDs("Hello World!")
-      .map((id, i) => ({ id, pos: vec(0, (i + 1) * fontSize) }));
+      .map((id, i) => ({ id, pos: vec(i * (fontSize - 2), fontSize) }));
   }, [font]);
 
-  const size = 256;
+  const size = 500;
   const r = useSharedValue(0);
   const c = useDerivedValue(() => size - r.value);
   useEffect(() => {
-    r.value = withRepeat(withTiming(size * 0.33, { duration: 1000 }), -1);
+    r.value = withRepeat(withTiming(size * 0.33, { duration: 2000 }), -1);
   }, [r, size]);
 
   return (
@@ -69,7 +69,14 @@ export default function ImageView(props: ImageViewProps) {
         }
       />
 
-      <Glyphs x={c} y={r} font={font} color={"#3f2"} glyphs={glyphs} />
+      <Glyphs
+        // some padding from left
+        x={width - width * 0.9}
+        y={c}
+        font={font}
+        color={"#3f2"}
+        glyphs={glyphs}
+      />
     </Canvas>
   );
 }
