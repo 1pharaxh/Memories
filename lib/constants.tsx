@@ -1,6 +1,6 @@
 import { Blend } from "./icons/Blend";
 import { Crop } from "./icons/Crop";
-import { ALargeSmall } from "./icons/Alargesmall";
+import { ALargeSmall } from "./icons/ALargeSmall";
 import { Brush } from "./icons/Brush";
 import { Sticker } from "./icons/Sticker";
 

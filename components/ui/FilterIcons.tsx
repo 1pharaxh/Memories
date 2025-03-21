@@ -72,7 +72,9 @@ const FilterIcons = (props: Props) => {
             }}
           >
             <View>
-              <TabBarText className="mt-0 mb-2">{icon.name}</TabBarText>
+              <TabBarText className="mt-0 mb-2 dark:text-white text-black">
+                {icon.name}
+              </TabBarText>
               <Animated.View
                 className={cx(
                   selected === icon.name
