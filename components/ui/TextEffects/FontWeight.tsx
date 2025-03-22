@@ -1,15 +1,13 @@
-import React, { memo, useEffect } from "react";
-import { matchFont, Text, useFont, useFonts } from "@shopify/react-native-skia";
+import React, { memo, useEffect, useState } from "react";
 import {
   Easing,
-  useDerivedValue,
   useSharedValue,
-  withDelay,
-  withRepeat,
-  withSequence,
   withTiming,
-  cancelAnimation,
+  withRepeat,
+  runOnJS,
+  useDerivedValue,
 } from "react-native-reanimated";
+import { matchFont, Text, useFonts } from "@shopify/react-native-skia";
 
 type FontWeightTextProps = {
   xCord: number;
@@ -20,7 +18,7 @@ type FontWeightTextProps = {
 };
 
 const FontWeightText = memo((props: FontWeightTextProps) => {
-  const { xCord, yCord, text, fontSize = 32, playOnce = false } = props;
+  const { xCord, yCord, text, fontSize = 32 } = props;
 
   const fontMgr = useFonts({
     OverusedGrotesk: [
@@ -44,22 +42,45 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
       require("../../../assets/fonts/Overused-Grotesk/OverusedGrotesk-SemiBoldItalic.ttf"),
     ],
   });
+
+  const boldIndex = useSharedValue(0);
+  // Local state to trigger re-renders.
+  const [currentBold, setCurrentBold] = useState(0);
+
+  useEffect(() => {
+    boldIndex.value = withRepeat(
+      withTiming(text.length - 1, {
+        duration: 2000,
+        easing: Easing.linear,
+      }),
+      -1,
+      false
+    );
+  }, [text]);
+
+  // Update local state from the shared value.
+  useDerivedValue(() => {
+    runOnJS(setCurrentBold)(Math.round(boldIndex.get()));
+  }, [boldIndex]);
+
   let currentX = xCord;
 
   return (
     <>
       {text.split("").map((char, index) => {
+        const isBold = index === currentBold;
+
         const fontStyle = {
           fontFamily: "OverusedGrotesk",
-          fontWeight: index === 4 ? "700" : "100",
-          fontStyle: index === 4 ? "italic" : "normal",
+          fontWeight: isBold ? "700" : "100",
+          fontStyle: isBold ? "italic" : "normal",
           fontSize: fontSize,
         } as const;
 
+        // Get the matching font.
         const font = fontMgr ? matchFont(fontStyle, fontMgr) : null;
         const charWidth = font ? font.getTextWidth(char) : fontSize * 0.5;
         const charXPosition = currentX;
-        // append the width of each character to the currentX
         currentX += charWidth;
 
         return (
