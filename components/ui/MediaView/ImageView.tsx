@@ -46,7 +46,7 @@ export default function ImageView(props: ImageViewProps) {
 
       <GlitchText
         fontName="Got_Heroin"
-        text="I love Linh"
+        text="Testing a big text"
         xCord={150}
         yCord={400}
         fontSize={50}
@@ -55,7 +55,7 @@ export default function ImageView(props: ImageViewProps) {
       <BigSmallText
         type="big"
         fontName="Got_Heroin"
-        text="I love Linh"
+        text="Testing a big text"
         xCord={100}
         yCord={500}
         playOnce={false}
@@ -64,14 +64,19 @@ export default function ImageView(props: ImageViewProps) {
       <BigSmallText
         type="small"
         fontName="Got_Heroin"
-        text="I love Linh"
+        text="Testing a big text"
         xCord={130}
         yCord={600}
         playOnce={false}
         fontSize={50}
       />
 
-      <FontWeightText text="I love Linh" xCord={40} yCord={700} fontSize={43} />
+      <FontWeightText
+        text="Testing a big text"
+        xCord={40}
+        yCord={700}
+        fontSize={43}
+      />
     </Canvas>
   );
 }

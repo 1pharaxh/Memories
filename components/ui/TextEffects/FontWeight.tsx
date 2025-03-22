@@ -72,7 +72,7 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
 
         const fontStyle = {
           fontFamily: "OverusedGrotesk",
-          fontWeight: isBold ? "700" : "100",
+          fontWeight: isBold ? "600" : "300",
           fontStyle: isBold ? "italic" : "normal",
           fontSize: fontSize,
         } as const;
