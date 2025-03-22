@@ -11,6 +11,7 @@ import useGlobalStore from "~/store/globalStore";
 
 import GlitchText from "../TextEffects/GlitchEffect";
 import BigSmallText from "../TextEffects/BigSmall";
+import FontWeightText from "../TextEffects/FontWeight";
 type ImageViewProps = Omit<CanvasProps, "children"> & {};
 
 export default function ImageView(props: ImageViewProps) {
@@ -43,13 +44,13 @@ export default function ImageView(props: ImageViewProps) {
         }
       />
 
-      {/* <GlitchText
+      <GlitchText
         fontName="Got_Heroin"
         text="I love Linh"
-        xCord={100}
-        yCord={500}
+        xCord={150}
+        yCord={400}
         fontSize={50}
-      /> */}
+      />
 
       <BigSmallText
         type="big"
@@ -60,6 +61,17 @@ export default function ImageView(props: ImageViewProps) {
         playOnce={false}
         fontSize={50}
       />
+      <BigSmallText
+        type="small"
+        fontName="Got_Heroin"
+        text="I love Linh"
+        xCord={130}
+        yCord={600}
+        playOnce={false}
+        fontSize={50}
+      />
+
+      <FontWeightText text="I love Linh" xCord={40} yCord={700} fontSize={43} />
     </Canvas>
   );
 }

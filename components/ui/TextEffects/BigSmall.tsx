@@ -42,7 +42,7 @@ const BigSmallText = memo((props: BigSmallTextProps) => {
   } = props;
 
   const font = useFont(FONTS[fontName], fontSize);
-  const textWidth = font ? font.getTextWidth(text) : 0;
+  const textWidth = font ? font.getSize() : 0;
 
   const scale = useSharedValue(1);
 
