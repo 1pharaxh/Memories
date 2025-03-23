@@ -16,10 +16,19 @@ type FontWeightTextProps = {
   yCord: number;
   text: string;
   fontSize?: number;
+  reverse?: boolean;
+  playOnce?: boolean;
 };
 
 const FontWeightText = memo((props: FontWeightTextProps) => {
-  const { xCord, yCord, text, fontSize = 32 } = props;
+  const {
+    xCord,
+    yCord,
+    text,
+    fontSize = 32,
+    reverse = false,
+    playOnce = false,
+  } = props;
 
   const fontMgr = useFonts({
     OverusedGrotesk: [
@@ -44,38 +53,35 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
     ],
   });
 
-  const boldIndex = useSharedValue(0);
+  const boldIndex = useSharedValue(reverse ? text.length : 0);
   // Local state to trigger re-renders.
   const [currentBold, setCurrentBold] = useState(0);
 
   const calculateDuration = interpolate(
     text.length,
     [0, 100], // Input range
-    [1500, 2500], // Output range
+    [1700, 2500], // Output range
     Extrapolate.CLAMP
   );
 
   useEffect(() => {
-    boldIndex.value = withRepeat(
-      withTiming(text.length - 1, {
-        duration: calculateDuration,
-        easing: Easing.linear,
-      }),
-      -1,
-      false
-    );
-  }, [text]);
+    const animate = withTiming(reverse ? 0 : text.length, {
+      duration: calculateDuration,
+      easing: Easing.linear,
+    });
+    boldIndex.value = playOnce ? animate : withRepeat(animate, -1, false);
+  }, [text, playOnce, reverse]);
 
   // Update local state from the shared value.
-  useDerivedValue(() => {
-    const interpolatedIndex = interpolate(
-      boldIndex.value,
-      [0, text.length - 1], // Input range
-      [0, text.length - 1] // Output range remains the same
-    );
 
-    runOnJS(setCurrentBold)(interpolatedIndex);
-  }, [boldIndex]);
+  const interpolatedIndex = useDerivedValue(() => {
+    return interpolate(boldIndex.value, [-1, text.length], [-1, text.length]);
+  });
+  // useEffect  but for reanimated values.
+  useDerivedValue(() => {
+    runOnJS(setCurrentBold)(interpolatedIndex.get());
+  }, [interpolatedIndex]);
+
   let currentX = xCord;
 
   return (
@@ -90,7 +96,7 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
             currentBold + 1,
             currentBold + 2,
           ],
-          [300, 400, 700, 400, 300], // Gradual weight changes
+          [300, 500, 700, 500, 300], // Gradual weight changes
           Extrapolate.CLAMP
         );
 
@@ -110,7 +116,6 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
         const fontStyle = {
           fontFamily: "OverusedGrotesk",
           fontWeight: String(fontWeight) as "300" | "400" | "500" | "700",
-
           fontStyle: fontStyleInText ? "italic" : "normal",
           fontSize: fontSize,
         } as const;
