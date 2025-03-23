@@ -8,6 +8,7 @@ import {
   useDerivedValue,
   interpolate,
   Extrapolate,
+  Extrapolation,
 } from "react-native-reanimated";
 import { matchFont, Text, useFonts } from "@shopify/react-native-skia";
 
@@ -57,30 +58,37 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
   // Local state to trigger re-renders.
   const [currentBold, setCurrentBold] = useState(0);
 
-  const calculateDuration = interpolate(
-    text.length,
-    [0, 100], // Input range
-    [1700, 2500], // Output range
-    Extrapolate.CLAMP
-  );
+  // Reset both the shared value and state
+  useEffect(() => {
+    boldIndex.value = reverse ? text.length : 0;
+    setCurrentBold(reverse ? text.length : 0);
+  }, [text, reverse]);
+
+  const calculateDuration = useDerivedValue(() => {
+    return interpolate(
+      text.length,
+      [0, 100],
+      [1000, 3000],
+      Extrapolation.CLAMP
+    );
+  }, [text.length]);
 
   useEffect(() => {
     const animate = withTiming(reverse ? 0 : text.length, {
-      duration: calculateDuration,
+      duration: calculateDuration.get(),
       easing: Easing.linear,
     });
     boldIndex.value = playOnce ? animate : withRepeat(animate, -1, false);
   }, [text, playOnce, reverse]);
 
-  // Update local state from the shared value.
-
   const interpolatedIndex = useDerivedValue(() => {
     return interpolate(boldIndex.value, [-1, text.length], [-1, text.length]);
-  });
-  // useEffect  but for reanimated values.
+  }, [boldIndex, text, playOnce, reverse]);
+
+  // useEffect  but for reanimated values.  Update local state from the shared value.
   useDerivedValue(() => {
     runOnJS(setCurrentBold)(interpolatedIndex.get());
-  }, [interpolatedIndex]);
+  }, [interpolatedIndex, text, playOnce, reverse]);
 
   let currentX = xCord;
 
@@ -97,7 +105,7 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
             currentBold + 2,
           ],
           [300, 500, 700, 500, 300], // Gradual weight changes
-          Extrapolate.CLAMP
+          Extrapolation.CLAMP
         );
 
         const fontStyleInText = interpolate(
@@ -110,7 +118,7 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
             currentBold + 2,
           ],
           [0, 0, 1, 0, 0], // Gradual italic changes
-          Extrapolate.CLAMP
+          Extrapolation.CLAMP
         );
 
         const fontStyle = {
