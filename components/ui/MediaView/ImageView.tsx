@@ -73,6 +73,7 @@ export default function ImageView(props: ImageViewProps) {
 
       <FontWeightText
         text="Variable Font Animations"
+        comeback
         xCord={40}
         yCord={700}
         fontSize={35}

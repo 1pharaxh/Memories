@@ -64,39 +64,30 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
 
   const dependencies = [text, reverse, comeback, playOnce];
 
-  // Reset both the shared value and state
   useEffect(() => {
+    // Reset animation
     boldIndex.value = reverse ? text.length : 0;
     setCurrentBold(reverse ? text.length : 0);
-  }, dependencies);
 
-  // const calculateDuration = useDerivedValue(() => {
-  //   return interpolate(
-  //     text.length,
-  //     [0, 10, 20, 30, 40, 50],
-  //     [1000, 2000, 3000, 4000, 5000, 6000],
-  //     Extrapolation.CLAMP
-  //   );
-  // }, [text.length]);
-
-  useEffect(() => {
-    // const animate = withTiming(reverse ? 0 : text.length, {
-    //   duration: calculateDuration.get(),
-    //   easing: Easing.linear,
-    // });
-
+    // Create animation
     const animateSpring = withSpring(reverse ? 0 : text.length, {
       mass: 50,
       damping: 34,
       stiffness: 50,
       overshootClamping: true,
-      restDisplacementThreshold: 77.52,
+      restDisplacementThreshold: 0.5,
       restSpeedThreshold: 0.01,
       reduceMotion: ReduceMotion.Never,
     });
-    boldIndex.value = playOnce
-      ? animateSpring
-      : withRepeat(animateSpring, -1, comeback);
+
+    // Apply animation - handle playOnce differently
+    if (playOnce) {
+      // Just apply the animation directly for playOnce
+      boldIndex.value = animateSpring;
+    } else {
+      // For repeating animation, use withRepeat
+      boldIndex.value = withRepeat(animateSpring, -1, comeback);
+    }
   }, dependencies);
 
   useDerivedValue(() => {
