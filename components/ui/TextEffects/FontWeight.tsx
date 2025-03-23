@@ -9,6 +9,8 @@ import {
   interpolate,
   Extrapolate,
   Extrapolation,
+  withSpring,
+  ReduceMotion,
 } from "react-native-reanimated";
 import { matchFont, Text, useFonts } from "@shopify/react-native-skia";
 
@@ -19,6 +21,7 @@ type FontWeightTextProps = {
   fontSize?: number;
   reverse?: boolean;
   playOnce?: boolean;
+  comeback?: boolean;
 };
 
 const FontWeightText = memo((props: FontWeightTextProps) => {
@@ -29,6 +32,7 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
     fontSize = 32,
     reverse = false,
     playOnce = false,
+    comeback = false,
   } = props;
 
   const fontMgr = useFonts({
@@ -58,37 +62,53 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
   // Local state to trigger re-renders.
   const [currentBold, setCurrentBold] = useState(0);
 
+  const dependencies = [text, reverse, comeback, playOnce];
+
   // Reset both the shared value and state
   useEffect(() => {
     boldIndex.value = reverse ? text.length : 0;
     setCurrentBold(reverse ? text.length : 0);
-  }, [text, reverse]);
+  }, dependencies);
 
-  const calculateDuration = useDerivedValue(() => {
-    return interpolate(
-      text.length,
-      [0, 100],
-      [1000, 3000],
-      Extrapolation.CLAMP
-    );
-  }, [text.length]);
+  // const calculateDuration = useDerivedValue(() => {
+  //   return interpolate(
+  //     text.length,
+  //     [0, 10, 20, 30, 40, 50],
+  //     [1000, 2000, 3000, 4000, 5000, 6000],
+  //     Extrapolation.CLAMP
+  //   );
+  // }, [text.length]);
 
   useEffect(() => {
-    const animate = withTiming(reverse ? 0 : text.length, {
-      duration: calculateDuration.get(),
-      easing: Easing.linear,
-    });
-    boldIndex.value = playOnce ? animate : withRepeat(animate, -1, false);
-  }, [text, playOnce, reverse]);
+    // const animate = withTiming(reverse ? 0 : text.length, {
+    //   duration: calculateDuration.get(),
+    //   easing: Easing.linear,
+    // });
 
-  const interpolatedIndex = useDerivedValue(() => {
-    return interpolate(boldIndex.value, [-1, text.length], [-1, text.length]);
-  }, [boldIndex, text, playOnce, reverse]);
+    const animateSpring = withSpring(reverse ? 0 : text.length, {
+      mass: 50,
+      damping: 34,
+      stiffness: 50,
+      overshootClamping: true,
+      restDisplacementThreshold: 77.52,
+      restSpeedThreshold: 0.01,
+      reduceMotion: ReduceMotion.Never,
+    });
+    boldIndex.value = playOnce
+      ? animateSpring
+      : withRepeat(animateSpring, -1, comeback);
+  }, dependencies);
+
+  useDerivedValue(() => {
+    const interpolatedIndex = interpolate(
+      boldIndex.value,
+      [-1, text.length],
+      [-1, text.length]
+    );
+    runOnJS(setCurrentBold)(interpolatedIndex);
+  }, [boldIndex, ...dependencies]);
 
   // useEffect  but for reanimated values.  Update local state from the shared value.
-  useDerivedValue(() => {
-    runOnJS(setCurrentBold)(interpolatedIndex.get());
-  }, [interpolatedIndex, text, playOnce, reverse]);
 
   let currentX = xCord;
 
