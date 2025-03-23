@@ -6,6 +6,8 @@ import {
   withRepeat,
   runOnJS,
   useDerivedValue,
+  interpolate,
+  Extrapolate,
 } from "react-native-reanimated";
 import { matchFont, Text, useFonts } from "@shopify/react-native-skia";
 
@@ -14,7 +16,6 @@ type FontWeightTextProps = {
   yCord: number;
   text: string;
   fontSize?: number;
-  playOnce?: boolean;
 };
 
 const FontWeightText = memo((props: FontWeightTextProps) => {
@@ -47,10 +48,17 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
   // Local state to trigger re-renders.
   const [currentBold, setCurrentBold] = useState(0);
 
+  const calculateDuration = interpolate(
+    text.length,
+    [0, 100], // Input range
+    [1500, 2500], // Output range
+    Extrapolate.CLAMP
+  );
+
   useEffect(() => {
     boldIndex.value = withRepeat(
       withTiming(text.length - 1, {
-        duration: 2000,
+        duration: calculateDuration,
         easing: Easing.linear,
       }),
       -1,
@@ -60,20 +68,50 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
 
   // Update local state from the shared value.
   useDerivedValue(() => {
-    runOnJS(setCurrentBold)(Math.round(boldIndex.get()));
-  }, [boldIndex]);
+    const interpolatedIndex = interpolate(
+      boldIndex.value,
+      [0, text.length - 1], // Input range
+      [0, text.length - 1] // Output range remains the same
+    );
 
+    runOnJS(setCurrentBold)(interpolatedIndex);
+  }, [boldIndex]);
   let currentX = xCord;
 
   return (
     <>
       {text.split("").map((char, index) => {
-        const isBold = index === currentBold;
+        const fontWeight = interpolate(
+          index,
+          [
+            currentBold - 2,
+            currentBold - 1,
+            currentBold,
+            currentBold + 1,
+            currentBold + 2,
+          ],
+          [300, 400, 700, 400, 300], // Gradual weight changes
+          Extrapolate.CLAMP
+        );
+
+        const fontStyleInText = interpolate(
+          index,
+          [
+            currentBold - 2,
+            currentBold - 1,
+            currentBold,
+            currentBold + 1,
+            currentBold + 2,
+          ],
+          [0, 0, 1, 0, 0], // Gradual italic changes
+          Extrapolate.CLAMP
+        );
 
         const fontStyle = {
           fontFamily: "OverusedGrotesk",
-          fontWeight: isBold ? "600" : "300",
-          fontStyle: isBold ? "italic" : "normal",
+          fontWeight: String(fontWeight) as "300" | "400" | "500" | "700",
+
+          fontStyle: fontStyleInText ? "italic" : "normal",
           fontSize: fontSize,
         } as const;
 
