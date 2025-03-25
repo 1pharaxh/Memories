@@ -72,7 +72,7 @@ const FilterIcons = (props: Props) => {
             }}
           >
             <View>
-              <TabBarText className="mt-0 mb-2 dark:text-white text-black">
+              <TabBarText className="mt-0 mb-2" accountForDarkMode>
                 {icon.name}
               </TabBarText>
               <Animated.View

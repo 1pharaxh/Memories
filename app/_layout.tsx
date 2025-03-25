@@ -11,7 +11,7 @@ import * as AC from "@bacons/apple-colors";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { Platform } from "react-native";
-import { NAV_THEME } from "~/lib/constants";
+import { FilterType, NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "@rn-primitives/portal";
 import * as Form from "~/components/ui/Form";
@@ -19,6 +19,7 @@ import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { IconSymbol } from "~/components/ui/IconSymbol";
+import { useNavigationState } from "@react-navigation/native";
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
   colors: NAV_THEME.light,
@@ -37,6 +38,13 @@ export default function RootLayout() {
   const hasMounted = React.useRef(false);
   const { colorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
+
+  const navigationState = useNavigationState((state) => state);
+  const routeName = (
+    navigationState?.routes[navigationState.index]?.params as {
+      type?: string;
+    }
+  )?.type;
 
   useIsomorphicLayoutEffect(() => {
     if (hasMounted.current) {
@@ -81,10 +89,14 @@ export default function RootLayout() {
             sheet
             options={{
               headerLargeTitle: false,
-              // Quarter sheet with no pulling allowed
+              // Quarter sheet with no pulling allowed on routes other than filter sheet
               headerTransparent: false,
               sheetGrabberVisible: false,
-              sheetAllowedDetents: [0.3],
+              sheetAllowedDetents:
+                // Filter sheet is vertically scrolled list
+                routeName && routeName === FilterType.Filter
+                  ? [0.25]
+                  : [0.25, 0.35],
               headerRight: () => (
                 <Form.Link headerRight href="/(tabs)" dismissTo>
                   <IconSymbol
