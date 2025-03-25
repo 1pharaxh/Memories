@@ -3,17 +3,23 @@ import { ScrollView } from "react-native";
 
 import React, { memo } from "react";
 
-import FilterIcons from "~/components/ui/FilterIcons";
+import FilterIcons from "~/components/ui/PresetSheetViews/FilterIcons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { FilterType } from "~/lib/constants";
 interface renderPresetSheetContentProps {
   type: string;
 }
+
+import * as AC from "@bacons/apple-colors";
+import StickerSheet from "~/components/ui/PresetSheetViews/StickerSheet";
+
 const RenderPresetSheetContent: React.FC<renderPresetSheetContentProps> = memo(
   ({ type }: renderPresetSheetContentProps) => {
     switch (type) {
       case FilterType.Filter:
         return <FilterIcons />;
+      case FilterType.Stickers:
+        return <StickerSheet />;
       default:
         return null;
     }
@@ -29,10 +35,21 @@ export default function Page() {
 
   return (
     <>
-      <Stack.Screen options={{ title: sheetTitle }} />
-      <ScrollView horizontal contentContainerStyle={{ padding: 24, gap: 32 }}>
+      <Stack.Screen
+        options={{
+          title: sheetTitle,
+          contentStyle: {
+            backgroundColor: AC.tertiarySystemGroupedBackground,
+          },
+        }}
+      />
+      {type === FilterType.Filter ? (
+        <ScrollView horizontal contentContainerStyle={{ padding: 24, gap: 32 }}>
+          <RenderPresetSheetContent type={type || ""} />
+        </ScrollView>
+      ) : (
         <RenderPresetSheetContent type={type || ""} />
-      </ScrollView>
+      )}
     </>
   );
 }

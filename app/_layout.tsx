@@ -84,7 +84,7 @@ export default function RootLayout() {
               // Quarter sheet with no pulling allowed
               headerTransparent: false,
               sheetGrabberVisible: false,
-              sheetAllowedDetents: [0.25],
+              sheetAllowedDetents: [0.3],
               headerRight: () => (
                 <Form.Link headerRight href="/(tabs)" dismissTo>
                   <IconSymbol

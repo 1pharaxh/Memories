@@ -14,7 +14,7 @@ import {
 } from "react-native-reanimated";
 import { matchFont, Text, useFonts } from "@shopify/react-native-skia";
 
-type FontWeightTextProps = {
+type VariableFontAnimateTextProps = {
   xCord: number;
   yCord: number;
   text: string;
@@ -24,7 +24,7 @@ type FontWeightTextProps = {
   comeback?: boolean;
 };
 
-const FontWeightText = memo((props: FontWeightTextProps) => {
+const VariableFontAnimateText = memo((props: VariableFontAnimateTextProps) => {
   const {
     xCord,
     yCord,
@@ -106,7 +106,7 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
   return (
     <>
       {text.split("").map((char, index) => {
-        const fontWeight = interpolate(
+        const VariableFontAnimate = interpolate(
           index,
           [
             currentBold - 2,
@@ -134,7 +134,11 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
 
         const fontStyle = {
           fontFamily: "OverusedGrotesk",
-          fontWeight: String(fontWeight) as "300" | "400" | "500" | "700",
+          fontWeight: String(VariableFontAnimate) as
+            | "300"
+            | "400"
+            | "500"
+            | "700",
           fontStyle: fontStyleInText ? "italic" : "normal",
           fontSize: fontSize,
         } as const;
@@ -160,4 +164,4 @@ const FontWeightText = memo((props: FontWeightTextProps) => {
   );
 });
 
-export default FontWeightText;
+export default VariableFontAnimateText;

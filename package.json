@@ -61,7 +61,8 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
     "zustand": "^4.4.7",
-    "@shopify/react-native-skia": "1.5.0"
+    "@shopify/react-native-skia": "1.5.0",
+    "@shopify/flash-list": "1.7.3"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

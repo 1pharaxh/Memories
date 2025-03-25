@@ -1,8 +1,10 @@
 import { Blend } from "./icons/Blend";
 import { Crop } from "./icons/Crop";
-import { ALargeSmall } from "./icons/ALargeSmall";
+import { Music } from "./icons/Music";
 import { Brush } from "./icons/Brush";
 import { Sticker } from "./icons/Sticker";
+import VariableFontAnimateText from "~/components/ui/TextEffects/VariableFont";
+import { FontNames } from "./utils";
 
 export const NAV_THEME = {
   light: {
@@ -65,7 +67,7 @@ export const FILTER_PRESETS = [
 
 export enum FilterType {
   Filter = "Filter",
-  Text = "Text",
+  Music = "Music",
   Draw = "Draw",
   Crop = "Crop",
   Stickers = "Stickers",
@@ -79,10 +81,16 @@ export const PRESET_OPTIONS = [
     icon: <Blend size={17} strokeWidth={2} className="text-white" />,
   },
   {
-    name: "Text",
-    type: FilterType.Text,
-    sheetTitle: "Choose a font and write",
-    icon: <ALargeSmall size={17} strokeWidth={2} className="text-white" />,
+    name: "Stickers",
+    type: FilterType.Stickers,
+    sheetTitle: "Choose a sticker",
+    icon: <Sticker size={17} strokeWidth={2} className="text-white" />,
+  },
+  {
+    name: "Music",
+    type: FilterType.Music,
+    sheetTitle: "Choose music to add",
+    icon: <Music size={17} strokeWidth={2} className="text-white" />,
   },
   {
     name: "Draw",
@@ -96,10 +104,68 @@ export const PRESET_OPTIONS = [
     sheetTitle: "Crop your image",
     icon: <Crop size={17} strokeWidth={2} className="text-white" />,
   },
+];
+
+export enum STICKER_TYPE {
+  TEXT = "text",
+  IMAGE = "image",
+}
+
+export enum STICKER_TEXT_NAME {
+  BLOOM = "Bloom",
+  BIG = "Big",
+  SMALL = "Small",
+  GLITCH = "Glitch",
+  RIGHTWARD = "Rightward",
+  LEFTWARD = "Leftward",
+}
+
+export const STICKER_OPTIONS: SINGLE_STICKER_OPTIONS[] = [
   {
-    name: "Stickers",
-    type: FilterType.Stickers,
-    sheetTitle: "Choose a sticker",
-    icon: <Sticker size={17} strokeWidth={2} className="text-white" />,
+    type: STICKER_TYPE.TEXT,
+    name: STICKER_TEXT_NAME.GLITCH,
+    fontName: "Got_Heroin",
+    fontSize: 50,
+  },
+  {
+    type: STICKER_TYPE.TEXT,
+    name: STICKER_TEXT_NAME.BLOOM,
+    fontName: "SuperWoobly", // DOES NOT MATTER
+    fontSize: 30,
+  },
+
+  {
+    type: STICKER_TYPE.TEXT,
+    name: STICKER_TEXT_NAME.RIGHTWARD,
+    fontName: "Gyrotrope-David Moles",
+    fontSize: 35,
+  },
+
+  {
+    type: STICKER_TYPE.TEXT,
+    name: STICKER_TEXT_NAME.LEFTWARD,
+    fontName: "Gyrotrope-David Moles",
+    fontSize: 35,
+  },
+
+  {
+    type: STICKER_TYPE.TEXT,
+    name: STICKER_TEXT_NAME.BIG,
+    fontName: "Gyrotrope-David Moles",
+    fontSize: 30,
+  },
+
+  {
+    type: STICKER_TYPE.TEXT,
+    name: STICKER_TEXT_NAME.SMALL,
+    fontName: "Gyrotrope-David Moles",
+    fontSize: 30,
   },
 ];
+
+export interface SINGLE_STICKER_OPTIONS {
+  type: STICKER_TYPE;
+  name: STICKER_TEXT_NAME;
+  fontName: FontNames;
+  fontSize: number;
+}

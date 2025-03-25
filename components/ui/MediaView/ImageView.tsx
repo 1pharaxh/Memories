@@ -9,9 +9,9 @@ import {
 } from "@shopify/react-native-skia";
 import useGlobalStore from "~/store/globalStore";
 
-import GlitchText from "../TextEffects/GlitchEffect";
+import GlitchText from "../TextEffects/Glitch";
 import BigSmallText from "../TextEffects/BigSmall";
-import FontWeightText from "../TextEffects/FontWeight";
+import VariableFontAnimateText from "../TextEffects/VariableFont";
 type ImageViewProps = Omit<CanvasProps, "children"> & {};
 
 export default function ImageView(props: ImageViewProps) {
@@ -42,41 +42,6 @@ export default function ImageView(props: ImageViewProps) {
                 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
               ]
         }
-      />
-
-      <GlitchText
-        fontName="Got_Heroin"
-        text="Glitch Effect"
-        xCord={150}
-        yCord={400}
-        fontSize={50}
-      />
-
-      <BigSmallText
-        type="big"
-        fontName="Gyrotrope-David Moles"
-        text="Big text"
-        xCord={50}
-        yCord={500}
-        playOnce={false}
-        fontSize={35}
-      />
-      <BigSmallText
-        type="small"
-        fontName="Streetwear"
-        text="Small text"
-        xCord={130}
-        yCord={600}
-        playOnce={false}
-        fontSize={35}
-      />
-
-      <FontWeightText
-        text="Variable Font Animations"
-        comeback
-        xCord={40}
-        yCord={700}
-        fontSize={35}
       />
     </Canvas>
   );
