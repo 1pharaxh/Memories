@@ -3,7 +3,14 @@ import { View, Text, Dimensions } from "react-native";
 
 import React, { useCallback } from "react";
 import { cx } from "class-variance-authority";
-import { Canvas, Group, Rect, RoundedRect } from "@shopify/react-native-skia";
+import {
+  Canvas,
+  Group,
+  Rect,
+  RoundedRect,
+  useAnimatedImageValue,
+  Image,
+} from "@shopify/react-native-skia";
 import { FlashList } from "@shopify/flash-list";
 import * as AC from "@bacons/apple-colors";
 import VariableFontAnimateText from "../TextEffects/VariableFont";
@@ -11,11 +18,13 @@ import {
   SINGLE_STICKER_OPTIONS,
   STICKER_OPTIONS,
   STICKER_TEXT_NAME,
+  STICKER_TYPE,
 } from "~/lib/constants";
 import GlitchText from "../TextEffects/Glitch";
 import BigSmallText from "../TextEffects/BigSmall";
 
 const TEXT_PILL_HEIGHT = 72;
+const GIF_HEIGHT = 180;
 type Props = {};
 
 const CenteredSkiaContent = ({
@@ -155,24 +164,36 @@ const StickerSheet = (props: Props) => {
               <Canvas
                 style={{
                   width: textStickerWidth,
-                  height: TEXT_PILL_HEIGHT,
+                  height:
+                    item.type === STICKER_TYPE.TEXT
+                      ? TEXT_PILL_HEIGHT
+                      : GIF_HEIGHT,
                   flex: 1,
                 }}
               >
-                <RoundedRect
-                  color={"white"}
-                  x={0}
-                  y={0}
-                  r={25}
-                  height={72}
-                  width={textStickerWidth}
-                />
-                <CenteredSkiaContent
-                  width={textStickerWidth}
-                  height={TEXT_PILL_HEIGHT}
-                >
-                  {RenderSticker(item, textStickerWidth)}
-                </CenteredSkiaContent>
+                {item.type === STICKER_TYPE.TEXT ? (
+                  <>
+                    <RoundedRect
+                      color={"white"}
+                      x={0}
+                      y={0}
+                      r={25}
+                      height={72}
+                      width={textStickerWidth}
+                    />
+                    <CenteredSkiaContent
+                      width={textStickerWidth}
+                      height={TEXT_PILL_HEIGHT}
+                    >
+                      {RenderSticker(item, textStickerWidth)}
+                    </CenteredSkiaContent>
+                  </>
+                ) : (
+                  <AnimatedImages
+                    item={item}
+                    textStickerWidth={textStickerWidth}
+                  />
+                )}
               </Canvas>
             </TouchableBounce>
           </View>
@@ -183,3 +204,24 @@ const StickerSheet = (props: Props) => {
 };
 
 export default StickerSheet;
+
+const AnimatedImages = ({
+  item,
+  textStickerWidth,
+}: {
+  item: SINGLE_STICKER_OPTIONS;
+  textStickerWidth: number;
+}) => {
+  // This can be an animated GIF or WebP file
+  const image = useAnimatedImageValue(item.name);
+  return (
+    <Image
+      image={image}
+      x={0}
+      y={0}
+      width={textStickerWidth}
+      height={GIF_HEIGHT}
+      fit="contain"
+    />
+  );
+};

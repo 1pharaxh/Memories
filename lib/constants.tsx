@@ -3,8 +3,6 @@ import { Crop } from "./icons/Crop";
 import { Music } from "./icons/Music";
 import { Brush } from "./icons/Brush";
 import { Sticker } from "./icons/Sticker";
-import VariableFontAnimateText from "~/components/ui/TextEffects/VariableFont";
-import { FontNames } from "./utils";
 
 export const NAV_THEME = {
   light: {
@@ -106,6 +104,17 @@ export const PRESET_OPTIONS = [
   },
 ];
 
+export const FONTS = {
+  "SF-Pro": require("../assets/fonts/SF-Pro.ttf"),
+  Got_Heroin: require("../assets/fonts/Got_Heroin.ttf"),
+  SuperShiny: require("../assets/fonts/SuperShiny.ttf"),
+  SuperWoobly: require("../assets/fonts/SuperWoobly.ttf"),
+  Streetwear: require("../assets/fonts/Streetwear.otf"),
+  GarciaMarquez: require("../assets/fonts/GarciaMarquez.otf"),
+  "Gyrotrope-David Moles": require("../assets/fonts/Gyrotrope-David Moles.otf"),
+} as const;
+export type FontNames = keyof typeof FONTS;
+
 export enum STICKER_TYPE {
   TEXT = "text",
   IMAGE = "image",
@@ -122,6 +131,36 @@ export enum STICKER_TEXT_NAME {
 
 export const STICKER_OPTIONS: SINGLE_STICKER_OPTIONS[] = [
   {
+    type: STICKER_TYPE.IMAGE,
+    name: require("../assets/gifs/Art Text Sticker by Matt Osio.gif"),
+    fontSize: 30,
+  },
+  {
+    type: STICKER_TYPE.IMAGE,
+    name: require("../assets/gifs/I Love You Animation Sticker by Matt Osio.gif"),
+    fontSize: 30,
+  },
+  {
+    type: STICKER_TYPE.IMAGE,
+    name: require("../assets/gifs/Meh Over It Sticker by V5MT.gif"),
+    fontSize: 30,
+  },
+  {
+    type: STICKER_TYPE.IMAGE,
+    name: require("../assets/gifs/Text Please Sticker by V5MT.gif"),
+    fontSize: 30,
+  },
+  {
+    type: STICKER_TYPE.IMAGE,
+    name: require("../assets/gifs/Thank U Sticker by V5MT.gif"),
+    fontSize: 30,
+  },
+  {
+    type: STICKER_TYPE.IMAGE,
+    name: require("../assets/gifs/the wave dancing Sticker.gif"),
+    fontSize: 30,
+  },
+  {
     type: STICKER_TYPE.TEXT,
     name: STICKER_TEXT_NAME.GLITCH,
     fontName: "Got_Heroin",
@@ -130,21 +169,18 @@ export const STICKER_OPTIONS: SINGLE_STICKER_OPTIONS[] = [
   {
     type: STICKER_TYPE.TEXT,
     name: STICKER_TEXT_NAME.BLOOM,
-    fontName: "SuperWoobly", // DOES NOT MATTER
     fontSize: 30,
   },
 
   {
     type: STICKER_TYPE.TEXT,
     name: STICKER_TEXT_NAME.RIGHTWARD,
-    fontName: "Gyrotrope-David Moles",
     fontSize: 35,
   },
 
   {
     type: STICKER_TYPE.TEXT,
     name: STICKER_TEXT_NAME.LEFTWARD,
-    fontName: "Gyrotrope-David Moles",
     fontSize: 35,
   },
 
@@ -165,7 +201,7 @@ export const STICKER_OPTIONS: SINGLE_STICKER_OPTIONS[] = [
 
 export interface SINGLE_STICKER_OPTIONS {
   type: STICKER_TYPE;
-  name: STICKER_TEXT_NAME;
-  fontName: FontNames;
+  name: STICKER_TEXT_NAME | string;
+  fontName?: FontNames;
   fontSize: number;
 }

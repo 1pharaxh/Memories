@@ -10,7 +10,7 @@ import {
   withTiming,
   cancelAnimation,
 } from "react-native-reanimated";
-import { FontNames, FONTS } from "~/lib/utils";
+import { FontNames, FONTS } from "~/lib/constants";
 
 const DURATION = 500;
 // big / small duration for expanding/shrinking

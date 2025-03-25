@@ -8,7 +8,7 @@ import {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { FontNames, FONTS } from "~/lib/utils";
+import { FontNames, FONTS } from "~/lib/constants";
 
 const DURATION = 100;
 
