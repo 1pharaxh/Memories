@@ -11,6 +11,7 @@ import {
   cancelAnimation,
 } from "react-native-reanimated";
 import { FontNames, FONTS } from "~/lib/constants";
+import { useColorScheme } from "~/lib/useColorScheme";
 
 const DURATION = 500;
 // big / small duration for expanding/shrinking
@@ -27,6 +28,7 @@ type BigSmallTextProps = {
   fontSize?: number;
   fontName?: FontNames;
   playOnce?: boolean;
+  textColor?: string | undefined;
   type: "big" | "small";
 };
 
@@ -39,6 +41,7 @@ const BigSmallText = memo((props: BigSmallTextProps) => {
     fontName = "SF-Pro",
     playOnce = false,
     type,
+    textColor = undefined,
   } = props;
 
   const font = useFont(FONTS[fontName], fontSize);
@@ -82,9 +85,22 @@ const BigSmallText = memo((props: BigSmallTextProps) => {
     ];
   });
 
+  const { colorScheme } = useColorScheme();
+
   return (
     <Group transform={transform}>
-      <Text font={font} text={text} x={xCord} y={yCord} opacity={0.9} />
+      <Text
+        font={font}
+        color={
+          textColor ?? colorScheme === "dark"
+            ? "rgba(242.25, 242.25, 247.35, 1)"
+            : "rgba(43.35, 43.35, 46.35, 1)"
+        }
+        text={text}
+        x={xCord}
+        y={yCord}
+        opacity={0.9}
+      />
     </Group>
   );
 });

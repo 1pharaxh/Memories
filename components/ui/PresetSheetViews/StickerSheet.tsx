@@ -22,6 +22,7 @@ import {
 } from "~/lib/constants";
 import GlitchText from "../TextEffects/Glitch";
 import BigSmallText from "../TextEffects/BigSmall";
+import { useColorScheme } from "~/lib/useColorScheme";
 
 const TEXT_PILL_HEIGHT = 72;
 const GIF_HEIGHT = 180;
@@ -142,7 +143,7 @@ const StickerSheet = (props: Props) => {
   const textStickerWidth = width / 2 - 24;
 
   const onPress = useCallback(() => {}, []);
-
+  const { colorScheme } = useColorScheme();
   return (
     <View className="flex flex-wrap flex-row justify-between p-4 flex-1">
       <FlashList
@@ -174,7 +175,7 @@ const StickerSheet = (props: Props) => {
                 {item.type === STICKER_TYPE.TEXT ? (
                   <>
                     <RoundedRect
-                      color={"white"}
+                      color={colorScheme === "light" ? "white" : "black"}
                       x={0}
                       y={0}
                       r={25}

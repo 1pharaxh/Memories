@@ -13,6 +13,7 @@ import {
   ReduceMotion,
 } from "react-native-reanimated";
 import { matchFont, Text, useFonts } from "@shopify/react-native-skia";
+import { useColorScheme } from "~/lib/useColorScheme";
 
 type VariableFontAnimateTextProps = {
   xCord: number;
@@ -22,6 +23,7 @@ type VariableFontAnimateTextProps = {
   reverse?: boolean;
   playOnce?: boolean;
   comeback?: boolean;
+  textColor?: string | undefined;
 };
 
 const VariableFontAnimateText = memo((props: VariableFontAnimateTextProps) => {
@@ -33,6 +35,7 @@ const VariableFontAnimateText = memo((props: VariableFontAnimateTextProps) => {
     reverse = false,
     playOnce = false,
     comeback = false,
+    textColor = undefined,
   } = props;
 
   const fontMgr = useFonts({
@@ -103,6 +106,8 @@ const VariableFontAnimateText = memo((props: VariableFontAnimateTextProps) => {
 
   let currentX = xCord;
 
+  const { colorScheme } = useColorScheme();
+
   return (
     <>
       {text.split("").map((char, index) => {
@@ -155,6 +160,11 @@ const VariableFontAnimateText = memo((props: VariableFontAnimateTextProps) => {
             font={font}
             text={char}
             x={charXPosition}
+            color={
+              textColor ?? colorScheme === "dark"
+                ? "rgba(242.25, 242.25, 247.35, 1)"
+                : "rgba(43.35, 43.35, 46.35, 1)"
+            }
             y={yCord}
             opacity={0.9}
           />
