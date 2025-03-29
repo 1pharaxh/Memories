@@ -107,7 +107,7 @@ export const GestureHandler = ({
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View style={style}>
-        <Text> native view</Text>
+        {debug && <Text> native view</Text>}
       </Animated.View>
     </GestureDetector>
   );

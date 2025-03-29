@@ -31,7 +31,7 @@ export default function ImageView(props: ImageViewProps) {
   const fontSize = 44;
 
   // Calculate text dimensions
-  const textWidth = 405;
+  const textWidth = 414.59375;
   const textHeight = fontSize * 1.2; // Approximate text height
 
   const src = rect(0, 0, textWidth, textHeight);
@@ -77,7 +77,6 @@ export default function ImageView(props: ImageViewProps) {
       {/* Position gesture handler at the same position as text */}
 
       <GestureHandler
-        debug
         matrix={matrix} // Use identity matrix since position is set by View
         size={{
           height: textHeight,
