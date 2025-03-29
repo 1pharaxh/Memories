@@ -1,10 +1,11 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { SkMatrix, Vector } from "@shopify/react-native-skia";
-import { Skia } from "@shopify/react-native-skia";
+import { Skia, useFont } from "@shopify/react-native-skia";
 
 import type { SkRect } from "@shopify/react-native-skia";
 import { rect } from "@shopify/react-native-skia";
+import { FontNames, FONTS } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -51,3 +52,15 @@ export const deflate = (rct: SkRect, amount: number) =>
     rct.width - amount * 2,
     rct.height - amount * 2
   );
+
+export const calculateFontSize = (
+  fontName: FontNames,
+  fontSize: number,
+  text: string
+): SkRect | 0 => {
+  // work on UI thread as we need size of each text to render its gesture handler
+  "worklet";
+
+  const font = useFont(FONTS[fontName], fontSize);
+  return font ? font.measureText(text) : 0;
+};

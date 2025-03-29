@@ -88,8 +88,6 @@ const BigSmallText = memo((props: BigSmallTextProps) => {
 
   const { colorScheme } = useColorScheme();
 
-  console.log("BigSmall Text Width and Height: ", textWidth, textHeight);
-
   return (
     <Group transform={transform}>
       <Text

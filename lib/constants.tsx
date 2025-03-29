@@ -114,6 +114,7 @@ export const FONTS = {
   "Gyrotrope-David Moles": require("../assets/fonts/Gyrotrope-David Moles.otf"),
   "Beyond Wonderland": require("../assets/fonts/Beyond Wonderland.ttf"),
   "Cocaine sans - chris hansen": require("../assets/fonts/Cocaine sans - chris hansen.ttf"),
+  OverusedGrotesk: require("../assets/fonts/Overused-Grotesk/OverusedGrotesk-Medium.ttf"),
 } as const;
 export type FontNames = keyof typeof FONTS;
 

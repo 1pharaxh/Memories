@@ -1,4 +1,7 @@
+import { SkMatrix } from "@shopify/react-native-skia";
+import { Mutable } from "react-native-reanimated/lib/typescript/commonTypes";
 import { create, StateCreator } from "zustand";
+import { SINGLE_STICKER_OPTIONS } from "~/lib/constants";
 
 /*Store to handle Captured media related operations*/
 
@@ -79,13 +82,6 @@ export interface Filter {
   colorMatrix: number[];
 }
 
-export interface AnimatedText {
-  startTime: number;
-  endTime: number;
-  text: string;
-  position: XYPosition;
-}
-
 export interface Crop {
   // Top-left coordinate of the crop region
   position: XYPosition;
@@ -103,29 +99,23 @@ export interface Draw {
   endTime?: number;
 }
 
-export interface Sticker {
-  imageUrl: string;
-  position: XYPosition;
-  // Optional: scale factor for the sticker
-  scale?: number;
-  // Optional: rotation angle in degrees
-  rotation?: number;
-  isAnimated?: boolean;
-  startTime?: number;
-  endTime?: number;
-}
+export type GLOBALS_SINGLE_STICKER_OPTIONS = SINGLE_STICKER_OPTIONS & {
+  matrix: Mutable<SkMatrix>;
+  fontSize: number;
+  text: string;
+  height: number;
+  width: number;
+};
 
 export interface PresetSlice {
   filter?: Filter;
-  text?: AnimatedText[];
   crop?: Crop;
   draw?: Draw[];
-  stickers?: Sticker[];
+  stickers?: GLOBALS_SINGLE_STICKER_OPTIONS[];
   setFilter: (filter: Filter) => void;
-  setText: (text: AnimatedText[]) => void;
   setCrop: (crop: Crop) => void;
   setDraw: (draw: Draw[]) => void;
-  setStickers: (stickers: Sticker[]) => void;
+  addStickers: (sticker: GLOBALS_SINGLE_STICKER_OPTIONS) => void;
 }
 
 const createPresetSlice: StateCreator<PresetSlice, [], [], PresetSlice> = (
@@ -135,7 +125,6 @@ const createPresetSlice: StateCreator<PresetSlice, [], [], PresetSlice> = (
     name: "",
     colorMatrix: [],
   },
-  text: [],
   crop: {
     position: { x: 0, y: 0 },
     width: 1,
@@ -144,10 +133,10 @@ const createPresetSlice: StateCreator<PresetSlice, [], [], PresetSlice> = (
   draw: [],
   stickers: [],
   setFilter: (filter) => set({ filter }),
-  setText: (text) => set({ text }),
   setCrop: (crop) => set({ crop }),
   setDraw: (draw) => set({ draw }),
-  setStickers: (stickers) => set({ stickers }),
+  addStickers: (sticker) =>
+    set((state) => ({ stickers: [...(state.stickers || []), sticker] })),
 });
 
 /*Global store builds upon and combines all the slices*/
