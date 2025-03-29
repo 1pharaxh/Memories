@@ -50,7 +50,7 @@ export default function ImageView(props: ImageViewProps) {
           image={image}
           fit="cover"
         />
-
+        {/* if you want text color to not change then move color matrix inside image  */}
         <ColorMatrix
           matrix={
             filter && filter.colorMatrix.length > 0

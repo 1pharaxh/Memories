@@ -11,8 +11,19 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
-import { rotateZ, scale, toM4, translate } from "~/lib/utils";
+import { rotateZ, scale, translate } from "~/lib/utils";
 
+export enum MatrixIndex {
+  ScaleX = 0,
+  SkewX = 1,
+  TransX = 2,
+  SkewY = 3,
+  ScaleY = 4,
+  TransY = 5,
+  Persp0 = 6,
+  Persp1 = 7,
+  Persp2 = 8,
+}
 interface GestureHandlerProps {
   matrix: SharedValue<SkMatrix>;
   size: SkSize;
@@ -27,7 +38,6 @@ export const GestureHandler = ({
   const pivot = useSharedValue(Skia.Point(0, 0));
   const offset = useSharedValue(Skia.Matrix());
   const pan = Gesture.Pan().onChange((event) => {
-    console.log("pan", event);
     matrix.value = translate(matrix.value, event.changeX, event.changeY);
   });
   const pinch = Gesture.Pinch()
@@ -48,29 +58,27 @@ export const GestureHandler = ({
       matrix.value = rotateZ(offset.value, event.rotation, pivot.value);
     });
   const gesture = Gesture.Race(pan, pinch, rotate);
-  const style = useAnimatedStyle(() => ({
-    position: "absolute",
-    width: size.width,
-    height: size.height,
-    backgroundColor: debug ? "rgba(255, 0, 0, 0.5)" : "transparent",
-    top: toM4(matrix.value)[13],
-    left: toM4(matrix.value)[12],
-    transform: [
-      {
-        translateX: -size.width / 2,
-      },
-      {
-        translateY: -size.height / 2,
-      },
-      { matrix: toM4(matrix.value) },
-      {
-        translateX: size.width / 2,
-      },
-      {
-        translateY: size.height / 2,
-      },
-    ],
-  }));
+  const style = useAnimatedStyle(() => {
+    const m3 = matrix.value.get();
+    console.log("matrix", m3);
+    const rotation = Math.atan2(m3[MatrixIndex.SkewY], m3[MatrixIndex.ScaleY]);
+    const scaleX = Math.sqrt(
+      m3[MatrixIndex.ScaleX] ** 2 + m3[MatrixIndex.SkewX] ** 2
+    );
+    const scaleY = Math.sqrt(
+      m3[MatrixIndex.ScaleY] ** 2 + m3[MatrixIndex.SkewY] ** 2
+    );
+    const angle = (rotation * 180) / Math.PI;
+    return {
+      position: "absolute",
+      width: size.width * scaleX,
+      height: size.height * scaleY,
+      backgroundColor: debug ? "rgba(255, 0, 0, 0.5)" : "transparent",
+      top: m3[MatrixIndex.TransY],
+      left: m3[MatrixIndex.TransX],
+      transform: [{ rotateZ: `${angle}rad` }],
+    };
+  });
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View style={style}>
