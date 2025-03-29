@@ -131,6 +131,7 @@ const GlitchText = memo((props: GlitchTextProps) => {
     return () => clearInterval(interval);
   }, [xCord, playOnce]);
 
+  console.log("Glitch Text Width and Height: ", textWidth, textHeight);
   return (
     <>
       <Text

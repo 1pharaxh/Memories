@@ -45,7 +45,8 @@ const BigSmallText = memo((props: BigSmallTextProps) => {
   } = props;
 
   const font = useFont(FONTS[fontName], fontSize);
-  const textWidth = font ? font.getSize() : 0;
+  const textWidth = font ? font.measureText(text).width : 0;
+  const textHeight = font ? font.measureText(text).width : 0;
 
   const scale = useSharedValue(1);
 
@@ -86,6 +87,8 @@ const BigSmallText = memo((props: BigSmallTextProps) => {
   });
 
   const { colorScheme } = useColorScheme();
+
+  console.log("BigSmall Text Width and Height: ", textWidth, textHeight);
 
   return (
     <Group transform={transform}>

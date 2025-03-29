@@ -27,11 +27,11 @@ export default function ImageView(props: ImageViewProps) {
   const { width, height } = Dimensions.get("window");
 
   // Text properties
-  const text = "Hello World";
+  const text = "Hello World this works";
   const fontSize = 44;
 
   // Calculate text dimensions
-  const textWidth = fontSize * text.length * 0.6; // Approximate text width
+  const textWidth = 405;
   const textHeight = fontSize * 1.2; // Approximate text height
 
   const src = rect(0, 0, textWidth, textHeight);

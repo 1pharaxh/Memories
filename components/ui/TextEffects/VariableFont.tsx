@@ -108,6 +108,13 @@ const VariableFontAnimateText = memo((props: VariableFontAnimateTextProps) => {
 
   const { colorScheme } = useColorScheme();
 
+  const font = fontMgr
+    ? matchFont({ fontFamily: "OverusedGrotesk", fontSize }, fontMgr)
+    : null;
+  const textWidth = font ? font.measureText(text).width : 0;
+  const textHeight = font ? font.measureText(text).height : 0;
+  console.log("VariableFont Text Width and Height: ", textWidth, textHeight);
+
   return (
     <>
       {text.split("").map((char, index) => {

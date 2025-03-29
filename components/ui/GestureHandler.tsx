@@ -58,25 +58,50 @@ export const GestureHandler = ({
       matrix.value = rotateZ(offset.value, event.rotation, pivot.value);
     });
   const gesture = Gesture.Race(pan, pinch, rotate);
+
   const style = useAnimatedStyle(() => {
     const m3 = matrix.value.get();
-    console.log("matrix", m3);
-    const rotation = Math.atan2(m3[MatrixIndex.SkewY], m3[MatrixIndex.ScaleY]);
+
+    // Extract translation from matrix
+    const tx = m3[MatrixIndex.TransX];
+    const ty = m3[MatrixIndex.TransY];
+
+    // Extract rotation and scale
+    const rotation = Math.atan2(m3[MatrixIndex.SkewY], m3[MatrixIndex.ScaleX]);
     const scaleX = Math.sqrt(
-      m3[MatrixIndex.ScaleX] ** 2 + m3[MatrixIndex.SkewX] ** 2
+      m3[MatrixIndex.ScaleX] ** 2 + m3[MatrixIndex.SkewY] ** 2
     );
-    const scaleY = Math.sqrt(
-      m3[MatrixIndex.ScaleY] ** 2 + m3[MatrixIndex.SkewY] ** 2
-    );
-    const angle = (rotation * 180) / Math.PI;
+
+    // Calculate the original dimensions before scaling
+    const originalWidth = size.width;
+    const originalHeight = size.height;
+
+    // Calculate the half-dimensions for origin adjustments
+    const halfWidth = originalWidth / 2;
+    const halfHeight = originalHeight / 2;
+
     return {
       position: "absolute",
-      width: size.width * scaleX,
-      height: size.height * scaleY,
+      width: originalWidth,
+      height: originalHeight,
       backgroundColor: debug ? "rgba(255, 0, 0, 0.5)" : "transparent",
-      top: m3[MatrixIndex.TransY],
-      left: m3[MatrixIndex.TransX],
-      transform: [{ rotateZ: `${angle}rad` }],
+      transform: [
+        // Position first
+        { translateX: tx },
+        { translateY: ty },
+
+        // Move to rotation origin
+        { translateX: -halfWidth },
+        { translateY: -halfHeight },
+
+        // Apply scale and rotation
+        { scale: scaleX },
+        { rotate: `${rotation}rad` },
+
+        // Move back from rotation origin
+        { translateX: halfWidth },
+        { translateY: halfHeight },
+      ],
     };
   });
   return (
