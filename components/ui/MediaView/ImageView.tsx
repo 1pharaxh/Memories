@@ -17,6 +17,7 @@ import { GestureHandler } from "../GestureHandler";
 import Animated, { makeMutable, useSharedValue } from "react-native-reanimated";
 import { deflate } from "~/lib/utils";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import RenderStickers from "../Stickers/RenderStickers";
 
 type ImageViewProps = Omit<CanvasProps, "children"> & {};
 
@@ -51,15 +52,7 @@ export default function ImageView(props: ImageViewProps) {
 
         {/* Render text at center of screen */}
         {stickers?.map((e, idx) => (
-          <Group key={idx} matrix={e.matrix}>
-            <VariableFontAnimateText
-              text={e.text}
-              xCord={0}
-              yCord={e.fontSize} // Adjust for text baseline
-              comeback
-              fontSize={e.fontSize}
-            />
-          </Group>
+          <RenderStickers item={e} matrix={e.matrix} key={idx} />
         ))}
       </Canvas>
 

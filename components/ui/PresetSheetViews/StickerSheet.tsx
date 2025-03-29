@@ -29,7 +29,7 @@ import BigSmallText from "../Stickers/BigSmall";
 import { useColorScheme } from "~/lib/useColorScheme";
 import useGlobalStore from "~/store/globalStore";
 import { useRouter } from "expo-router";
-import { calculateFontSize, deflate } from "~/lib/utils";
+import { deflate } from "~/lib/utils";
 import { makeMutable } from "react-native-reanimated";
 
 const TEXT_PILL_HEIGHT = 72;
@@ -158,9 +158,15 @@ const StickerSheet = (props: Props) => {
       // Text properties
       const text = "Hello World this works";
 
-      const textWidth = item.fontSize * text.length * 0.45; // Approximate text width
+      const textWidth =
+        item.type === STICKER_TYPE.TEXT
+          ? item.fontSize * text.length * 0.45 // Approximate text width
+          : textStickerWidth;
 
-      const textHeight = item.fontSize * 1.2; // Approximate text height
+      const textHeight =
+        item.type === STICKER_TYPE.TEXT
+          ? item.fontSize * 1.2 // Approximate text height
+          : GIF_HEIGHT;
 
       const src = rect(0, 0, textWidth, textHeight);
       const dst = deflate(rect(0, 0, width, height), 24);

@@ -52,15 +52,3 @@ export const deflate = (rct: SkRect, amount: number) =>
     rct.width - amount * 2,
     rct.height - amount * 2
   );
-
-export const calculateFontSize = (
-  fontName: FontNames,
-  fontSize: number,
-  text: string
-): SkRect | 0 => {
-  // work on UI thread as we need size of each text to render its gesture handler
-  "worklet";
-
-  const font = useFont(FONTS[fontName], fontSize);
-  return font ? font.measureText(text) : 0;
-};
