@@ -3,19 +3,11 @@ import {
   Canvas,
   CanvasProps,
   ColorMatrix,
-  fitbox,
-  Group,
   Image,
-  processTransform2d,
-  rect,
-  Skia,
   useImage,
 } from "@shopify/react-native-skia";
 import useGlobalStore from "~/store/globalStore";
-import VariableFontAnimateText from "../Stickers/VariableFont";
 import { GestureHandler } from "../GestureHandler";
-import Animated, { makeMutable, useSharedValue } from "react-native-reanimated";
-import { deflate } from "~/lib/utils";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import RenderStickers from "../Stickers/RenderStickers";
 

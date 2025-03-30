@@ -84,7 +84,7 @@ export const GestureHandler = ({
       position: "absolute",
       width: originalWidth,
       height: originalHeight,
-      backgroundColor: debug ? "rgba(255, 0, 0, 0.5)" : "transparent",
+      backgroundColor: debug ? "rgba(255, 0, 0, 0.3)" : "transparent",
       transform: [
         // Position first
         { translateX: tx },
