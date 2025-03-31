@@ -16,9 +16,9 @@ import Animated, {
 } from "react-native-reanimated";
 import CameraTools from "~/components/ui/CameraTools";
 import RecordingCounter from "~/components/ui/RecordingCounter";
-import PictureView from "~/components/ui/PictureView";
 import VideoViewComponent from "~/components/ui/VideoView";
 import useGlobalStore from "~/store/globalStore";
+import MediaView from "~/components/ui/MediaView/MediaView";
 
 export default function HomeScreen() {
   const cameraRef = React.useRef<CameraView>(null);
@@ -44,7 +44,9 @@ export default function HomeScreen() {
   } = useGlobalStore();
 
   const handleTakePicture = React.useCallback(async () => {
-    const response = await cameraRef.current?.takePictureAsync({});
+    const response = await cameraRef.current?.takePictureAsync({
+      quality: 1,
+    });
     setPhoto(response!.uri);
   }, []);
 
@@ -54,7 +56,10 @@ export default function HomeScreen() {
       setIsRecording(false);
     } else {
       setIsRecording(true);
-      const response = await cameraRef.current?.recordAsync({});
+      const response = await cameraRef.current?.recordAsync({
+        codec: "hvc1",
+        maxDuration: 30,
+      });
       setVideo(response!.uri);
     }
   }, [isRecording]);
@@ -64,7 +69,7 @@ export default function HomeScreen() {
     setHandleTakeVideo(handleTakeVideo);
   }, [handleTakePicture, handleTakeVideo]);
 
-  if (photo) return <PictureView picture={photo} setPicture={setPhoto} />;
+  if (photo) return <MediaView type="picture" />;
   if (video) return <VideoViewComponent />;
 
   return (
@@ -104,10 +109,12 @@ export default function HomeScreen() {
           style={{ flex: 1 }}
           facing={cameraFacing}
           mode={cameraMode}
+          videoStabilizationMode="cinematic"
+          focusable
+          videoQuality="2160p"
           zoom={cameraZoom}
           enableTorch={cameraTorch}
           flash={cameraFlash}
-          barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
           onCameraReady={() => console.log("camera is ready")}
         >
           <View className="p-2 mt-28">

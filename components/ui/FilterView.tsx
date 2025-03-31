@@ -200,3 +200,29 @@ export const neonFragSrc = `
     gl_FragColor = mix(bottomColor, topColor, vUV.y);
   }
 `;
+
+export const summerColorMatrix = [
+  1.1, 0, 0, 0, 0, 0, 1.05, 0, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 0, 1, 0,
+];
+
+export const winterColorMatrix = [
+  0.9, 0, 0, 0, 0, 0, 0.95, 0, 0, 0, 0, 0, 1.1, 0, 0, 0, 0, 0, 1, 0,
+];
+
+export const vintageColorMatrix = [
+  0.393, 0.769, 0.189, 0, 0, 0.349, 0.686, 0.168, 0, 0, 0.272, 0.534, 0.131, 0,
+  0, 0, 0, 0, 1, 0,
+];
+
+export const nighttimeColorMatrix = [
+  0.3, 0, 0, 0, 0, 0, 0.3, 0, 0, 0, 0, 0, 0.7, 0, 0, 0, 0, 0, 1, 0,
+];
+
+export const neonColorMatrix = [
+  1.5, 0, 0, 0, -0.2, 0, 1.5, 0, 0, -0.2, 0, 0, 1.5, 0, -0.2, 0, 0, 0, 1, 0,
+];
+
+export const GreenColorMatrix = [
+  -0.578, 0.99, 0.588, 0, 0, 0.469, 0.535, -0.003, 0, 0, 0.015, 1.69, -0.703, 0,
+  0, 0, 0, 0, 1, 0,
+];

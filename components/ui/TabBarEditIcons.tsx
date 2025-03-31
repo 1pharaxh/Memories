@@ -2,12 +2,16 @@ import { BlurView } from "expo-blur";
 import React from "react";
 import { Platform, View } from "react-native";
 import TabBarText from "./TabBarText";
-import { Aperture } from "~/lib/icons/Aperture";
 import { useRouter } from "expo-router";
 import TouchableBounce from "./TouchableBounce";
 
 type TabBarEditIconsProps = {
-  label: string;
+  label: {
+    name: string;
+    type: string;
+    sheetTitle: string;
+    icon: React.JSX.Element;
+  };
   colorScheme: "dark" | "light" | undefined;
 };
 
@@ -16,8 +20,9 @@ const TabBarEditIcons = ({ label, colorScheme }: TabBarEditIconsProps) => {
 
   const onPress = async () => {
     try {
-      // Trigger haptics first
-      router.push("/preset-sheet");
+      router.push(
+        `/preset-sheet?type=${label.type}&sheetTitle=${label.sheetTitle}`
+      );
     } catch (error) {
       console.error("Haptics error:", error);
     }
@@ -26,7 +31,9 @@ const TabBarEditIcons = ({ label, colorScheme }: TabBarEditIconsProps) => {
   const onLongPress = async () => {
     try {
       // Trigger haptics first
-      router.push("/preset-sheet");
+      router.push(
+        `/preset-sheet?type=${label.type}&sheetTitle=${label.sheetTitle}`
+      );
     } catch (error) {
       console.error("Haptics error:", error);
     }
@@ -44,10 +51,10 @@ const TabBarEditIcons = ({ label, colorScheme }: TabBarEditIconsProps) => {
           tint={colorScheme === "light" ? "prominent" : "extraLight"}
           className="rounded-full overflow-hidden h-12 w-12 justify-center items-center"
         >
-          <Aperture size={17} strokeWidth={2} className="text-white" />
+          {label.icon}
         </BlurView>
 
-        <TabBarText>{label}</TabBarText>
+        <TabBarText>{label.name}</TabBarText>
       </View>
     </TouchableBounce>
   );

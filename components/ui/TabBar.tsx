@@ -10,6 +10,9 @@ import Animated, {
 import { BlurView } from "expo-blur";
 import React, { useEffect, useState } from "react";
 import { ArrowLeft } from "~/lib/icons/ArrowLeft";
+import { Share } from "~/lib/icons/Share";
+import { shareAsync } from "expo-sharing";
+
 import TabBarIcon from "./TabBarIcon";
 import { useColorScheme } from "nativewind";
 import useGlobalStore from "~/store/globalStore";
@@ -27,6 +30,7 @@ import {
 } from "~/lib/animations";
 import { cx } from "class-variance-authority";
 import TabBarText from "./TabBarText";
+import { PRESET_OPTIONS } from "~/lib/constants";
 export default function MyTabBar({
   state,
   descriptors,
@@ -150,9 +154,9 @@ export default function MyTabBar({
             )}
           />
           {photo || video ? (
-            <View className="absolute top-5 left-10 w-full flex flex-row items-center justify-between z-10">
+            <View className="absolute top-5 inset-x-12 flex flex-row items-center justify-center">
               <TouchableOpacity
-                className="h-fit w-fit flex items-center justify-center z-20"
+                className=" z-20"
                 onPress={() => {
                   setPhoto("");
                   setVideo("");
@@ -161,7 +165,16 @@ export default function MyTabBar({
                 <ArrowLeft size={17} strokeWidth={2} className="text-white" />
               </TouchableOpacity>
 
-              <TabBarText className="text-lg mt-0 right-8">Edit</TabBarText>
+              <TabBarText className="!text-lg !text-start !mt-0 ">
+                Edit
+              </TabBarText>
+
+              <TouchableOpacity
+                className="z-20"
+                onPress={async () => await shareAsync(photo || video)}
+              >
+                <Share size={17} strokeWidth={2} className="text-white" />
+              </TouchableOpacity>
             </View>
           ) : null}
           {!photo && !video
@@ -178,7 +191,7 @@ export default function MyTabBar({
                   key={route.key}
                 />
               ))
-            : ["Filter", "Text", "Animations", "Crop", "Me"].map((w, idx) => (
+            : PRESET_OPTIONS.map((w, idx) => (
                 <TabBarEditIcons
                   colorScheme={colorScheme}
                   label={w}

@@ -4,11 +4,13 @@ import { Animated, TextProps } from "react-native";
 
 interface TabBarTextProps extends TextProps {
   opacity?: number;
+  accountForDarkMode?: boolean;
 }
 
 export default function TabBarText({
   children,
   opacity = 1,
+  accountForDarkMode = false,
   style,
   ...rest
 }: TabBarTextProps) {
@@ -33,7 +35,8 @@ export default function TabBarText({
     <Animated.Text
       {...rest}
       className={cx(
-        "text-white text-xs mt-2 text-center w-full",
+        "text-xs mt-2 text-center w-full",
+        accountForDarkMode ? "dark:text-white text-black" : "text-white",
         rest.className
       )}
       style={[style, { opacity, transform: [{ translateY }] }]}
