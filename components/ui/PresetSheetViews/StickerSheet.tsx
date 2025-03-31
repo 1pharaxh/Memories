@@ -314,7 +314,8 @@ const AnimatedImages = ({
   const { replaceSticker } = useGlobalStore();
   React.useEffect(() => {
     if (!selected) return;
-    if (item.name !== selected.name) return;
+    if (item.name !== selected.name && selected.type !== STICKER_TYPE.IMAGE)
+      return;
     if (!expoImage) return;
 
     try {
