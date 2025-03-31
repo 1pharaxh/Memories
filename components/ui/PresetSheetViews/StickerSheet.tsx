@@ -330,7 +330,7 @@ const AnimatedImages = ({
       const widthScale = targetWidth / imgWidth;
       const heightScale = targetHeight / imgHeight;
       const scale = Math.min(widthScale, heightScale);
-      const dynamicScale = clamp(scale, 1.0, 0.1);
+      const dynamicScale = clamp(scale, 0.1, 1.0);
 
       if (selected) {
         replaceSticker({
