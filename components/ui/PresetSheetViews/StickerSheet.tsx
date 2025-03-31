@@ -128,6 +128,7 @@ const RenderSticker = (
           xCord={-textWidth / 2}
           yCord={item.fontSize / 4}
           fontSize={item.fontSize}
+          fontName={item.fontName}
         />
       );
     }
@@ -142,6 +143,7 @@ const RenderSticker = (
           xCord={-textWidth / 2}
           yCord={item.fontSize / 4}
           fontSize={item.fontSize}
+          fontName={item.fontName}
         />
       );
     }

@@ -85,6 +85,7 @@ const RenderText = ({ item }: { item: GLOBALS_SINGLE_STICKER_OPTIONS }) => {
           xCord={0}
           yCord={item.fontSize}
           fontSize={item.fontSize}
+          fontName={item.fontName}
         />
       );
     }
@@ -97,6 +98,7 @@ const RenderText = ({ item }: { item: GLOBALS_SINGLE_STICKER_OPTIONS }) => {
           xCord={0}
           yCord={item.fontSize}
           fontSize={item.fontSize}
+          fontName={item.fontName}
         />
       );
     }

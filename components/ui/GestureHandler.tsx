@@ -2,6 +2,7 @@ import {
   Skia,
   type SkMatrix,
   type SkSize,
+  useFont,
   vec,
 } from "@shopify/react-native-skia";
 import { Text } from "react-native";
@@ -11,7 +12,12 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
+import { FONTS, STICKER_TYPE } from "~/lib/constants";
 import { rotateZ, scale, translate } from "~/lib/utils";
+import { GLOBALS_SINGLE_STICKER_OPTIONS } from "~/store/globalStore";
+
+// constant to increase text gesture handler height
+const TEXT_HEIGHT_OFFSET = 15;
 
 export enum MatrixIndex {
   ScaleX = 0,
@@ -25,16 +31,19 @@ export enum MatrixIndex {
   Persp2 = 8,
 }
 interface GestureHandlerProps {
-  matrix: SharedValue<SkMatrix>;
-  size: SkSize;
   debug?: boolean;
+  sticker: GLOBALS_SINGLE_STICKER_OPTIONS;
 }
 
-export const GestureHandler = ({
-  matrix,
-  size,
-  debug,
-}: GestureHandlerProps) => {
+export const GestureHandler = ({ sticker, debug }: GestureHandlerProps) => {
+  const { fontSize, fontName, height, matrix, name, text, type, width } =
+    sticker;
+  const font = useFont(FONTS[fontName!], fontSize);
+  const textWidth = font ? font.measureText(text).width : 0;
+  const textHeight = font
+    ? font.measureText(text).height + TEXT_HEIGHT_OFFSET
+    : 0;
+
   const pivot = useSharedValue(Skia.Point(0, 0));
   const offset = useSharedValue(Skia.Matrix());
   const pan = Gesture.Pan().onChange((event) => {
@@ -73,8 +82,8 @@ export const GestureHandler = ({
     );
 
     // Calculate the original dimensions before scaling
-    const originalWidth = size.width;
-    const originalHeight = size.height;
+    const originalWidth = type === STICKER_TYPE.IMAGE ? width : textWidth;
+    const originalHeight = type === STICKER_TYPE.IMAGE ? height : textHeight;
 
     // Calculate the half-dimensions for origin adjustments
     const halfWidth = originalWidth / 2;

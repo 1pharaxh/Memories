@@ -172,18 +172,21 @@ export const STICKER_OPTIONS: SINGLE_STICKER_OPTIONS[] = [
   {
     type: STICKER_TYPE.TEXT,
     name: STICKER_TEXT_NAME.BLOOM,
+    fontName: "OverusedGrotesk",
     fontSize: 30,
   },
 
   {
     type: STICKER_TYPE.TEXT,
     name: STICKER_TEXT_NAME.RIGHTWARD,
+    fontName: "OverusedGrotesk",
     fontSize: 35,
   },
 
   {
     type: STICKER_TYPE.TEXT,
     name: STICKER_TEXT_NAME.LEFTWARD,
+    fontName: "OverusedGrotesk",
     fontSize: 35,
   },
 

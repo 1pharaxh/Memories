@@ -50,15 +50,7 @@ export default function ImageView(props: ImageViewProps) {
 
       {/* Position gesture handler at the same position as text */}
       {stickers?.map((e, idx) => (
-        <GestureHandler
-          debug
-          key={idx}
-          matrix={e.matrix}
-          size={{
-            height: e.height,
-            width: e.width,
-          }}
-        />
+        <GestureHandler debug key={idx} sticker={e} />
       ))}
     </GestureHandlerRootView>
   );
