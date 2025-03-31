@@ -1,7 +1,7 @@
 import TouchableBounce from "~/components/ui/TouchableBounce";
 import { View, Text, Dimensions } from "react-native";
 
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { cx } from "class-variance-authority";
 import {
   Canvas,
@@ -27,14 +27,19 @@ import {
 import GlitchText from "../Stickers/Glitch";
 import BigSmallText from "../Stickers/BigSmall";
 import { useColorScheme } from "~/lib/useColorScheme";
-import useGlobalStore from "~/store/globalStore";
+import useGlobalStore, {
+  GLOBALS_SINGLE_STICKER_OPTIONS,
+} from "~/store/globalStore";
 import { useRouter } from "expo-router";
 import { deflate } from "~/lib/utils";
-import { makeMutable } from "react-native-reanimated";
+import { clamp, makeMutable } from "react-native-reanimated";
+import { useImage } from "expo-image";
 
 const TEXT_PILL_HEIGHT = 72;
 const GIF_HEIGHT = 180;
 type Props = {};
+
+const { width, height } = Dimensions.get("window");
 
 const CenteredSkiaContent = ({
   width,
@@ -146,12 +151,12 @@ const RenderSticker = (
 };
 
 const StickerSheet = (props: Props) => {
-  const { width, height } = Dimensions.get("window");
   const textStickerWidth = width / 2 - 24;
 
   const { colorScheme } = useColorScheme();
   const { addStickers } = useGlobalStore();
-  const router = useRouter();
+
+  const [selected, setSelected] = useState<GLOBALS_SINGLE_STICKER_OPTIONS>();
 
   const onPress = useCallback(
     (item: SINGLE_STICKER_OPTIONS) => {
@@ -167,11 +172,19 @@ const StickerSheet = (props: Props) => {
         item.type === STICKER_TYPE.TEXT
           ? item.fontSize * 1.2 // Approximate text height
           : GIF_HEIGHT;
-
+      // construct matrix to render in middle of screen
       const src = rect(0, 0, textWidth, textHeight);
       const dst = deflate(rect(0, 0, width, height), 24);
       const m3 = processTransform2d(fitbox("contain", src, dst));
       const matrix = makeMutable(m3);
+
+      setSelected({
+        ...item,
+        matrix,
+        text,
+        width: textWidth,
+        height: textHeight,
+      });
 
       addStickers({
         ...item,
@@ -180,10 +193,8 @@ const StickerSheet = (props: Props) => {
         width: textWidth,
         height: textHeight,
       });
-
-      router.back();
     },
-    [addStickers, width, height, router]
+    [addStickers, width, height]
   );
 
   return (
@@ -193,48 +204,19 @@ const StickerSheet = (props: Props) => {
         data={STICKER_OPTIONS}
         numColumns={2}
         estimatedItemSize={100}
+        keyExtractor={(item) => item.name}
+        extraData={selected?.name}
         ListFooterComponentStyle={{
           padding: 360,
         }}
-        renderItem={({ item }: { item: SINGLE_STICKER_OPTIONS }) => (
-          <View className="mb-4">
-            <TouchableBounce sensory onPress={onPress.bind(null, item)}>
-              <Canvas
-                style={{
-                  width: textStickerWidth,
-                  height:
-                    item.type === STICKER_TYPE.TEXT
-                      ? TEXT_PILL_HEIGHT
-                      : GIF_HEIGHT,
-                  flex: 1,
-                }}
-              >
-                {item.type === STICKER_TYPE.TEXT ? (
-                  <>
-                    <RoundedRect
-                      color={colorScheme === "light" ? "white" : "black"}
-                      x={0}
-                      y={0}
-                      r={25}
-                      height={72}
-                      width={textStickerWidth}
-                    />
-                    <CenteredSkiaContent
-                      width={textStickerWidth}
-                      height={TEXT_PILL_HEIGHT}
-                    >
-                      {RenderSticker(item, textStickerWidth)}
-                    </CenteredSkiaContent>
-                  </>
-                ) : (
-                  <AnimatedImages
-                    item={item}
-                    textStickerWidth={textStickerWidth}
-                  />
-                )}
-              </Canvas>
-            </TouchableBounce>
-          </View>
+        renderItem={({ item }) => (
+          <StickerItem
+            item={item}
+            selected={selected}
+            colorScheme={colorScheme}
+            textStickerWidth={textStickerWidth}
+            onItemPress={onPress}
+          />
         )}
       />
     </View>
@@ -243,15 +225,131 @@ const StickerSheet = (props: Props) => {
 
 export default StickerSheet;
 
+const StickerItem = React.memo(
+  ({
+    item,
+    selected,
+    colorScheme,
+    textStickerWidth,
+    onItemPress,
+  }: {
+    item: SINGLE_STICKER_OPTIONS;
+    selected?: GLOBALS_SINGLE_STICKER_OPTIONS;
+    colorScheme: string;
+    textStickerWidth: number;
+    onItemPress: (item: SINGLE_STICKER_OPTIONS) => void;
+  }) => {
+    return (
+      <View className="mb-4">
+        <TouchableBounce sensory onPress={() => onItemPress(item)}>
+          <Canvas
+            style={{
+              width: textStickerWidth,
+              height:
+                item.type === STICKER_TYPE.TEXT ? TEXT_PILL_HEIGHT : GIF_HEIGHT,
+              flex: 1,
+            }}
+          >
+            {item.type === STICKER_TYPE.TEXT ? (
+              <>
+                <RoundedRect
+                  color={colorScheme === "light" ? "white" : "black"}
+                  x={0}
+                  y={0}
+                  r={25}
+                  height={72}
+                  width={textStickerWidth}
+                />
+                <CenteredSkiaContent
+                  width={textStickerWidth}
+                  height={TEXT_PILL_HEIGHT}
+                >
+                  {RenderSticker(item, textStickerWidth)}
+                </CenteredSkiaContent>
+              </>
+            ) : (
+              <AnimatedImages
+                item={item}
+                textStickerWidth={textStickerWidth}
+                // Don't pass the entire selected object, just what's needed
+                selected={selected}
+              />
+            )}
+          </Canvas>
+        </TouchableBounce>
+      </View>
+    );
+  },
+  (prev, next) => {
+    const wasSelected = prev.selected?.name === prev.item.name;
+    const isSelected = next.selected?.name === next.item.name;
+
+    // If selection state changed for THIS item, re-render
+    if (wasSelected !== isSelected) return false;
+
+    // If color scheme changed, re-render
+    if (prev.colorScheme !== next.colorScheme) return false;
+
+    // Otherwise don't
+    return true;
+  }
+);
+
 const AnimatedImages = ({
   item,
   textStickerWidth,
+  selected = undefined,
 }: {
   item: SINGLE_STICKER_OPTIONS;
   textStickerWidth: number;
+  selected: GLOBALS_SINGLE_STICKER_OPTIONS | undefined;
 }) => {
+  const router = useRouter();
+
   // This can be an animated GIF or WebP file
   const image = useAnimatedImageValue(item.name);
+
+  const expoImage = useImage(selected?.name || item.name);
+
+  const { replaceSticker } = useGlobalStore();
+  React.useEffect(() => {
+    if (!selected) return;
+    if (item.name !== selected.name) return;
+    if (!expoImage) return;
+
+    try {
+      // Safe access to image dimensions with null checks
+      const imgWidth = expoImage?.width || 0;
+      const imgHeight = expoImage?.height || 0;
+
+      if (imgWidth === 0 || imgHeight === 0) return;
+
+      const targetWidth = width * 0.4;
+      const targetHeight = height * 0.3;
+
+      const widthScale = targetWidth / imgWidth;
+      const heightScale = targetHeight / imgHeight;
+      const scale = Math.min(widthScale, heightScale);
+      const dynamicScale = clamp(scale, 1.0, 0.1);
+
+      if (selected) {
+        replaceSticker({
+          ...selected,
+          width: imgWidth * dynamicScale,
+          height: imgHeight * dynamicScale,
+        });
+      }
+    } catch (error) {
+      console.log("Error processing image:", error);
+    }
+    router.back();
+  }, [selected, expoImage, item.name, replaceSticker, width, height]);
+
+  // Add error boundary to prevent crashes
+  if (!image) {
+    return null;
+  }
+
   return (
     <Image
       image={image}

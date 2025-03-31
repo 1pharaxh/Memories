@@ -116,6 +116,7 @@ export interface PresetSlice {
   setCrop: (crop: Crop) => void;
   setDraw: (draw: Draw[]) => void;
   addStickers: (sticker: GLOBALS_SINGLE_STICKER_OPTIONS) => void;
+  replaceSticker: (sticker: GLOBALS_SINGLE_STICKER_OPTIONS) => void;
 }
 
 const createPresetSlice: StateCreator<PresetSlice, [], [], PresetSlice> = (
@@ -135,6 +136,21 @@ const createPresetSlice: StateCreator<PresetSlice, [], [], PresetSlice> = (
   setFilter: (filter) => set({ filter }),
   setCrop: (crop) => set({ crop }),
   setDraw: (draw) => set({ draw }),
+  replaceSticker: (sticker) =>
+    set((state) => {
+      const newStickers = [...(state.stickers || [])];
+
+      // Find the index of the last sticker with the matching name
+      const lastIndex = newStickers
+        .map((s) => s.name)
+        .lastIndexOf(sticker.name);
+
+      if (lastIndex !== -1) {
+        newStickers[lastIndex] = sticker;
+      }
+
+      return { stickers: newStickers };
+    }),
   addStickers: (sticker) =>
     set((state) => ({ stickers: [...(state.stickers || []), sticker] })),
 });
