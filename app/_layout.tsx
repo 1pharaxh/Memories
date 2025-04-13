@@ -29,6 +29,8 @@ const DARK_THEME: Theme = {
   colors: NAV_THEME.dark,
 };
 
+console.log("test");
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
