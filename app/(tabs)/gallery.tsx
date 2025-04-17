@@ -135,7 +135,7 @@ function GalleryPage({}: Props) {
             >
               <View className="relative">
                 <Animated.Text
-                  className="text-6xl font-extrabold tracking-tighter text-center dark:text-white text-black/70 "
+                  className="text-6xl z-10 font-extrabold tracking-tighter text-center dark:text-white text-black/70 "
                   style={headingTextStyle}
                 >
                   Akarshan
