@@ -17,6 +17,7 @@ import TouchableBounce from "~/components/ui/TouchableBounce";
 import { Image } from "expo-image";
 const PADDING_X = 25;
 const PADDING_Y = 100;
+const TEXT_SIZE = 24;
 
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
@@ -67,13 +68,14 @@ function GalleryPage({}: Props) {
   });
 
   const headingTextStyle = useAnimatedStyle(() => {
+    const textSize = isExpanded.value ? 60 : TEXT_SIZE;
     const widthX = width - PADDING_X;
-    const collapsedHeight = widthX - 60;
+    const collapsedHeight = widthX - textSize;
     const expandedHeight = height - PADDING_Y;
 
     const targetHeight = isExpanded.value ? expandedHeight : collapsedHeight;
 
-    const translateY = withTiming(isExpanded.value ? 100 : targetHeight / 2, {
+    const translateY = withTiming(isExpanded.value ? 50 : targetHeight / 2, {
       duration: 500,
       easing: Easing.inOut(Easing.ease),
     });
@@ -88,21 +90,25 @@ function GalleryPage({}: Props) {
           translateY: translateY,
         },
       ],
+      fontSize: withTiming(textSize),
       alignItems: "center",
       justifyContent: "center",
     };
   });
   const subHeadingTextStyle = useAnimatedStyle(() => {
     const widthX = width - PADDING_X;
-    const collapsedHeight = widthX + 60;
+    const collapsedHeight = widthX + TEXT_SIZE;
     const expandedHeight = height - PADDING_Y;
 
     const targetHeight = isExpanded.value ? expandedHeight : collapsedHeight;
 
-    const translateY = withTiming(isExpanded.value ? 60 : targetHeight / 2, {
-      duration: 500,
-      easing: Easing.inOut(Easing.ease),
-    });
+    const translateY = withTiming(
+      isExpanded.value ? TEXT_SIZE : targetHeight / 2,
+      {
+        duration: 500,
+        easing: Easing.inOut(Easing.ease),
+      }
+    );
 
     return {
       position: "absolute",
@@ -127,7 +133,7 @@ function GalleryPage({}: Props) {
       style={{ flex: 1 }}
     >
       <SafeAreaView className="flex-1 justify-center items-center gap-4 px-5">
-        <View className="flex-col justify-end items-center gap-6 h-fit w-full ">
+        <View className="flex-col justify-end items-center h-fit w-full shadow">
           <TouchableBounce onPress={onPress} sensory>
             <Animated.View
               style={galleryBlobStyle}
@@ -135,7 +141,7 @@ function GalleryPage({}: Props) {
             >
               <View className="relative">
                 <Animated.Text
-                  className="text-6xl z-10 font-extrabold tracking-tighter text-center dark:text-white text-black/70 "
+                  className="font-extrabold tracking-tighter text-center dark:text-white text-black/70 "
                   style={headingTextStyle}
                 >
                   Akarshan
@@ -152,7 +158,6 @@ function GalleryPage({}: Props) {
                   .fill(null)
                   .map((_, index) => {
                     const containerWidth = width - 40;
-                    const expandedContainerHeight = height - PADDING_Y;
                     const boxWidth = 144;
                     const boxHeight = 192;
                     const positions = [
@@ -216,9 +221,7 @@ function GalleryPage({}: Props) {
                             backgroundColor: "red",
                             flex: 1,
                           }}
-                          source={{
-                            uri: "https://picsum.photos/seed/696/3000/2000",
-                          }}
+                          source={`https://picsum.photos/seed/${index}/3000/2000`}
                           contentFit="cover"
                           placeholder={blurhash}
                           transition={1000}
