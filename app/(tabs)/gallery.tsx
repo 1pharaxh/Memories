@@ -1,4 +1,5 @@
 import React from "react";
+import { Text } from "react-native";
 
 import Animated, {
   Easing,
@@ -15,9 +16,9 @@ import { Dimensions, View } from "react-native";
 import { Share, Info, Trash2, Heart } from "~/lib/icons/index";
 import TouchableBounce from "~/components/ui/TouchableBounce";
 import { Image } from "expo-image";
-const PADDING_X = 25;
-const PADDING_Y = 100;
-const TEXT_SIZE = 24;
+const X_OFFSET = 25;
+const Y_OFFSET = 100;
+const TEXT_SIZE = 32;
 
 const blurhash =
   "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
@@ -35,9 +36,9 @@ function GalleryPage({}: Props) {
   };
 
   const galleryBlobStyle = useAnimatedStyle(() => {
-    const widthX = width - PADDING_X;
-    const targetHeight = isExpanded.value ? height - PADDING_Y : widthX;
-    const translateY = isExpanded.value ? PADDING_Y : 0;
+    const widthX = width - X_OFFSET;
+    const targetHeight = isExpanded.value ? height : widthX;
+    const translateY = isExpanded.value ? targetHeight * 0.23 : 0;
     return {
       width: widthX,
       height: withTiming(targetHeight),
@@ -69,9 +70,9 @@ function GalleryPage({}: Props) {
 
   const headingTextStyle = useAnimatedStyle(() => {
     const textSize = isExpanded.value ? 60 : TEXT_SIZE;
-    const widthX = width - PADDING_X;
+    const widthX = width - X_OFFSET;
     const collapsedHeight = widthX - textSize;
-    const expandedHeight = height - PADDING_Y;
+    const expandedHeight = height;
 
     const targetHeight = isExpanded.value ? expandedHeight : collapsedHeight;
 
@@ -96,9 +97,9 @@ function GalleryPage({}: Props) {
     };
   });
   const subHeadingTextStyle = useAnimatedStyle(() => {
-    const widthX = width - PADDING_X;
+    const widthX = width - X_OFFSET;
     const collapsedHeight = widthX + TEXT_SIZE;
-    const expandedHeight = height - PADDING_Y;
+    const expandedHeight = height;
 
     const targetHeight = isExpanded.value ? expandedHeight : collapsedHeight;
 
@@ -133,18 +134,19 @@ function GalleryPage({}: Props) {
       style={{ flex: 1 }}
     >
       <SafeAreaView className="flex-1 justify-center items-center gap-4 px-5">
-        <View className="flex-col justify-end items-center h-fit w-full shadow">
+        <Text className="opacity-0"></Text>
+        <View className="flex-col justify-end items-center h-fit w-full shadow gap-6">
           <TouchableBounce onPress={onPress} sensory>
             <Animated.View
               style={galleryBlobStyle}
-              className="rounded-3xl overflow-hidden"
+              className="rounded-3xl overflow-hidden "
             >
               <View className="relative">
                 <Animated.Text
                   className="font-extrabold tracking-tighter text-center dark:text-white text-black/70 "
                   style={headingTextStyle}
                 >
-                  Akarshan
+                  Rome - 25
                 </Animated.Text>
 
                 <Animated.Text
@@ -157,35 +159,58 @@ function GalleryPage({}: Props) {
                 {Array(8)
                   .fill(null)
                   .map((_, index) => {
-                    const containerWidth = width - 40;
+                    const containerWidth = width;
                     const boxWidth = 144;
                     const boxHeight = 192;
+                    const padding = 0;
+                    const boxMiddleXCoord = containerWidth / 2 - boxWidth / 2;
+                    const boxMiddleYCoord = containerWidth / 2 - boxHeight / 2;
+
                     const positions = [
-                      { left: 0, top: -boxHeight / 3 },
                       {
-                        left: containerWidth / 2 - boxWidth / 2.5,
-                        top: -boxHeight / 3,
+                        left: boxMiddleXCoord - padding - boxWidth,
+                        top: boxMiddleYCoord - padding - boxHeight,
                       },
-                      { right: 0, top: -boxHeight / 3 },
-                      { left: 0, top: boxHeight - boxHeight / 3 },
-                      { right: 0, top: boxHeight - boxHeight / 3 },
-                      { left: 0, top: boxHeight * 1.65 },
                       {
-                        left: containerWidth / 2 - boxWidth / 2.5,
-                        top: boxHeight * 1.65,
+                        left: boxMiddleXCoord,
+                        top: boxMiddleYCoord - padding - boxHeight,
                       },
-                      { right: 0, top: boxHeight * 1.65 },
+                      {
+                        left: boxMiddleXCoord + padding + boxWidth,
+                        top: boxMiddleYCoord - padding - boxHeight,
+                      },
+                      {
+                        left: boxMiddleXCoord - padding - boxWidth,
+                        top: boxMiddleYCoord,
+                      },
+                      {
+                        left: boxMiddleXCoord + padding + boxWidth,
+                        top: boxMiddleYCoord,
+                      },
+
+                      {
+                        left: boxMiddleXCoord - padding - boxWidth,
+                        top: boxMiddleYCoord + boxHeight + padding,
+                      },
+                      {
+                        left: boxMiddleXCoord,
+                        top: boxMiddleYCoord + boxHeight + padding,
+                      },
+                      {
+                        left: boxMiddleXCoord + padding + boxWidth,
+                        top: boxMiddleYCoord + boxHeight + padding,
+                      },
                     ];
 
                     const translation = [
                       { x: 50, y: 210, rotate: -0.1 },
                       { x: 100, y: 220, rotate: 0.15 },
-                      { x: -120, y: 340, rotate: 0.1 },
-                      { x: 60, y: 300, rotate: 0.1 },
-                      { x: -20, y: 310, rotate: -0.1 },
-                      { x: 20, y: 300, rotate: -0.1 },
+                      { x: -130, y: 340, rotate: 0.1 },
+                      { x: 50, y: 300, rotate: 0.1 },
+                      { x: -50, y: 310, rotate: -0.1 },
+                      { x: 50, y: 300, rotate: -0.1 },
                       { x: 30, y: 200, rotate: -0.1 },
-                      { x: -20, y: 300, rotate: 0.2 },
+                      { x: -50, y: 300, rotate: 0.2 },
                     ];
 
                     const animatedStyles = useAnimatedStyle(() => {
@@ -218,7 +243,7 @@ function GalleryPage({}: Props) {
                           style={{
                             width: 144,
                             height: 192,
-                            backgroundColor: "red",
+                            backgroundColor: "#d1d5db",
                             flex: 1,
                           }}
                           source={`https://picsum.photos/seed/${index}/3000/2000`}
