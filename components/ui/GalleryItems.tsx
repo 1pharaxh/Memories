@@ -8,7 +8,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { Dimensions, View } from "react-native";
+import { Dimensions, ScrollView, View } from "react-native";
 import { Share, Info, Trash2, Heart } from "~/lib/icons/index";
 import TouchableBounce from "~/components/ui/TouchableBounce";
 import { Image } from "expo-image";
@@ -159,120 +159,122 @@ function GalleryItems({}: Props) {
             style={galleryBlobStyle}
             className="rounded-3xl overflow-hidden "
           >
-            <View className="relative">
-              <Animated.Text
-                className="font-extrabold tracking-tighter text-center dark:text-white text-black/70 "
-                style={headingTextStyle}
-              >
-                My Pics
-              </Animated.Text>
+            <ScrollView>
+              <View className="relative">
+                <Animated.Text
+                  className="font-extrabold tracking-tighter text-center dark:text-white text-black/70 "
+                  style={headingTextStyle}
+                >
+                  My Pics
+                </Animated.Text>
 
-              <Animated.Text
-                style={subHeadingTextStyle}
-                className="text-2xl font-medium tracking-tighter text-center dark:text-white text-black/70 "
-              >
-                April
-              </Animated.Text>
+                <Animated.Text
+                  style={subHeadingTextStyle}
+                  className="text-2xl font-medium tracking-tighter text-center dark:text-white text-black/70 "
+                >
+                  April
+                </Animated.Text>
 
-              {Array(8)
-                .fill(null)
-                .map((_, index) => {
-                  const containerWidth = width;
-                  const boxWidth = 144;
-                  const boxHeight = 192;
-                  const padding = 0;
-                  const boxMiddleXCoord = containerWidth / 2 - boxWidth / 2;
-                  const boxMiddleYCoord = containerWidth / 2 - boxHeight / 2;
+                {Array(8)
+                  .fill(null)
+                  .map((_, index) => {
+                    const containerWidth = width;
+                    const boxWidth = 144;
+                    const boxHeight = 192;
+                    const padding = 0;
+                    const boxMiddleXCoord = containerWidth / 2 - boxWidth / 2;
+                    const boxMiddleYCoord = containerWidth / 2 - boxHeight / 2;
 
-                  const positions = [
-                    {
-                      left: boxMiddleXCoord - padding - boxWidth,
-                      top: boxMiddleYCoord - padding - boxHeight,
-                    },
-                    {
-                      left: boxMiddleXCoord,
-                      top: boxMiddleYCoord - padding - boxHeight,
-                    },
-                    {
-                      left: boxMiddleXCoord + padding + boxWidth,
-                      top: boxMiddleYCoord - padding - boxHeight,
-                    },
-                    {
-                      left: boxMiddleXCoord - padding - boxWidth,
-                      top: boxMiddleYCoord,
-                    },
-                    {
-                      left: boxMiddleXCoord + padding + boxWidth,
-                      top: boxMiddleYCoord,
-                    },
+                    const positions = [
+                      {
+                        left: boxMiddleXCoord - padding - boxWidth,
+                        top: boxMiddleYCoord - padding - boxHeight,
+                      },
+                      {
+                        left: boxMiddleXCoord,
+                        top: boxMiddleYCoord - padding - boxHeight,
+                      },
+                      {
+                        left: boxMiddleXCoord + padding + boxWidth,
+                        top: boxMiddleYCoord - padding - boxHeight,
+                      },
+                      {
+                        left: boxMiddleXCoord - padding - boxWidth,
+                        top: boxMiddleYCoord,
+                      },
+                      {
+                        left: boxMiddleXCoord + padding + boxWidth,
+                        top: boxMiddleYCoord,
+                      },
 
-                    {
-                      left: boxMiddleXCoord - padding - boxWidth,
-                      top: boxMiddleYCoord + boxHeight + padding,
-                    },
-                    {
-                      left: boxMiddleXCoord,
-                      top: boxMiddleYCoord + boxHeight + padding,
-                    },
-                    {
-                      left: boxMiddleXCoord + padding + boxWidth,
-                      top: boxMiddleYCoord + boxHeight + padding,
-                    },
-                  ];
+                      {
+                        left: boxMiddleXCoord - padding - boxWidth,
+                        top: boxMiddleYCoord + boxHeight + padding,
+                      },
+                      {
+                        left: boxMiddleXCoord,
+                        top: boxMiddleYCoord + boxHeight + padding,
+                      },
+                      {
+                        left: boxMiddleXCoord + padding + boxWidth,
+                        top: boxMiddleYCoord + boxHeight + padding,
+                      },
+                    ];
 
-                  const translation = [
-                    { x: 50, y: 210, rotate: -0.1 },
-                    { x: 100, y: 220, rotate: 0.15 },
-                    { x: -130, y: 340, rotate: 0.1 },
-                    { x: 50, y: 300, rotate: 0.1 },
-                    { x: -50, y: 310, rotate: -0.1 },
-                    { x: 50, y: 300, rotate: -0.1 },
-                    { x: 30, y: 200, rotate: -0.1 },
-                    { x: -50, y: 300, rotate: 0.2 },
-                  ];
+                    const translation = [
+                      { x: 50, y: 210, rotate: -0.1 },
+                      { x: 100, y: 220, rotate: 0.15 },
+                      { x: -130, y: 340, rotate: 0.1 },
+                      { x: 50, y: 300, rotate: 0.1 },
+                      { x: -50, y: 310, rotate: -0.1 },
+                      { x: 50, y: 300, rotate: -0.1 },
+                      { x: 30, y: 200, rotate: -0.1 },
+                      { x: -50, y: 300, rotate: 0.2 },
+                    ];
 
-                  const animatedStyles = useAnimatedStyle(() => {
-                    const translateX = isExpanded.value
-                      ? translation[index].x
-                      : 0;
-                    const translateY = isExpanded.value
-                      ? translation[index].y
-                      : 0;
+                    const animatedStyles = useAnimatedStyle(() => {
+                      const translateX = isExpanded.value
+                        ? translation[index].x
+                        : 0;
+                      const translateY = isExpanded.value
+                        ? translation[index].y
+                        : 0;
 
-                    const rotate = isExpanded.value
-                      ? translation[index].rotate
-                      : 0;
-                    return {
-                      transform: [
-                        { translateX: withTiming(translateX) },
-                        { translateY: withTiming(translateY) },
-                        { rotate: withTiming(`${rotate}rad`) },
-                      ],
-                    };
-                  });
+                      const rotate = isExpanded.value
+                        ? translation[index].rotate
+                        : 0;
+                      return {
+                        transform: [
+                          { translateX: withTiming(translateX) },
+                          { translateY: withTiming(translateY) },
+                          { rotate: withTiming(`${rotate}rad`) },
+                        ],
+                      };
+                    });
 
-                  return (
-                    <Animated.View
-                      key={index}
-                      style={[positions[index], animatedStyles]}
-                      className="bg-green-500 h-48 w-36 absolute rounded-xl overflow-hidden"
-                    >
-                      <Image
-                        style={{
-                          width: 144,
-                          height: 192,
-                          backgroundColor: "#d1d5db",
-                          flex: 1,
-                        }}
-                        source={`https://picsum.photos/seed/${index}/3000/2000`}
-                        contentFit="cover"
-                        placeholder={blurhash}
-                        transition={1000}
-                      />
-                    </Animated.View>
-                  );
-                })}
-            </View>
+                    return (
+                      <Animated.View
+                        key={index}
+                        style={[positions[index], animatedStyles]}
+                        className="bg-green-500 h-48 w-36 absolute rounded-xl overflow-hidden"
+                      >
+                        <Image
+                          style={{
+                            width: 144,
+                            height: 192,
+                            backgroundColor: "#d1d5db",
+                            flex: 1,
+                          }}
+                          source={`https://picsum.photos/seed/${index}/3000/2000`}
+                          contentFit="cover"
+                          placeholder={blurhash}
+                          transition={1000}
+                        />
+                      </Animated.View>
+                    );
+                  })}
+              </View>
+            </ScrollView>
           </Animated.View>
         </WarpEffect>
       </TouchableBounce>

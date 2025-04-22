@@ -87,13 +87,13 @@ export default function TabBarIcon({
   const InnerPillStyle = useAnimatedStyle(() => {
     return {
       height: withTiming(
-        AnimatedIsFocused.value && AnimatedIsExpanded.value ? 70 : 48,
+        AnimatedIsFocused.value && AnimatedIsExpanded.value ? 60 : 48,
         {
           duration: 300,
         }
       ),
       width: withTiming(
-        AnimatedIsFocused.value && AnimatedIsExpanded.value ? 150 : 48,
+        AnimatedIsFocused.value && AnimatedIsExpanded.value ? 135 : 48,
         {
           duration: 300,
         }
@@ -132,7 +132,7 @@ export default function TabBarIcon({
 
             <Animated.Text
               style={TabBarPillTextStyle}
-              className="text-xl tracking-tighter text-white text-center"
+              className="text-lg tracking-tighter text-white text-center"
             >
               {label}
             </Animated.Text>

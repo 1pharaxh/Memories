@@ -96,16 +96,21 @@ export default function RootLayout() {
                 // Filter sheet is vertically scrolled list
                 routeName && routeName === FilterType.Filter
                   ? [0.25]
-                  : [0.25, 0.35],
-              headerRight: () => (
-                <Form.Link headerRight href="/(tabs)" dismissTo>
-                  <IconSymbol
-                    name="xmark.circle.fill"
-                    color={AC.systemGray}
-                    size={28}
-                  />
-                </Form.Link>
-              ),
+                  : routeName && routeName === FilterType.Draw
+                  ? [0.5]
+                  : [0.25, 0.5],
+              headerRight: () =>
+                routeName && routeName === FilterType.Draw ? (
+                  <></>
+                ) : (
+                  <Form.Link headerRight href="/(tabs)" dismissTo>
+                    <IconSymbol
+                      name="xmark.circle.fill"
+                      color={AC.systemGray}
+                      size={28}
+                    />
+                  </Form.Link>
+                ),
             }}
           />
         </Stack>

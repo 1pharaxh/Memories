@@ -3,14 +3,14 @@ export const editTabBarExpand = {
   height: 140,
   borderRadius: "3rem",
   gap: 25,
-  padding: 24,
+  padding: 15,
 };
 export const tabBarExpand = {
   scale: 1.1,
-  height: 90,
+  height: 75,
   gap: 15,
   borderRadius: "5rem",
-  padding: 10,
+  padding: 8,
 };
 
 export const tabBarCollapse = {

@@ -93,7 +93,7 @@ export const PRESET_OPTIONS = [
   {
     name: "Draw",
     type: FilterType.Draw,
-    sheetTitle: "Draw on your image",
+    sheetTitle: "",
     icon: <Brush size={17} strokeWidth={2} className="text-white" />,
   },
   {

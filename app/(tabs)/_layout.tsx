@@ -39,7 +39,7 @@ export default function TabLayout() {
             },
             tabBarIcon: () => {
               return (
-                <Sparkles size={28} strokeWidth={1.7} className="text-white" />
+                <Sparkles size={25} strokeWidth={1.7} className="text-white" />
               );
             },
           }}
@@ -51,7 +51,7 @@ export default function TabLayout() {
             title: "Snap",
             swipeEnabled: photo || video ? false : true,
             tabBarIcon: ({ focused, color }) => (
-              <Aperture size={28} strokeWidth={1.7} className="text-white" />
+              <Aperture size={25} strokeWidth={1.7} className="text-white" />
             ),
           }}
         />
@@ -66,7 +66,7 @@ export default function TabLayout() {
             title: "My Hub",
             tabBarIcon: () => {
               return (
-                <UserRound size={28} strokeWidth={1.7} className="text-white" />
+                <UserRound size={25} strokeWidth={1.7} className="text-white" />
               );
             },
           }}
