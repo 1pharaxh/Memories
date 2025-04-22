@@ -35,7 +35,7 @@ export default function TabBarText({
     <Animated.Text
       {...rest}
       className={cx(
-        "text-xs mt-2 text-center w-full",
+        "text-center w-full",
         accountForDarkMode ? "dark:text-white text-black" : "text-white",
         rest.className
       )}

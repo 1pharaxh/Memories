@@ -143,7 +143,7 @@ export default function MyTabBar({
       <View className="flex flex-row absolute bottom-0 h-1/4 items-end justify-center pb-6 w-full">
         <Animated.View
           style={animatedStyle}
-          className="mx-auto min-w-fit mt-8 flex flex-row items-center justify-between px-7"
+          className="mx-auto min-w-fit mt-8 flex flex-row items-center justify-between"
         >
           <BlurView
             intensity={60}

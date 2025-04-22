@@ -4,6 +4,12 @@ import { Platform, View } from "react-native";
 import TabBarText from "./TabBarText";
 import RecordingButton from "./RecordingButton";
 import TouchableBounce from "./TouchableBounce";
+import Animated, {
+  useAnimatedStyle,
+  useDerivedValue,
+  withTiming,
+} from "react-native-reanimated";
+import { AnimatedBlurView } from "./AnimatedBlurView";
 
 export default function TabBarIcon({
   state,
@@ -59,10 +65,48 @@ export default function TabBarIcon({
 
   const opacity = position.interpolate({
     inputRange,
-    outputRange: inputRange.map((i: number) => (i === index ? 1 : 0.3)),
+    outputRange: inputRange.map((i: number) => (i === index ? 1 : 0.1)),
   });
 
   const { tabBarIcon } = options;
+
+  const AnimatedIsExpanded = useDerivedValue(() => {
+    return isExpanded;
+  }, [isExpanded]);
+
+  const AnimatedIsFocused = useDerivedValue(() => {
+    return state.index === index;
+  }, [state.index, index]);
+
+  const TabBarPillTextStyle = useAnimatedStyle(() => {
+    return {
+      display:
+        AnimatedIsFocused.value && AnimatedIsExpanded.value ? "flex" : "none",
+      opacity: withTiming(
+        AnimatedIsFocused.value && AnimatedIsExpanded.value ? 1 : 0,
+        {
+          duration: 300,
+        }
+      ),
+    };
+  });
+
+  const TabBarPillStyle = useAnimatedStyle(() => {
+    return {
+      height: withTiming(
+        AnimatedIsFocused.value && AnimatedIsExpanded.value ? 70 : 48,
+        {
+          duration: 300,
+        }
+      ),
+      width: withTiming(
+        AnimatedIsFocused.value && AnimatedIsExpanded.value ? 150 : 48,
+        {
+          duration: 300,
+        }
+      ),
+    };
+  });
 
   if (route.name === "index" && isFocused) {
     return <RecordingButton key={route.name} />;
@@ -79,10 +123,11 @@ export default function TabBarIcon({
         onLongPress={onLongPress}
       >
         <View className="flex items-center justify-center flex-col">
-          <BlurView
+          <AnimatedBlurView
+            style={TabBarPillStyle}
             intensity={isFocused ? 50 : 30}
             tint={colorScheme === "light" ? "prominent" : "extraLight"}
-            className="rounded-full overflow-hidden h-12 w-12 justify-center items-center flex"
+            className="rounded-full overflow-hidden flex-row items-center justify-center gap-3"
           >
             {tabBarIcon &&
               tabBarIcon({
@@ -90,8 +135,13 @@ export default function TabBarIcon({
                 color: isFocused ? "#ffffff" : "#ffffff80",
                 size: 24,
               })}
-          </BlurView>
-          {isExpanded && <TabBarText opacity={opacity}>{label}</TabBarText>}
+
+            <Animated.View style={TabBarPillTextStyle}>
+              <TabBarText className="text-lg" opacity={opacity}>
+                {label}
+              </TabBarText>
+            </Animated.View>
+          </AnimatedBlurView>
         </View>
       </TouchableBounce>
     );
