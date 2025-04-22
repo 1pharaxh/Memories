@@ -61,14 +61,7 @@ export default function TabBarIcon({
     navigation.navigate({ name: route.name, merge: true });
   };
 
-  const inputRange = state.routes.map((_: any, i: any) => i);
-
-  const opacity = position.interpolate({
-    inputRange,
-    outputRange: inputRange.map((i: number) => (i === index ? 1 : 0.1)),
-  });
-
-  const { tabBarIcon } = options;
+  const { tabBarIcon: Icon } = options;
 
   const AnimatedIsExpanded = useDerivedValue(() => {
     return isExpanded;
@@ -91,7 +84,7 @@ export default function TabBarIcon({
     };
   });
 
-  const TabBarPillStyle = useAnimatedStyle(() => {
+  const InnerPillStyle = useAnimatedStyle(() => {
     return {
       height: withTiming(
         AnimatedIsFocused.value && AnimatedIsExpanded.value ? 70 : 48,
@@ -124,23 +117,25 @@ export default function TabBarIcon({
       >
         <View className="flex items-center justify-center flex-col">
           <AnimatedBlurView
-            style={TabBarPillStyle}
-            intensity={isFocused ? 50 : 30}
-            tint={colorScheme === "light" ? "prominent" : "extraLight"}
+            style={InnerPillStyle}
+            intensity={isFocused ? 50 : 0}
+            tint={
+              isFocused
+                ? colorScheme === "light"
+                  ? "prominent"
+                  : "extraLight"
+                : "default"
+            }
             className="rounded-full overflow-hidden flex-row items-center justify-center gap-3"
           >
-            {tabBarIcon &&
-              tabBarIcon({
-                focused: isFocused,
-                color: isFocused ? "#ffffff" : "#ffffff80",
-                size: 24,
-              })}
+            <Icon />
 
-            <Animated.View style={TabBarPillTextStyle}>
-              <TabBarText className="text-lg" opacity={opacity}>
-                {label}
-              </TabBarText>
-            </Animated.View>
+            <Animated.Text
+              style={TabBarPillTextStyle}
+              className="text-xl tracking-tighter text-white text-center"
+            >
+              {label}
+            </Animated.Text>
           </AnimatedBlurView>
         </View>
       </TouchableBounce>

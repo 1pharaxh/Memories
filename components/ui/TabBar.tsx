@@ -31,6 +31,7 @@ import {
 import { cx } from "class-variance-authority";
 import TabBarText from "./TabBarText";
 import { PRESET_OPTIONS } from "~/lib/constants";
+import { AnimatedBlurView } from "./AnimatedBlurView";
 export default function MyTabBar({
   state,
   descriptors,
@@ -145,9 +146,9 @@ export default function MyTabBar({
           style={animatedStyle}
           className="mx-auto min-w-fit mt-8 flex flex-row items-center justify-between"
         >
-          <BlurView
+          <AnimatedBlurView
             intensity={60}
-            tint="dark"
+            tint={colorScheme === "light" ? "dark" : "light"}
             className={cx(
               "absolute top-0 left-0 right-0 bottom-0 overflow-hidden",
               photo || video ? "rounded-[3rem]" : "rounded-[5rem]"
