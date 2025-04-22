@@ -3,6 +3,7 @@
   "main": "index.js",
   "version": "1.0.0",
   "scripts": {
+    "offline": "expo start --offline",
     "dev": "expo start -c",
     "dev:web": "expo start -c --web",
     "dev:android": "expo start -c --android",

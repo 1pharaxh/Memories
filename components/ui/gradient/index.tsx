@@ -20,8 +20,7 @@ import {
 } from "~/store/OverlayStore";
 import { generateColors } from "~/lib/utils";
 import { ENTERING_TIME, EXITING_TIME } from "./constants";
-
-const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
+import { AnimatedBlurView } from "../AnimatedBlurView";
 
 const dimensions = Dimensions.get("window");
 
