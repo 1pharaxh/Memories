@@ -2,6 +2,7 @@ import Slider from "@react-native-community/slider";
 import { cx } from "class-variance-authority";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback } from "react";
+import { Pen } from "~/lib/icons/Pen";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 import {
   Gesture,
@@ -103,8 +104,12 @@ const ColorSelectionSheet = (props: Props) => {
         <View className="flex flex-row gap-3 items-center justify-center">
           <Animated.View
             style={selectedColorStyle}
-            className={cx("w-16 h-16 rounded-full")}
-          />
+            className={cx(
+              "w-16 h-16 rounded-full flex items-center justify-center "
+            )}
+          >
+            <Pen strokeWidth={2} size={24} className="text-white" />
+          </Animated.View>
 
           <ScrollView
             horizontal
