@@ -16,6 +16,7 @@ import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "@rn-primitives/portal";
 import * as Form from "~/components/ui/Form";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
+import * as ScreenOrientation from "expo-screen-orientation";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { IconSymbol } from "~/components/ui/IconSymbol";
@@ -58,6 +59,7 @@ export default function RootLayout() {
     setAndroidNavigationBar(colorScheme);
     setIsColorSchemeLoaded(true);
     hasMounted.current = true;
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
   }, []);
 
   if (!isColorSchemeLoaded) {
