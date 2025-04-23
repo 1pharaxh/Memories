@@ -26,14 +26,12 @@ export default function VideoViewComponent(props: VideoViewProps) {
   const { ...rest } = props;
 
   const paused = useSharedValue(false);
-  const { width, height } = Dimensions.get("window");
+  const { width, height } = Dimensions.get("screen");
 
   const { video, filter, stickers } = useGlobalStore();
   const { currentFrame, rotation, size } = useVideo(video, {
     paused,
   });
-
-  const radians = (deg: number) => (deg * Math.PI) / 180;
 
   const currentPath = useSharedValue(Skia.Path.Make());
 
@@ -48,6 +46,10 @@ export default function VideoViewComponent(props: VideoViewProps) {
 
     playSound();
   }, []);
+
+  const src = rect(0, 0, width, height);
+  const dst = rect(0, 0, width, height);
+  const transform = fitbox("cover", src, dst, rotation);
 
   return (
     <Pressable
@@ -64,6 +66,7 @@ export default function VideoViewComponent(props: VideoViewProps) {
                 y={0}
                 width={width}
                 height={height}
+                transform={transform}
               />
               <ColorMatrix
                 matrix={
