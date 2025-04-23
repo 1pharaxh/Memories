@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Canvas,
   ColorMatrix,
@@ -11,6 +11,7 @@ import {
 import { Pressable, useWindowDimensions } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import useGlobalStore from "~/store/globalStore";
+import { Audio } from "expo-av";
 
 interface VideoViewProps {}
 export default function VideoViewComponent({}: VideoViewProps) {
@@ -25,6 +26,18 @@ export default function VideoViewComponent({}: VideoViewProps) {
   const transform = fitbox("cover", src, dst, rotation);
   console.log("transform", transform);
 
+  useEffect(() => {
+    async function playSound() {
+      console.log("Loading Sound");
+      const { sound } = await Audio.Sound.createAsync({ uri: video });
+
+      console.log("Playing Sound");
+      await sound.playAsync();
+    }
+
+    playSound();
+  }, []);
+
   return (
     <Pressable
       style={{ flex: 1 }}
@@ -38,6 +51,7 @@ export default function VideoViewComponent({}: VideoViewProps) {
             y={0}
             width={width}
             height={height}
+            transform={transform}
             fit="cover"
           />
           <ColorMatrix

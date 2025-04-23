@@ -70,7 +70,7 @@ export default function HomeScreen() {
   }, [handleTakePicture, handleTakeVideo]);
 
   if (photo) return <MediaView type="picture" />;
-  if (video) return <VideoViewComponent />;
+  if (video) return <MediaView type="video" />;
 
   return (
     <Animated.View

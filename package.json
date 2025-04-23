@@ -66,7 +66,8 @@
     "vaul": "^1.1.2",
     "zustand": "^4.4.7",
     "expo-linear-gradient": "~14.0.2",
-    "@react-native-community/slider": "4.5.5"
+    "@react-native-community/slider": "4.5.5",
+    "expo-av": "~15.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
