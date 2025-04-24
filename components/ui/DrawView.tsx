@@ -11,9 +11,10 @@ import {
 type Props = {
   children: React.ReactNode;
   currentPath: SharedValue<SkPath>;
+  erase?: boolean;
 };
 
-const DrawView = ({ children, currentPath }: Props) => {
+const DrawView = ({ children, currentPath, erase = true }: Props) => {
   const currentPathObject = useSharedValue(Skia.Path.Make());
   const currentPathX = useSharedValue(0);
   const currentPathY = useSharedValue(0);
