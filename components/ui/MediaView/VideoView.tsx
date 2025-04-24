@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Canvas,
   CanvasProps,
@@ -11,7 +11,7 @@ import {
   Skia,
   useVideo,
 } from "@shopify/react-native-skia";
-import { Dimensions, Pressable, useWindowDimensions, View } from "react-native";
+import { Dimensions, View } from "react-native";
 import {
   runOnJS,
   useDerivedValue,
@@ -41,39 +41,58 @@ export default function VideoViewComponent(props: VideoViewProps) {
 
   const currentPath = useSharedValue(Skia.Path.Make());
   const [isPlaying, setIsPlaying] = useState(true);
-  const [muted, setMuted] = useState<boolean>(true);
-  const [curretVideoTime, setCurretVideoTime] = useState<number>(
-    currentTime.value
-  );
+  const [muted, setMuted] = useState<boolean>(false);
+
+  const soundRef = useRef<Audio.Sound | null>(null);
+
+  const flag = useRef<boolean>(false);
+
+  const [replaySound, setReplaySound] = useState<boolean>(false);
 
   useDerivedValue(() => {
-    if (paused.value) {
-      runOnJS(setCurretVideoTime)(currentTime.value);
+    if (currentTime.value === 0) {
+      runOnJS(setReplaySound)(true);
     }
-  }, [currentTime, paused]);
+  }, [currentTime]);
 
   useEffect(() => {
     async function playSound() {
-      const { sound } = await Audio.Sound.createAsync({ uri: video });
-      await sound.setIsMutedAsync(muted);
-      if (isPlaying) {
-        await sound.playAsync();
+      if (!soundRef.current) {
+        const { sound } = await Audio.Sound.createAsync({ uri: video });
+        soundRef.current = sound;
+      }
+
+      if (replaySound) {
+        await soundRef.current?.setPositionAsync(0);
+        setReplaySound(false);
+      }
+
+      await soundRef.current.setIsMutedAsync(muted);
+
+      if (!isPlaying) {
+        await soundRef.current?.pauseAsync();
+        flag.current = false;
       } else {
-        await sound.pauseAsync();
+        if (!flag.current) {
+          await soundRef.current?.setPositionAsync(currentTime.value);
+          flag.current = true;
+        }
+        await soundRef.current?.playAsync();
       }
     }
 
     playSound();
-  }, [muted, isPlaying]);
+  }, [muted, isPlaying, currentTime.value, replaySound]);
 
   const src = rect(0, 0, width, height);
   const dst = rect(0, 0, width, height);
   const transform = fitbox("cover", src, dst, rotation);
 
-  const resetAndClose = () => {
+  const resetAndClose = async () => {
     setVideo("");
     setCameraMode("picture");
     setIsRecording(false);
+    soundRef.current?.stopAsync();
   };
 
   return (
@@ -88,8 +107,8 @@ export default function VideoViewComponent(props: VideoViewProps) {
         }}
       >
         <IconButton
-          onPress={() => {
-            resetAndClose();
+          onPress={async () => {
+            await resetAndClose();
           }}
           iosName={"xmark"}
         />
@@ -104,11 +123,12 @@ export default function VideoViewComponent(props: VideoViewProps) {
           iosName={isPlaying ? "pause" : "play"}
           onPress={() => {
             if (isPlaying) {
-              paused.value = !paused.value;
+              paused.value = true;
+              setIsPlaying(false);
             } else {
-              paused.value = !paused.value;
+              paused.value = false;
+              setIsPlaying(true);
             }
-            setIsPlaying(!isPlaying);
           }}
         />
       </View>
