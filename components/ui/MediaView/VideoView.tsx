@@ -155,9 +155,7 @@ export default function VideoViewComponent(props: VideoViewProps) {
                       ]
                 }
               />
-              {stickers?.map((e, idx) => (
-                <RenderStickers item={e} matrix={e.matrix} key={idx} />
-              ))}
+
               <Path
                 path={currentPath}
                 color="#61DAFB"
@@ -166,6 +164,10 @@ export default function VideoViewComponent(props: VideoViewProps) {
               >
                 <DiscretePathEffect length={10} deviation={2} />
               </Path>
+
+              {stickers?.map((e, idx) => (
+                <RenderStickers item={e} matrix={e.matrix} key={idx} />
+              ))}
             </Canvas>
 
             {stickers?.map((e, idx) => (

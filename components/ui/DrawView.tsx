@@ -2,7 +2,6 @@ import { Skia, SkPath } from "@shopify/react-native-skia";
 import React from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import {
-  DerivedValue,
   SharedValue,
   useDerivedValue,
   useSharedValue,
@@ -11,10 +10,9 @@ import {
 type Props = {
   children: React.ReactNode;
   currentPath: SharedValue<SkPath>;
-  erase?: boolean;
 };
 
-const DrawView = ({ children, currentPath, erase = true }: Props) => {
+const DrawView = ({ children, currentPath }: Props) => {
   const currentPathObject = useSharedValue(Skia.Path.Make());
   const currentPathX = useSharedValue(0);
   const currentPathY = useSharedValue(0);

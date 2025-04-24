@@ -5,9 +5,11 @@ import {
   ColorMatrix,
   DiscretePathEffect,
   Image,
+  LinearGradient,
   Path,
   Skia,
   useImage,
+  vec,
 } from "@shopify/react-native-skia";
 import useGlobalStore from "~/store/globalStore";
 import { GestureHandler } from "../GestureHandler";
@@ -49,17 +51,19 @@ export default function ImageView(props: ImageViewProps) {
                     ]
               }
             />
+
+            <Path path={currentPath} style="stroke" strokeWidth={10}>
+              <DiscretePathEffect length={10} deviation={2} />
+              <LinearGradient
+                start={vec(0, 0)}
+                end={vec(width, height)}
+                colors={["cyan", "magenta", "yellow", "cyan"]}
+              />
+            </Path>
+
             {stickers?.map((e, idx) => (
               <RenderStickers item={e} matrix={e.matrix} key={idx} />
             ))}
-            <Path
-              path={currentPath}
-              color="#61DAFB"
-              style="stroke"
-              strokeWidth={2}
-            >
-              <DiscretePathEffect length={10} deviation={2} />
-            </Path>
           </Canvas>
 
           {stickers?.map((e, idx) => (
