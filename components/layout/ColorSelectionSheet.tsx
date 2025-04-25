@@ -3,6 +3,9 @@ import { cx } from "class-variance-authority";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback, useEffect, useState } from "react";
 import { Plus } from "~/lib/icons/Plus";
+import { CircleDashed } from "~/lib/icons/CircleDashed";
+import { StickyNote } from "~/lib/icons/StickyNote";
+
 import { Trash2 } from "~/lib/icons/Trash2";
 
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -18,6 +21,7 @@ import Animated, {
   RollInLeft,
   RollOutRight,
   runOnJS,
+  useAnimatedReaction,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
@@ -30,6 +34,8 @@ import * as Haptics from "expo-haptics";
 import DottedBackground from "../ui/DottedBackground";
 import TouchableBounce from "../ui/TouchableBounce";
 import TextWithHorizontalRule from "../ui/TextWithHorizontalRule";
+import { cn } from "~/lib/utils";
+import { Plug } from "lucide-react-native";
 
 type Props = {};
 const { width } = Dimensions.get("screen");
@@ -55,8 +61,34 @@ const ColorSelectionSheet = (props: Props) => {
     "#7E57C2", // Deep Purple
     "#FF8A65", // Deep Orange
   ];
+  const [strokeWidthState, setstrokeWidthState] = useState<number>(0);
+  const [scrollViewEnabled, setScrollViewEnabled] = useState(true);
+
+  const strokeWidth = useSharedValue(25);
+
+  useAnimatedReaction(
+    () => strokeWidth.value,
+    (e) => {
+      runOnJS(setstrokeWidthState)(e);
+    }
+  );
+
+  const changeStrokeWidth = (e: number) => {
+    strokeWidth.value = e;
+  };
+
+  const AnimateStrokeWidth = useAnimatedStyle(() => {
+    const scale = interpolate(strokeWidth.value, [0, 48], [0, 1]);
+    return {
+      transform: [{ scale }],
+    };
+  });
 
   const TEXT = "Press and drag";
+
+  const max = 12;
+  const skipInterval = 2;
+  const ticks = [...Array(max + 1)].map((_, i) => i);
 
   const progress = useSharedValue<number>(0);
 
@@ -147,137 +179,236 @@ const ColorSelectionSheet = (props: Props) => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View className="px-8 flex flex-col items-start justify-center gap-4 bg-red-500">
-        <GestureDetector gesture={gesture}>
-          <LinearGradient
-            colors={colors}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            className="flex overflow-hidden relative"
-            style={[
-              {
-                height: 140,
-                width: GRADIENT_BOX_WIDTH,
-                borderRadius: 24,
-              },
-            ]}
-          >
-            <Animated.View
-              style={movingColorIndicatorStyle}
-              className={cx(
-                "w-12 h-12 rounded-full flex items-center justify-center absolute border-2 border-white"
-              )}
-            />
-            <View className=" absolute z-10 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 transform flex flex-row justify-center-center items-center">
-              {TEXT.split("").map((char, idx) => {
-                const style = useAnimatedStyle(() => {
-                  const charProgress = interpolate(
-                    progress.value,
-                    [0, 100],
-                    [0, TEXT.length]
+      <ScrollView
+        scrollEnabled={scrollViewEnabled}
+        showsVerticalScrollIndicator
+        style={{
+          gap: -10,
+        }}
+        className="px-8"
+      >
+        <View className="gap-5">
+          <GestureDetector gesture={gesture}>
+            <LinearGradient
+              colors={colors}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              className="flex overflow-hidden relative"
+              style={[
+                {
+                  height: 140,
+                  width: GRADIENT_BOX_WIDTH,
+                  borderRadius: 24,
+                },
+              ]}
+            >
+              <Animated.View
+                style={movingColorIndicatorStyle}
+                className={cx(
+                  "w-12 h-12 rounded-full flex items-center justify-center absolute border-2 border-white"
+                )}
+              />
+              <View className=" absolute z-10 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 transform flex flex-row justify-center-center items-center">
+                {TEXT.split("").map((char, idx) => {
+                  const style = useAnimatedStyle(() => {
+                    const charProgress = interpolate(
+                      progress.value,
+                      [0, 100],
+                      [0, TEXT.length]
+                    );
+
+                    const distanceFromProgress = Math.abs(charProgress - idx);
+                    const waveFactor = Math.max(
+                      1 - distanceFromProgress / 4,
+                      0
+                    );
+
+                    const color = interpolateColor(
+                      waveFactor,
+                      [0, 1],
+                      ["#6b7280cc", "white"]
+                    );
+
+                    return {
+                      color,
+                    };
+                  });
+
+                  return (
+                    <Animated.Text
+                      key={idx}
+                      className={"text-2xl font-bold"}
+                      style={style}
+                    >
+                      {char}
+                    </Animated.Text>
                   );
+                })}
+              </View>
+              <DottedBackground />
+            </LinearGradient>
+          </GestureDetector>
 
-                  const distanceFromProgress = Math.abs(charProgress - idx);
-                  const waveFactor = Math.max(1 - distanceFromProgress / 4, 0);
-
-                  const color = interpolateColor(
-                    waveFactor,
-                    [0, 1],
-                    ["#6b7280cc", "white"]
-                  );
-
-                  return {
-                    color,
-                  };
-                });
-
-                return (
-                  <Animated.Text
-                    key={idx}
-                    className={"text-2xl font-bold"}
-                    style={style}
+          <View className="w-full flex-col flex items-start justify-start gap-3 ">
+            <View className="flex flex-row items-center justify-between w-full">
+              <View className="flex flex-row gap-3 items-center justify-center">
+                <TouchableBounce
+                  onPress={() => {
+                    setSelectedColors((prev) => [
+                      ...prev,
+                      backgroundColor.value,
+                    ]);
+                  }}
+                  sensory
+                >
+                  <Animated.View
+                    style={selectedColorStyle}
+                    className={cx(
+                      "w-16 h-16 rounded-full flex items-center justify-center "
+                    )}
                   >
-                    {char}
-                  </Animated.Text>
-                );
-              })}
-            </View>
-            <DottedBackground />
-          </LinearGradient>
-        </GestureDetector>
+                    <Plus strokeWidth={2} size={30} className="text-white" />
+                  </Animated.View>
+                </TouchableBounce>
 
-        <View className="w-full flex-col flex items-start justify-start gap-3 bg-yellow-500">
-          <View className="flex flex-row items-center justify-between w-full">
-            <View className="flex flex-row gap-3 items-center justify-center">
+                <Text className="text-muted-foreground text-lg text-center font-semibold">
+                  Add colors
+                </Text>
+              </View>
+
               <TouchableBounce
                 onPress={() => {
-                  setSelectedColors((prev) => [...prev, backgroundColor.value]);
+                  setSelectedColors((prev) => prev.slice(0, -1));
                 }}
                 sensory
               >
-                <Animated.View
-                  style={selectedColorStyle}
-                  className={cx(
-                    "w-16 h-16 rounded-full flex items-center justify-center "
-                  )}
-                >
-                  <Plus strokeWidth={2} size={30} className="text-white" />
-                </Animated.View>
+                <Trash2
+                  strokeWidth={2}
+                  size={30}
+                  className="text-muted-foreground"
+                />
               </TouchableBounce>
-
-              <Text className="text-muted-foreground text-lg text-center font-semibold">
-                Add colors
-              </Text>
             </View>
 
-            <TouchableBounce
-              onPress={() => {
-                setSelectedColors((prev) => prev.slice(0, -1));
+            <ScrollView
+              horizontal
+              className="px-10"
+              contentContainerStyle={{
+                gap: 12,
+                minWidth: GRADIENT_BOX_WIDTH,
+                minHeight: 48,
+                height: 48,
               }}
-              sensory
             >
-              <Trash2
-                strokeWidth={2}
-                size={30}
-                className="text-muted-foreground"
-              />
-            </TouchableBounce>
+              {selectedColors.map((i, idx) => (
+                <Animated.View
+                  layout={LinearTransition}
+                  entering={RollInLeft.duration(500)}
+                  exiting={RollOutRight.duration(600)}
+                  key={idx}
+                  style={{ backgroundColor: i }}
+                  className={cx("w-12 h-12 rounded-full")}
+                />
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+
+        <View className="gap-5">
+          <TextWithHorizontalRule text="Stroke settings"></TextWithHorizontalRule>
+
+          <View>
+            <View className="text-start flex-row w-full items-center justify-between">
+              <View className="w-4/5">
+                <Slider
+                  style={{ height: 40 }}
+                  value={strokeWidthState}
+                  onValueChange={(e) => {
+                    changeStrokeWidth(e);
+                  }}
+                  onSlidingStart={() => {
+                    setScrollViewEnabled(false);
+                  }}
+                  onSlidingComplete={() => {
+                    setScrollViewEnabled(true);
+                  }}
+                  minimumValue={0}
+                  maximumValue={48}
+                  minimumTrackTintColor="#FFFFFF"
+                  maximumTrackTintColor="#000000"
+                />
+
+                <View className="mt-1 flex flex-row w-full items-center justify-between gap-1 px-2.5 text-xs font-medium text-muted-foreground">
+                  {ticks.map((_, i) => (
+                    <View
+                      key={i}
+                      className="flex w-0 flex-col items-center justify-center gap-2"
+                    >
+                      <View
+                        className={cn(
+                          "h-2 w-px bg-muted-foreground/70",
+                          i % skipInterval !== 0 && "h-1"
+                        )}
+                      />
+                      <View
+                        className={cn(i % skipInterval !== 0 && "opacity-0")}
+                      ></View>
+                    </View>
+                  ))}
+                </View>
+              </View>
+
+              <View className="h-14 w-14">
+                <Animated.View
+                  style={AnimateStrokeWidth}
+                  className=" bg-red-500 rounded-full w-12 h-12"
+                />
+              </View>
+            </View>
           </View>
 
           <ScrollView
-            horizontal
-            className="px-10"
+            className="w-full mt-5"
             contentContainerStyle={{
               gap: 12,
-              minWidth: GRADIENT_BOX_WIDTH,
-              minHeight: 48,
-              height: 48,
+              height: 96,
             }}
+            horizontal
           >
-            {selectedColors.map((i, idx) => (
-              <Animated.View
-                layout={LinearTransition}
-                entering={RollInLeft.duration(500)}
-                exiting={RollOutRight.duration(600)}
-                key={idx}
-                style={{ backgroundColor: i }}
-                className={cx("w-12 h-12 rounded-full")}
-              />
-            ))}
+            <TouchableBounce sensory>
+              <View className="border-slate-400 border-2 rounded-2xl w-14 h-20 text-muted-foreground flex items-center justify-center">
+                <CircleDashed
+                  strokeWidth={2}
+                  size={30}
+                  className="text-muted-foreground"
+                />
+              </View>
+            </TouchableBounce>
+
+            <TouchableBounce sensory>
+              <View className="border-slate-400 border-2 rounded-2xl w-14 h-20 text-muted-foreground flex items-center justify-center">
+                <CircleDashed
+                  strokeWidth={2}
+                  size={30}
+                  className="text-muted-foreground"
+                />
+              </View>
+            </TouchableBounce>
+
+            <TouchableBounce sensory>
+              <View className="border-slate-400 border-2 rounded-2xl w-14 h-20 text-muted-foreground flex items-center justify-center">
+                <CircleDashed
+                  strokeWidth={2}
+                  size={30}
+                  className="text-muted-foreground"
+                />
+              </View>
+            </TouchableBounce>
           </ScrollView>
         </View>
-        <View className="bg-yellow-500">
-          <TextWithHorizontalRule text="Stroke Width"></TextWithHorizontalRule>
 
-          <Slider
-            style={{ width: GRADIENT_BOX_WIDTH, height: 40 }}
-            minimumValue={0}
-            maximumValue={1}
-            minimumTrackTintColor="#FFFFFF"
-            maximumTrackTintColor="#000000"
-          />
-        </View>
-      </View>
+        <View className="h-28 w-full"></View>
+      </ScrollView>
     </GestureHandlerRootView>
   );
 };
