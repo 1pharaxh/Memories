@@ -145,11 +145,9 @@ const ColorSelectionSheet = (props: Props) => {
     };
   });
 
-  console.log(selectedColors);
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View className="px-8 flex flex-col items-start justify-center gap-8">
+      <View className="px-8 flex flex-col items-start justify-center gap-4 bg-red-500">
         <GestureDetector gesture={gesture}>
           <LinearGradient
             colors={colors}
@@ -208,7 +206,7 @@ const ColorSelectionSheet = (props: Props) => {
           </LinearGradient>
         </GestureDetector>
 
-        <View className="w-full flex-col flex items-start justify-start gap-3">
+        <View className="w-full flex-col flex items-start justify-start gap-3 bg-yellow-500">
           <View className="flex flex-row items-center justify-between w-full">
             <View className="flex flex-row gap-3 items-center justify-center">
               <TouchableBounce
@@ -248,9 +246,12 @@ const ColorSelectionSheet = (props: Props) => {
 
           <ScrollView
             horizontal
+            className="px-10"
             contentContainerStyle={{
               gap: 12,
               minWidth: GRADIENT_BOX_WIDTH,
+              minHeight: 48,
+              height: 48,
             }}
           >
             {selectedColors.map((i, idx) => (
@@ -265,7 +266,7 @@ const ColorSelectionSheet = (props: Props) => {
             ))}
           </ScrollView>
         </View>
-        <View>
+        <View className="bg-yellow-500">
           <TextWithHorizontalRule text="Stroke Width"></TextWithHorizontalRule>
 
           <Slider
