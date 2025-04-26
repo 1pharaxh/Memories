@@ -99,7 +99,7 @@ export default function RootLayout() {
                 routeName && routeName === FilterType.Filter
                   ? [0.25]
                   : routeName && routeName === FilterType.Draw
-                  ? [0.75]
+                  ? [0.75, 1]
                   : [0.25, 0.5],
               headerRight: () =>
                 routeName && routeName === FilterType.Draw ? (
