@@ -1,11 +1,9 @@
 import Slider from "@react-native-community/slider";
-import { cx } from "class-variance-authority";
 import { LinearGradient } from "expo-linear-gradient";
 import { LinearGradient as SkiaLinearGradient } from "@shopify/react-native-skia";
 import React, { useCallback, useEffect, useState } from "react";
 import { Plus } from "~/lib/icons/Plus";
 import { CircleDashed } from "~/lib/icons/CircleDashed";
-import { StickyNote } from "~/lib/icons/StickyNote";
 
 import { Trash2 } from "~/lib/icons/Trash2";
 
@@ -18,13 +16,9 @@ import {
 import Animated, {
   interpolate,
   interpolateColor,
-  LinearTransition,
-  RollInLeft,
-  RollOutRight,
   runOnJS,
   useAnimatedReaction,
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
   withRepeat,
   withSequence,
@@ -232,7 +226,7 @@ const ColorSelectionSheet = (props: Props) => {
               >
                 <Animated.View
                   style={movingColorIndicatorStyle}
-                  className={cx(
+                  className={cn(
                     "w-12 h-12 rounded-full flex items-center justify-center absolute border-2 border-white"
                   )}
                 />
@@ -290,7 +284,7 @@ const ColorSelectionSheet = (props: Props) => {
                 >
                   <Animated.View
                     style={selectedColorStyle}
-                    className={cx(
+                    className={cn(
                       "w-16 h-16 rounded-full flex items-center justify-center border-2 dark:border-white border-muted-foreground"
                     )}
                   >

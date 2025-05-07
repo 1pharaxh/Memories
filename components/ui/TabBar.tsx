@@ -8,9 +8,7 @@ import Animated, {
   useDerivedValue,
   useSharedValue,
   withSpring,
-  withTiming,
 } from "react-native-reanimated";
-import { BlurView } from "expo-blur";
 import React, { useCallback, useEffect, useState } from "react";
 import { ArrowLeft } from "~/lib/icons/ArrowLeft";
 import { Share } from "~/lib/icons/Share";
@@ -35,6 +33,7 @@ import { cx } from "class-variance-authority";
 import TabBarText from "./TabBarText";
 import { PRESET_OPTIONS } from "~/lib/constants";
 import { AnimatedBlurView } from "./AnimatedBlurView";
+import { cn } from "~/lib/utils";
 export default function MyTabBar({
   state,
   descriptors,
@@ -189,7 +188,7 @@ export default function MyTabBar({
           <AnimatedBlurView
             intensity={60}
             tint={colorScheme === "light" ? "dark" : "light"}
-            className={cx(
+            className={cn(
               "absolute top-0 left-0 right-0 bottom-0 overflow-hidden",
               photo || video ? "rounded-[3rem]" : "rounded-[5rem]"
             )}

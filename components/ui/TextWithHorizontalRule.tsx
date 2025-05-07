@@ -1,6 +1,6 @@
-import { cx } from "class-variance-authority";
 import React from "react";
 import { Text, View, ViewProps } from "react-native";
+import { cn } from "~/lib/utils";
 
 type Props = ViewProps & {
   text: string;
@@ -10,7 +10,7 @@ const TextWithHorizontalRule = (props: Props) => {
   const { text, ...rest } = props;
   return (
     <View
-      className={cx(
+      className={cn(
         rest.className,
         "flex flex-row items-center justify-center gap-4"
       )}
