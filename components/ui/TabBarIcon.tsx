@@ -5,11 +5,19 @@ import TabBarText from "./TabBarText";
 import RecordingButton from "./RecordingButton";
 import TouchableBounce from "./TouchableBounce";
 import Animated, {
+  DerivedValue,
   useAnimatedStyle,
   useDerivedValue,
+  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { AnimatedBlurView } from "./AnimatedBlurView";
+
+export const TAB_BAR_SPRING = {
+  mass: 0.8,
+  damping: 10,
+  stiffness: 70,
+};
 
 export default function TabBarIcon({
   state,
@@ -20,6 +28,7 @@ export default function TabBarIcon({
   index,
   isExpanded,
   colorScheme,
+  animatedIsExpanded,
 }: {
   state: any;
   descriptors: any;
@@ -29,6 +38,7 @@ export default function TabBarIcon({
   index: number;
   isExpanded: boolean;
   colorScheme: "dark" | "light" | undefined;
+  animatedIsExpanded: DerivedValue<boolean>;
 }) {
   const { options } = descriptors[route.key];
 
@@ -63,10 +73,6 @@ export default function TabBarIcon({
 
   const { tabBarIcon: Icon } = options;
 
-  const AnimatedIsExpanded = useDerivedValue(() => {
-    return isExpanded;
-  }, [isExpanded]);
-
   const AnimatedIsFocused = useDerivedValue(() => {
     return state.index === index;
   }, [state.index, index]);
@@ -74,9 +80,9 @@ export default function TabBarIcon({
   const TabBarPillTextStyle = useAnimatedStyle(() => {
     return {
       display:
-        AnimatedIsFocused.value && AnimatedIsExpanded.value ? "flex" : "none",
+        AnimatedIsFocused.value && animatedIsExpanded.value ? "flex" : "none",
       opacity: withTiming(
-        AnimatedIsFocused.value && AnimatedIsExpanded.value ? 1 : 0,
+        AnimatedIsFocused.value && animatedIsExpanded.value ? 1 : 0,
         {
           duration: 300,
         }
@@ -86,17 +92,13 @@ export default function TabBarIcon({
 
   const InnerPillStyle = useAnimatedStyle(() => {
     return {
-      height: withTiming(
-        AnimatedIsFocused.value && AnimatedIsExpanded.value ? 60 : 48,
-        {
-          duration: 300,
-        }
+      height: withSpring(
+        AnimatedIsFocused.value && animatedIsExpanded.value ? 60 : 48,
+        TAB_BAR_SPRING
       ),
-      width: withTiming(
-        AnimatedIsFocused.value && AnimatedIsExpanded.value ? 135 : 48,
-        {
-          duration: 300,
-        }
+      width: withSpring(
+        AnimatedIsFocused.value && animatedIsExpanded.value ? 135 : 48,
+        TAB_BAR_SPRING
       ),
     };
   });
@@ -106,7 +108,7 @@ export default function TabBarIcon({
   } else {
     return (
       <TouchableBounce
-        sensory="medium"
+        sensory='medium'
         key={route.name}
         accessibilityRole={Platform.OS === "web" ? "link" : "button"}
         accessibilityState={isFocused ? { selected: true } : {}}
@@ -115,10 +117,10 @@ export default function TabBarIcon({
         onPress={onPress}
         onLongPress={onLongPress}
       >
-        <View className="flex items-center justify-center flex-col">
+        <View className='flex items-center justify-center flex-col'>
           <AnimatedBlurView
             style={InnerPillStyle}
-            intensity={isFocused ? 50 : 0}
+            intensity={isExpanded ? 0 : 50}
             tint={
               isFocused
                 ? colorScheme === "light"
@@ -126,13 +128,13 @@ export default function TabBarIcon({
                   : "extraLight"
                 : "default"
             }
-            className="rounded-full overflow-hidden flex-row items-center justify-center gap-3"
+            className='rounded-full overflow-hidden flex-row items-center justify-center gap-3'
           >
             <Icon />
 
             <Animated.Text
               style={TabBarPillTextStyle}
-              className="text-lg tracking-tighter text-white text-center"
+              className='text-lg tracking-tighter text-white text-center'
             >
               {label}
             </Animated.Text>
