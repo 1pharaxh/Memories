@@ -38,6 +38,7 @@ import { Canvas, FitBox, Path, rect, vec } from "@shopify/react-native-skia";
 import { Muted } from "../ui/typography";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
+import useGlobalStore, { Draw } from "~/store/globalStore";
 
 type Props = {};
 const { width } = Dimensions.get("screen");
@@ -63,9 +64,11 @@ const ColorSelectionSheet = (props: Props) => {
     "#7E57C2", // Deep Purple
     "#FF8A65", // Deep Orange
   ];
-  const [strokeWidthState, setstrokeWidthState] = useState<number>(0);
+  const [strokeWidthState, setstrokeWidthState] = useState<number>(25);
 
   const strokeWidth = useSharedValue(25);
+
+  const { setDraw, draw } = useGlobalStore();
 
   // UI thread to JS thread
   useAnimatedReaction(
@@ -203,6 +206,27 @@ const ColorSelectionSheet = (props: Props) => {
         borderWidth: withTiming(display ? 2 : 0),
       };
     }, [selectedEffects]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      const drawArr = draw ? [...draw] : [];
+      let item: Draw = {
+        selectedColors,
+        selectedEffects,
+        strokeWidth: strokeWidthState,
+      } as Draw;
+      if (drawArr.length > 0) {
+        drawArr.pop();
+        drawArr.push(item);
+      } else {
+        drawArr.push(item);
+      }
+      console.log("drawArr is", drawArr);
+      setDraw(drawArr);
+    }, 1000);
+
+    return () => clearTimeout(handler);
+  }, [selectedColors, selectedEffects, strokeWidthState]);
 
   return (
     <ScrollView
@@ -446,21 +470,6 @@ const ColorSelectionSheet = (props: Props) => {
               </View>
             </View>
           </View>
-          <View className='my-4 flex-1' />
-
-          <Button
-            variant='default'
-            onPress={() => {
-              console.log("value", {
-                selectedColors,
-                strokeWidth: strokeWidth.get(),
-                selectedEffects,
-              });
-            }}
-            className='w-full flex flex-row items-center justify-center gap-2'
-          >
-            <Text className='text-white dark:text-black'>Done</Text>
-          </Button>
         </View>
       </GestureHandlerRootView>
     </ScrollView>

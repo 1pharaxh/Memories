@@ -1,5 +1,5 @@
-import { SkMatrix } from "@shopify/react-native-skia";
-import { Mutable } from "react-native-reanimated/lib/typescript/commonTypes";
+import { SkMatrix, SkPath } from "@shopify/react-native-skia";
+import { Mutable, SharedValue } from "react-native-reanimated/lib/typescript/commonTypes";
 import { create, StateCreator } from "zustand";
 import { SINGLE_STICKER_OPTIONS } from "~/lib/constants";
 
@@ -90,13 +90,12 @@ export interface Crop {
 }
 
 export interface Draw {
-  color: string;
-  position: XYPosition;
+  selectedColors: string[];
+  selectedEffects: string[];
   // Represents the brush size
-  radius: number;
-  isAnimated?: boolean;
-  startTime?: number;
-  endTime?: number;
+  strokeWidth: number;
+  currentPath: SharedValue<SkPath>
+
 }
 
 export type GLOBALS_SINGLE_STICKER_OPTIONS = SINGLE_STICKER_OPTIONS & {
