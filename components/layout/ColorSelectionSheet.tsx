@@ -9,11 +9,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Plus } from "~/lib/icons/Plus";
 import { Signature } from "~/lib/icons/Signature";
 import { CircleDashed } from "~/lib/icons/CircleDashed";
-import { Circle } from "~/lib/icons/Circle";
-
 import { Trash2 } from "~/lib/icons/Trash2";
 
-import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Dimensions, ScrollView, Text, View } from "react-native";
 import {
   Gesture,
   GestureDetector,
@@ -35,12 +33,11 @@ import Animated, {
 import * as Haptics from "expo-haptics";
 import DottedBackground from "../ui/DottedBackground";
 import TouchableBounce from "../ui/TouchableBounce";
-import TextWithHorizontalRule from "../ui/TextWithHorizontalRule";
 import { cn } from "~/lib/utils";
-import { Plug } from "lucide-react-native";
 import { Canvas, FitBox, Path, rect, vec } from "@shopify/react-native-skia";
-import { Muted, Small } from "../ui/typography";
+import { Muted } from "../ui/typography";
 import { Separator } from "../ui/separator";
+import { Button } from "../ui/button";
 
 type Props = {};
 const { width } = Dimensions.get("screen");
@@ -72,14 +69,14 @@ const ColorSelectionSheet = (props: Props) => {
 
   // UI thread to JS thread
   useAnimatedReaction(
-    () => strokeWidth.value,
+    () => strokeWidth.get(),
     (e) => {
       runOnJS(setstrokeWidthState)(e);
     }
   );
 
   const changeStrokeWidth = (e: number) => {
-    strokeWidth.value = e;
+    strokeWidth.set(e);
   };
 
   const TEXT = "Press and drag";
@@ -93,16 +90,18 @@ const ColorSelectionSheet = (props: Props) => {
   const progress = useSharedValue<number>(0);
 
   useEffect(() => {
-    progress.value = withRepeat(
-      withSequence(
-        withTiming(100, {
-          duration: 2200,
-        }),
-        withTiming(0, {
-          duration: 2000,
-        })
-      ),
-      -1
+    progress.set(
+      withRepeat(
+        withSequence(
+          withTiming(100, {
+            duration: 2200,
+          }),
+          withTiming(0, {
+            duration: 2000,
+          })
+        ),
+        -1
+      )
     );
   }, []);
 
@@ -162,31 +161,31 @@ const ColorSelectionSheet = (props: Props) => {
   const gesture = Gesture.Simultaneous(hold, pan);
 
   const selectedColorStyle = useAnimatedStyle(() => {
-    return { backgroundColor: backgroundColor.value };
+    return { backgroundColor: backgroundColor.get() };
   });
 
   const [selectedColors, setSelectedColors] = useState<string[]>([colors[0]]);
 
   const movingColorIndicatorStyle = useAnimatedStyle(() => {
     return {
-      opacity: withSpring(isDrag.value ? 1 : 0),
-      backgroundColor: backgroundColor.value,
+      opacity: withSpring(isDrag.get() ? 1 : 0),
+      backgroundColor: backgroundColor.get(),
       transform: [
         {
-          translateX: currentX.value - 30,
+          translateX: currentX.get() - 30,
         },
         {
-          translateY: currentY.value - 65,
+          translateY: currentY.get() - 65,
         },
       ],
     };
   });
 
   const discretePathDeviation = useDerivedValue(() =>
-    interpolate(strokeWidth.value, [0, 48], [10, 2])
+    interpolate(strokeWidth.get(), [0, 48], [10, 2])
   );
   const dashPathEffectIntervals = useDerivedValue(() =>
-    interpolate(strokeWidth.value, [0, 48], [5, 50])
+    interpolate(strokeWidth.get(), [0, 48], [5, 50])
   );
 
   const [selectedEffects, setSelectedEffects] = useState<string[]>([]);
@@ -278,7 +277,7 @@ const ColorSelectionSheet = (props: Props) => {
                   {TEXT.split("").map((char, idx) => {
                     const style = useAnimatedStyle(() => {
                       const charProgress = interpolate(
-                        progress.value,
+                        progress.get(),
                         [0, 100],
                         [0, TEXT.length]
                       );
@@ -321,7 +320,7 @@ const ColorSelectionSheet = (props: Props) => {
                   onPress={() => {
                     setSelectedColors((prev) => [
                       ...prev,
-                      backgroundColor.value,
+                      backgroundColor.get(),
                     ]);
                   }}
                   sensory
@@ -447,6 +446,21 @@ const ColorSelectionSheet = (props: Props) => {
               </View>
             </View>
           </View>
+          <View className='my-4 flex-1' />
+
+          <Button
+            variant='default'
+            onPress={() => {
+              console.log("value", {
+                selectedColors,
+                strokeWidth: strokeWidth.get(),
+                selectedEffects,
+              });
+            }}
+            className='w-full flex flex-row items-center justify-center gap-2'
+          >
+            <Text className='text-white dark:text-black'>Done</Text>
+          </Button>
         </View>
       </GestureHandlerRootView>
     </ScrollView>

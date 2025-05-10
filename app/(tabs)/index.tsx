@@ -16,7 +16,6 @@ import Animated, {
 } from "react-native-reanimated";
 import CameraTools from "~/components/ui/CameraTools";
 import RecordingCounter from "~/components/ui/RecordingCounter";
-import VideoViewComponent from "~/components/ui/VideoView";
 import useGlobalStore from "~/store/globalStore";
 import MediaView from "~/components/ui/MediaView/MediaView";
 
