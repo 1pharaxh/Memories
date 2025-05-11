@@ -27,8 +27,7 @@ import Animated, {
 } from "react-native-reanimated";
 import DrawView from "../DrawView";
 import TouchableBounce from "../TouchableBounce";
-import { H3, H4 } from "../typography";
-import { useMemo } from "react";
+import { H4 } from "../typography";
 
 type ImageViewProps = Omit<CanvasProps, "children"> & {};
 
@@ -39,7 +38,7 @@ export default function ImageView(props: ImageViewProps) {
   const image = useImage(photo);
   const { width, height } = Dimensions.get("window");
 
-  const currentPath =  useSharedValue(Skia.Path.Make());
+  const currentPath = useSharedValue(Skia.Path.Make());
 
   const buttonStyle = useAnimatedStyle(() => {
     return { opacity: withSpring(isDrawing ? 1 : 0) };

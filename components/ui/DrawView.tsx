@@ -23,17 +23,20 @@ const DrawView = ({ children, currentPath }: Props) => {
   const currentPathY = useSharedValue(0);
   const isStartDrawing = useSharedValue(false);
 
-  // Reset paths when 'X' is pressed on ImageView
+  // Reset paths when 'X' is pressed on ImageView.
   useEffect(() => {
     if (isDrawing) return;
     else {
-      currentPathObject.set(Skia.Path.Make());
-      currentPath.set(Skia.Path.Make());
-      currentPathY.set(0);
-      currentPathX.set(0);
-      isStartDrawing.set(false);
+      // pressing 'X' clears draw. 
+      if (draw === undefined) {
+        currentPathObject.set(Skia.Path.Make());
+        currentPath.set(Skia.Path.Make());
+        currentPathY.set(0);
+        currentPathX.set(0);
+        isStartDrawing.set(false);
+      }
     }
-  }, [isDrawing]);
+  }, [isDrawing, draw]);
 
   const debouncedSetDraw = React.useMemo(
     () =>
