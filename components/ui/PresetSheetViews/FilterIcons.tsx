@@ -5,7 +5,6 @@ import MaskedView from "@react-native-masked-view/masked-view";
 import useGlobalStore, { Filter } from "~/store/globalStore";
 
 import React, { useCallback } from "react";
-import { cx } from "class-variance-authority";
 import Animated, {
   useAnimatedStyle,
   withSpring,
@@ -18,6 +17,7 @@ import {
 } from "@shopify/react-native-skia";
 import { FILTER_PRESETS } from "~/lib/constants";
 import TabBarText from "~/components/ui/TabBarText";
+import { cn } from "~/lib/utils";
 
 const backgroundImage =
   process.env.EXPO_OS === "web"
@@ -76,7 +76,7 @@ const FilterIcons = (props: Props) => {
                 {icon.name}
               </TabBarText>
               <Animated.View
-                className={cx(
+                className={cn(
                   selected === icon.name
                     ? "border border-primary/60"
                     : "border border-secondary/60",

@@ -16,10 +16,12 @@ import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "@rn-primitives/portal";
 import * as Form from "~/components/ui/Form";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
+import * as ScreenOrientation from "expo-screen-orientation";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { IconSymbol } from "~/components/ui/IconSymbol";
 import { useNavigationState } from "@react-navigation/native";
+import useGlobalStore from "~/store/globalStore";
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
   colors: NAV_THEME.light,
@@ -38,6 +40,7 @@ export default function RootLayout() {
   const hasMounted = React.useRef(false);
   const { colorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
+  const { setDraw } = useGlobalStore();
 
   const navigationState = useNavigationState((state) => state);
   const routeName = (
@@ -58,6 +61,7 @@ export default function RootLayout() {
     setAndroidNavigationBar(colorScheme);
     setIsColorSchemeLoaded(true);
     hasMounted.current = true;
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
   }, []);
 
   if (!isColorSchemeLoaded) {
@@ -70,22 +74,22 @@ export default function RootLayout() {
         <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
         <Stack>
           <Stack.Screen
-            name="index"
+            name='index'
             options={{
               headerShown: false,
             }}
           />
           <Stack.Screen
-            name="onboarding"
+            name='onboarding'
             options={{
               headerShown: false,
             }}
           />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
+          <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+          <Stack.Screen name='+not-found' />
 
           <Stack.Screen
-            name="preset-sheet"
+            name='preset-sheet'
             sheet
             options={{
               headerLargeTitle: false,
@@ -96,11 +100,14 @@ export default function RootLayout() {
                 // Filter sheet is vertically scrolled list
                 routeName && routeName === FilterType.Filter
                   ? [0.25]
-                  : [0.25, 0.35],
+                  : routeName && routeName === FilterType.Draw
+                  ? [0.5, 0.75]
+                  : [0.25, 0.5],
+
               headerRight: () => (
-                <Form.Link headerRight href="/(tabs)" dismissTo>
+                <Form.Link headerRight href='/(tabs)' dismissTo>
                   <IconSymbol
-                    name="xmark.circle.fill"
+                    name='xmark.circle.fill'
                     color={AC.systemGray}
                     size={28}
                   />

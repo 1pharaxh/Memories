@@ -1,6 +1,6 @@
-import { cx } from "class-variance-authority";
 import React, { useEffect, useRef } from "react";
 import { Animated, TextProps } from "react-native";
+import { cn } from "~/lib/utils";
 
 interface TabBarTextProps extends TextProps {
   opacity?: number;
@@ -34,8 +34,8 @@ export default function TabBarText({
   return (
     <Animated.Text
       {...rest}
-      className={cx(
-        "text-xs mt-2 text-center w-full",
+      className={cn(
+        "text-center w-full",
         accountForDarkMode ? "dark:text-white text-black" : "text-white",
         rest.className
       )}

@@ -1,7 +1,5 @@
-import { Link } from "expo-router";
 import React from "react";
-import * as Form from "~/components/ui/Form";
-import * as AC from "@bacons/apple-colors";
+import { Dimensions, Text, View } from "react-native";
 
 import Animated, {
   FadeIn,
@@ -9,9 +7,11 @@ import Animated, {
   LinearTransition,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import GalleryItems from "~/components/ui/GalleryItems";
+import { Overlay } from "~/components/ui/gradient/overlay";
 
 type Props = {};
-
+const { width, height } = Dimensions.get("screen");
 function GalleryPage({}: Props) {
   return (
     <Animated.View
@@ -20,14 +20,12 @@ function GalleryPage({}: Props) {
       exiting={FadeOut.duration(1000)}
       style={{ flex: 1 }}
     >
-      <SafeAreaView className="flex-1 justify-center items-center gap-4">
-        <Form.Text style={{ textAlign: "center", fontSize: 14 }}>
-          Gallery Page
-        </Form.Text>
-
-        <Link style={{ color: AC.link }} href="/onboarding">
-          back to onboarding
-        </Link>
+      <SafeAreaView className="flex-1 justify-center items-center gap-4 px-5">
+        <Text className="opacity-0"></Text>
+        <GalleryItems />
+        <View style={{ width, height, zIndex: -100, position: "absolute" }}>
+          <Overlay />
+        </View>
       </SafeAreaView>
     </Animated.View>
   );

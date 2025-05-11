@@ -12,7 +12,13 @@ import {
   withSpring,
   ReduceMotion,
 } from "react-native-reanimated";
-import { matchFont, Text, useFonts } from "@shopify/react-native-skia";
+import {
+  LinearGradient,
+  matchFont,
+  Text,
+  useFonts,
+  vec,
+} from "@shopify/react-native-skia";
 import { useColorScheme } from "~/lib/useColorScheme";
 
 type VariableFontAnimateTextProps = {
@@ -108,10 +114,6 @@ const VariableFontAnimateText = memo((props: VariableFontAnimateTextProps) => {
 
   const { colorScheme } = useColorScheme();
 
-  const font = fontMgr
-    ? matchFont({ fontFamily: "OverusedGrotesk", fontSize }, fontMgr)
-    : null;
-
   return (
     <>
       {text.split("").map((char, index) => {
@@ -171,7 +173,13 @@ const VariableFontAnimateText = memo((props: VariableFontAnimateTextProps) => {
             }
             y={yCord}
             opacity={0.9}
-          />
+          >
+            <LinearGradient
+              start={vec(0, 0)}
+              end={vec(fontSize * text.length, fontSize)}
+              colors={["cyan", "magenta", "yellow", "cyan"]}
+            />
+          </Text>
         );
       })}
     </>

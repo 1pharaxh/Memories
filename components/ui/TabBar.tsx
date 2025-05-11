@@ -1,19 +1,20 @@
-import { TouchableOpacity, View } from "react-native";
+import { LayoutChangeEvent, TouchableOpacity, View } from "react-native";
 
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
+  interpolate,
   runOnJS,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { BlurView } from "expo-blur";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ArrowLeft } from "~/lib/icons/ArrowLeft";
 import { Share } from "~/lib/icons/Share";
 import { shareAsync } from "expo-sharing";
 
-import TabBarIcon from "./TabBarIcon";
+import TabBarIcon, { TAB_BAR_SPRING } from "./TabBarIcon";
 import { useColorScheme } from "nativewind";
 import useGlobalStore from "~/store/globalStore";
 import TabBarEditIcons from "./TabBarEditIcons";
@@ -31,6 +32,8 @@ import {
 import { cx } from "class-variance-authority";
 import TabBarText from "./TabBarText";
 import { PRESET_OPTIONS } from "~/lib/constants";
+import { AnimatedBlurView } from "./AnimatedBlurView";
+import { cn } from "~/lib/utils";
 export default function MyTabBar({
   state,
   descriptors,
@@ -138,48 +141,93 @@ export default function MyTabBar({
     };
   });
 
+  const tabbarWidth = useSharedValue<number>(0);
+
+  const handleLayout = useCallback((event: LayoutChangeEvent) => {
+    const { width } = event.nativeEvent.layout;
+    tabbarWidth.set(width);
+  }, []);
+
+  const animatedIsExpanded = useDerivedValue(() => {
+    return isExpanded;
+  }, [isExpanded]);
+
+  const currentTabIndex = useDerivedValue(() => {
+    return state.index;
+  }, [state.index]);
+
+  const tabWidth = useDerivedValue(() => {
+    return tabbarWidth.value / 3;
+  });
+
+  const tabpillHighlightStyle = useAnimatedStyle(() => {
+    const tabWidth = tabbarWidth.value / 3;
+    const translationX = currentTabIndex.value * tabWidth;
+    const left = interpolate(
+      translationX,
+      [0, tabbarWidth.value],
+      [6, tabbarWidth.value - tabWidth]
+    );
+
+    return {
+      opacity: withSpring(
+        animatedIsExpanded.value && currentTabIndex.value !== 1 ? 1 : 0
+      ),
+      left: withSpring(left, TAB_BAR_SPRING),
+    };
+  });
+
   return (
     <GestureDetector gesture={gestureHandler}>
-      <View className="flex flex-row absolute bottom-0 h-1/4 items-end justify-center pb-6 w-full">
+      <View className='flex flex-row absolute bottom-0 h-1/4 items-end justify-center pb-6 w-full'>
         <Animated.View
           style={animatedStyle}
-          className="mx-auto min-w-fit mt-8 flex flex-row items-center justify-between px-7"
+          onLayout={handleLayout}
+          className='mx-auto min-w-fit mt-8 flex flex-row items-center justify-between'
         >
-          <BlurView
+          <AnimatedBlurView
             intensity={60}
-            tint="dark"
-            className={cx(
+            tint={colorScheme === "light" ? "dark" : "light"}
+            className={cn(
               "absolute top-0 left-0 right-0 bottom-0 overflow-hidden",
               photo || video ? "rounded-[3rem]" : "rounded-[5rem]"
             )}
           />
           {photo || video ? (
-            <View className="absolute top-5 inset-x-12 flex flex-row items-center justify-center">
+            <View className='absolute top-5 inset-x-12 flex flex-row items-center justify-center'>
               <TouchableOpacity
-                className=" z-20"
+                className=' z-20'
                 onPress={() => {
                   setPhoto("");
                   setVideo("");
                 }}
               >
-                <ArrowLeft size={17} strokeWidth={2} className="text-white" />
+                <ArrowLeft size={17} strokeWidth={2} className='text-white' />
               </TouchableOpacity>
 
-              <TabBarText className="!text-lg !text-start !mt-0 ">
+              <TabBarText className='!text-lg !text-start !mt-0 '>
                 Edit
               </TabBarText>
 
               <TouchableOpacity
-                className="z-20"
+                className='z-20'
                 onPress={async () => await shareAsync(photo || video)}
               >
-                <Share size={17} strokeWidth={2} className="text-white" />
+                <Share size={17} strokeWidth={2} className='text-white' />
               </TouchableOpacity>
             </View>
           ) : null}
+
+          {!photo && !video && (
+            <AnimatedBlurView
+              style={tabpillHighlightStyle}
+              className='absolute left-0 w-[135] h-[60] rounded-full overflow-hidden flex-row items-center justify-center'
+            ></AnimatedBlurView>
+          )}
           {!photo && !video
             ? state.routes.map((route: any, index: number) => (
                 <TabBarIcon
+                  animatedIsExpanded={animatedIsExpanded}
                   colorScheme={colorScheme}
                   descriptors={descriptors}
                   index={index}

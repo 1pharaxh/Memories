@@ -1,0 +1,3 @@
+- FINISH DRAW
+  - Look in DrawView.tsx handle path after drawing is finish
+  - Add effects from ColorSheet into the path.

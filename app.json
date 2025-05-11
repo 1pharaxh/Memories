@@ -46,6 +46,12 @@
         {
           "assets": ["./assets/"]
         }
+      ],
+      [
+        "expo-screen-orientation",
+        {
+          "initialOrientation": "PORTRAIT_UP"
+        }
       ]
     ],
     "experiments": {
