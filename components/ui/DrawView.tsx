@@ -1,5 +1,5 @@
 import { Skia, SkPath } from "@shopify/react-native-skia";
-import React from "react";
+import React, { useEffect } from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
@@ -22,6 +22,18 @@ const DrawView = ({ children, currentPath }: Props) => {
   const currentPathX = useSharedValue(0);
   const currentPathY = useSharedValue(0);
   const isStartDrawing = useSharedValue(false);
+
+  // Reset paths when 'X' is pressed on ImageView
+  useEffect(() => {
+    if (isDrawing) return;
+    else {
+      currentPathObject.set(Skia.Path.Make());
+      currentPath.set(Skia.Path.Make());
+      currentPathY.set(0);
+      currentPathX.set(0);
+      isStartDrawing.set(false);
+    }
+  }, [isDrawing]);
 
   const debouncedSetDraw = React.useMemo(
     () =>

@@ -209,7 +209,7 @@ const ColorSelectionSheet = (props: Props) => {
     useAnimatedStyle(() => {
       const display = selectedEffects.includes(e);
       return {
-        borderWidth: withTiming(display ? 2 : 0),
+        opacity: withSpring(display ? 1 : 0),
       };
     }, [selectedEffects]);
 
@@ -363,7 +363,7 @@ const ColorSelectionSheet = (props: Props) => {
                   <Animated.View
                     style={selectedColorStyle}
                     className={cn(
-                      "w-16 h-16 rounded-full flex items-center justify-center border-2 dark:border-white border-muted-foreground"
+                      "w-16 h-14 rounded-full flex items-center justify-center border-2 dark:border-white border-muted-foreground"
                     )}
                   >
                     <Plus strokeWidth={2} size={30} className='text-white' />
@@ -447,16 +447,17 @@ const ColorSelectionSheet = (props: Props) => {
                     toggleSelectedEffects("discrete");
                   }}
                 >
-                  <Animated.View
-                    style={getStyleForEffect("discrete")}
-                    className=' border-slate-400 rounded-2xl w-14 h-16 text-muted-foreground flex items-center justify-center'
-                  >
+                  <View className='rounded-2xl w-14 h-14 relative flex items-center justify-center overflow-hidden'>
+                    <Animated.View
+                      style={getStyleForEffect("discrete")}
+                      className='w-full h-full absolute top-0 left-0 z-10 bg-muted-foreground/10'
+                    />
                     <Signature
                       strokeWidth={2}
                       size={30}
                       className='text-muted-foreground'
                     />
-                  </Animated.View>
+                  </View>
                 </TouchableBounce>
 
                 <Separator orientation='vertical' />
@@ -467,16 +468,17 @@ const ColorSelectionSheet = (props: Props) => {
                     toggleSelectedEffects("dash");
                   }}
                 >
-                  <Animated.View
-                    style={getStyleForEffect("dash")}
-                    className=' border-slate-400 rounded-2xl w-14 h-16 text-muted-foreground flex items-center justify-center'
-                  >
+                  <View className='rounded-2xl w-14 h-14 relative flex items-center justify-center overflow-hidden'>
+                    <Animated.View
+                      style={getStyleForEffect("dash")}
+                      className='w-full h-full absolute top-0 left-0 z-10 bg-muted-foreground/10'
+                    />
                     <CircleDashed
                       strokeWidth={2}
                       size={30}
                       className='text-muted-foreground'
                     />
-                  </Animated.View>
+                  </View>
                 </TouchableBounce>
               </View>
             </View>
