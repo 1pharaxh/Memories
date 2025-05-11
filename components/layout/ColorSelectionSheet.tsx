@@ -45,6 +45,8 @@ const { width } = Dimensions.get("screen");
 const GRADIENT_BOX_WIDTH = width - 55;
 
 const ColorSelectionSheet = (props: Props) => {
+  const { setDraw, draw, setIsDrawing } = useGlobalStore();
+
   const colors: [string, string, ...string[]] = [
     "#FF69B4", // Hot Pink
     "#FF6B6B", // Coral Red
@@ -64,11 +66,11 @@ const ColorSelectionSheet = (props: Props) => {
     "#7E57C2", // Deep Purple
     "#FF8A65", // Deep Orange
   ];
-  const [strokeWidthState, setstrokeWidthState] = useState<number>(25);
+  const [strokeWidthState, setstrokeWidthState] = useState<number>(
+    draw?.strokeWidth || 5
+  );
 
-  const strokeWidth = useSharedValue(25);
-
-  const { setDraw, draw } = useGlobalStore();
+  const strokeWidth = useSharedValue(draw?.strokeWidth || 5);
 
   // UI thread to JS thread
   useAnimatedReaction(
@@ -167,7 +169,9 @@ const ColorSelectionSheet = (props: Props) => {
     return { backgroundColor: backgroundColor.get() };
   });
 
-  const [selectedColors, setSelectedColors] = useState<string[]>([colors[0]]);
+  const [selectedColors, setSelectedColors] = useState<string[]>(
+    draw?.selectedColors || [colors[0]]
+  );
 
   const movingColorIndicatorStyle = useAnimatedStyle(() => {
     return {
@@ -191,7 +195,9 @@ const ColorSelectionSheet = (props: Props) => {
     interpolate(strokeWidth.get(), [0, 48], [5, 50])
   );
 
-  const [selectedEffects, setSelectedEffects] = useState<string[]>([]);
+  const [selectedEffects, setSelectedEffects] = useState<string[]>(
+    draw?.selectedEffects || []
+  );
 
   const toggleSelectedEffects = useCallback((e: "discrete" | "dash") => {
     setSelectedEffects((prev) =>
@@ -209,24 +215,25 @@ const ColorSelectionSheet = (props: Props) => {
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      const drawArr = draw ? [...draw] : [];
       let item: Draw = {
         selectedColors,
         selectedEffects,
         strokeWidth: strokeWidthState,
+        dashPathEffectIntervals: dashPathEffectIntervals.get(),
+        discretePathDeviation: discretePathDeviation.get(),
       } as Draw;
-      if (drawArr.length > 0) {
-        drawArr.pop();
-        drawArr.push(item);
-      } else {
-        drawArr.push(item);
-      }
-      console.log("drawArr is", drawArr);
-      setDraw(drawArr);
+      setDraw(item);
+      setIsDrawing(true);
     }, 1000);
 
     return () => clearTimeout(handler);
-  }, [selectedColors, selectedEffects, strokeWidthState]);
+  }, [
+    selectedColors,
+    selectedEffects,
+    strokeWidthState,
+    discretePathDeviation.get(),
+    dashPathEffectIntervals.get(),
+  ]);
 
   return (
     <ScrollView
@@ -252,14 +259,18 @@ const ColorSelectionSheet = (props: Props) => {
                 {selectedEffects.includes("discrete") && (
                   <DiscretePathEffect
                     length={10}
-                    deviation={discretePathDeviation.get()}
+                    deviation={
+                      draw?.discretePathDeviation || discretePathDeviation.get()
+                    }
                   />
                 )}
                 {selectedEffects.includes("dash") && (
                   <DashPathEffect
                     intervals={[
-                      dashPathEffectIntervals.get(),
-                      dashPathEffectIntervals.get(),
+                      draw?.dashPathEffectIntervals ||
+                        dashPathEffectIntervals.get(),
+                      draw?.dashPathEffectIntervals ||
+                        dashPathEffectIntervals.get(),
                     ]}
                   />
                 )}

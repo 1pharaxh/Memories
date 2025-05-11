@@ -107,25 +107,6 @@ export default function RootLayout() {
               headerRight: () => (
                 <Form.Link headerRight href='/(tabs)' dismissTo>
                   <IconSymbol
-                    name='checkmark.circle.fill'
-                    color={AC.systemGray}
-                    size={28}
-                  />
-                </Form.Link>
-              ),
-              headerLeft: () => (
-                <Form.Link
-                  headerRight
-                  href='/(tabs)'
-                  dismissTo
-                  onPress={() => {
-                    if (routeName && routeName === FilterType.Draw) {
-                      // clear draw preset
-                      setDraw([]);
-                    }
-                  }}
-                >
-                  <IconSymbol
                     name='xmark.circle.fill'
                     color={AC.systemGray}
                     size={28}

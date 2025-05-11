@@ -1,4 +1,4 @@
-import { Dimensions, View } from "react-native";
+import { Dimensions, Text, View } from "react-native";
 import {
   Canvas,
   CanvasProps,
@@ -27,36 +27,58 @@ import Animated, {
 } from "react-native-reanimated";
 import DrawView from "../DrawView";
 import TouchableBounce from "../TouchableBounce";
+import { H3, H4 } from "../typography";
+import { useMemo } from "react";
 
 type ImageViewProps = Omit<CanvasProps, "children"> & {};
 
 export default function ImageView(props: ImageViewProps) {
   const { ...rest } = props;
-  const { photo, filter, stickers, draw, setDraw } = useGlobalStore();
+  const { photo, filter, stickers, draw, setDraw, isDrawing, setIsDrawing } =
+    useGlobalStore();
   const image = useImage(photo);
   const { width, height } = Dimensions.get("window");
 
-  const currentPath = useSharedValue(Skia.Path.Make());
+  const currentPath =  useSharedValue(Skia.Path.Make());
 
   const buttonStyle = useAnimatedStyle(() => {
-    return { opacity: withSpring(draw?.length ? 1 : 0) };
+    return { opacity: withSpring(isDrawing ? 1 : 0) };
   });
 
   return (
     <GestureHandlerRootView style={{ flex: 1, position: "relative" }}>
       <Animated.View
         style={buttonStyle}
-        className='absolute top-10 left-10 z-10'
+        className='absolute top-14 left-10 z-10'
       >
-        <TouchableBounce sensory>
+        <TouchableBounce
+          sensory
+          onPress={() => {
+            setIsDrawing(false);
+            setDraw(undefined);
+          }}
+        >
           <X strokeWidth={2} size={30} className='text-muted-foreground ' />
         </TouchableBounce>
       </Animated.View>
+
       <Animated.View
         style={buttonStyle}
-        className='absolute top-10 right-10 z-10'
+        className='absolute top-16 z-10 left-1/2 -translate-x-1/2'
       >
-        <TouchableBounce sensory>
+        <H4 className='text-muted-foreground'>Finish drawing</H4>
+      </Animated.View>
+
+      <Animated.View
+        style={buttonStyle}
+        className='absolute top-14 right-10 z-10'
+      >
+        <TouchableBounce
+          sensory
+          onPress={() => {
+            setIsDrawing(false);
+          }}
+        >
           <Check strokeWidth={2} size={30} className='text-muted-foreground ' />
         </TouchableBounce>
       </Animated.View>
@@ -85,20 +107,28 @@ export default function ImageView(props: ImageViewProps) {
             <Path
               path={currentPath}
               style='stroke'
-              strokeWidth={draw?.at(-1)?.strokeWidth}
+              strokeWidth={draw?.strokeWidth}
             >
-              {draw?.at(-1)?.selectedEffects.includes("discrete") ? (
-                <DiscretePathEffect length={10} deviation={2} />
+              {draw?.selectedEffects.includes("discrete") ? (
+                <DiscretePathEffect
+                  length={10}
+                  deviation={draw?.discretePathDeviation || 10}
+                />
               ) : null}
 
-              {draw?.at(-1)?.selectedEffects.includes("dash") ? (
-                <DashPathEffect intervals={[10, 10]} />
+              {draw?.selectedEffects.includes("dash") ? (
+                <DashPathEffect
+                  intervals={[
+                    draw?.dashPathEffectIntervals || 10,
+                    draw?.dashPathEffectIntervals || 10,
+                  ]}
+                />
               ) : null}
 
               <LinearGradient
                 start={vec(0, 0)}
                 end={vec(width, height)}
-                colors={draw?.at(-1)?.selectedColors || ["black"]}
+                colors={draw?.selectedColors || ["black"]}
               />
             </Path>
 

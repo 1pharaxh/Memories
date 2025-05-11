@@ -1,5 +1,9 @@
 import { SkMatrix, SkPath } from "@shopify/react-native-skia";
-import { Mutable, SharedValue } from "react-native-reanimated/lib/typescript/commonTypes";
+import { DerivedValue } from "react-native-reanimated";
+import {
+  Mutable,
+  SharedValue,
+} from "react-native-reanimated/lib/typescript/commonTypes";
 import { create, StateCreator } from "zustand";
 import { SINGLE_STICKER_OPTIONS } from "~/lib/constants";
 
@@ -94,8 +98,9 @@ export interface Draw {
   selectedEffects: string[];
   // Represents the brush size
   strokeWidth: number;
-  currentPath: SharedValue<SkPath>
-
+  currentPath: SharedValue<SkPath>;
+  dashPathEffectIntervals?: number;
+  discretePathDeviation?: number;
 }
 
 export type GLOBALS_SINGLE_STICKER_OPTIONS = SINGLE_STICKER_OPTIONS & {
@@ -109,13 +114,15 @@ export type GLOBALS_SINGLE_STICKER_OPTIONS = SINGLE_STICKER_OPTIONS & {
 export interface PresetSlice {
   filter?: Filter;
   crop?: Crop;
-  draw?: Draw[];
+  draw?: Draw | undefined;
   stickers?: GLOBALS_SINGLE_STICKER_OPTIONS[];
+  isDrawing: boolean;
   setFilter: (filter: Filter) => void;
   setCrop: (crop: Crop) => void;
-  setDraw: (draw: Draw[]) => void;
+  setDraw: (draw: Draw | undefined) => void;
   addStickers: (sticker: GLOBALS_SINGLE_STICKER_OPTIONS) => void;
   replaceSticker: (sticker: GLOBALS_SINGLE_STICKER_OPTIONS) => void;
+  setIsDrawing: (e: boolean) => void;
 }
 
 const createPresetSlice: StateCreator<PresetSlice, [], [], PresetSlice> = (
@@ -130,11 +137,13 @@ const createPresetSlice: StateCreator<PresetSlice, [], [], PresetSlice> = (
     width: 1,
     height: 1,
   },
-  draw: [],
+  draw: undefined,
   stickers: [],
+  isDrawing: false,
   setFilter: (filter) => set({ filter }),
   setCrop: (crop) => set({ crop }),
   setDraw: (draw) => set({ draw }),
+  setIsDrawing: (isDrawing) => set({ isDrawing }),
   replaceSticker: (sticker) =>
     set((state) => {
       const newStickers = [...(state.stickers || [])];
