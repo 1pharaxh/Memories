@@ -1,26 +1,22 @@
 import TouchableBounce from "~/components/ui/TouchableBounce";
-import { View, Text, Dimensions } from "react-native";
+import { View, Dimensions } from "react-native";
 
-import React, { useCallback, useState } from "react";
-import { cx } from "class-variance-authority";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Canvas,
   Group,
-  Rect,
   RoundedRect,
   useAnimatedImageValue,
   Image,
   rect,
   processTransform2d,
   fitbox,
-  SkRect,
 } from "@shopify/react-native-skia";
-import { FlashList } from "@shopify/flash-list";
-import * as AC from "@bacons/apple-colors";
 import VariableFontAnimateText from "../Stickers/VariableFont";
 import {
   SINGLE_STICKER_OPTIONS,
-  STICKER_OPTIONS,
+  STICKER_TABS,
+  STICKER_TABS_INTERFACE,
   STICKER_TEXT_NAME,
   STICKER_TYPE,
 } from "~/lib/constants";
@@ -32,8 +28,25 @@ import useGlobalStore, {
 } from "~/store/globalStore";
 import { useRouter } from "expo-router";
 import { deflate } from "~/lib/utils";
-import { clamp, makeMutable } from "react-native-reanimated";
+import Animated, {
+  clamp,
+  FadeIn,
+  makeMutable,
+  runOnJS,
+  SharedValue,
+  useAnimatedReaction,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
+  withSequence,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
+
 import { useImage } from "expo-image";
+import { LegendList } from "@legendapp/list";
+import { AnimatedMuted } from "../typography";
+import { TAB_BAR_SPRING } from "../TabBarIcon";
 
 const TEXT_PILL_HEIGHT = 72;
 const GIF_HEIGHT = 180;
@@ -123,7 +136,7 @@ const RenderSticker = (
 
       return (
         <BigSmallText
-          type="big"
+          type='big'
           text={item.name}
           xCord={-textWidth / 2}
           yCord={item.fontSize / 4}
@@ -138,7 +151,7 @@ const RenderSticker = (
 
       return (
         <BigSmallText
-          type="small"
+          type='small'
           text={item.name}
           xCord={-textWidth / 2}
           yCord={item.fontSize / 4}
@@ -157,6 +170,24 @@ const StickerSheet = (props: Props) => {
 
   const { colorScheme } = useColorScheme();
   const { addStickers } = useGlobalStore();
+
+  const selectedCategory = useSharedValue<string>(STICKER_TABS[0].name);
+
+  const handleSelectCategory = useCallback((e: string) => {
+    selectedCategory.set(e);
+  }, []);
+
+  const [data, setData] = useState<STICKER_TABS_INTERFACE>(STICKER_TABS[0]);
+
+  useAnimatedReaction(
+    () => selectedCategory.get(),
+    (select) => {
+      const selectedCategoryFromArray = STICKER_TABS.filter(
+        (e) => e.name === select
+      )[0];
+      runOnJS(setData)(selectedCategoryFromArray);
+    }
+  );
 
   const [selected, setSelected] = useState<GLOBALS_SINGLE_STICKER_OPTIONS>();
 
@@ -199,29 +230,87 @@ const StickerSheet = (props: Props) => {
     [addStickers, width, height]
   );
 
+  const animatedCounter = useSharedValue<number>(0);
+
+  useEffect(() => {
+    animatedCounter.set(animatedCounter.get() + 1);
+  }, [data]);
+
+  const animatedContainerStyle = useAnimatedStyle(() => {
+    const _ = animatedCounter.get();
+    return {
+      transform: [
+        {
+          scale: withSequence(
+            withTiming(0, { duration: 0 }),
+            withSpring(1, TAB_BAR_SPRING)
+          ),
+        },
+      ],
+      opacity: withSequence(
+        withTiming(0, { duration: 0 }),
+        withSpring(1, TAB_BAR_SPRING)
+      ),
+    };
+  });
+
   return (
-    <View className="flex flex-wrap flex-row justify-between p-4 flex-1">
-      <FlashList
-        className="flex-1 "
-        data={STICKER_OPTIONS}
-        numColumns={2}
-        estimatedItemSize={100}
-        keyExtractor={(item) => item.name}
-        extraData={selected?.name}
-        ListFooterComponentStyle={{
-          padding: 360,
-        }}
-        renderItem={({ item }) => (
-          <StickerItem
-            item={item}
-            selected={selected}
-            colorScheme={colorScheme}
-            textStickerWidth={textStickerWidth}
-            onItemPress={onPress}
-          />
-        )}
-      />
-    </View>
+    <>
+      <View className='h-20'>
+        <Animated.FlatList
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+          }}
+          horizontal
+          data={STICKER_TABS}
+          keyExtractor={(item) => item.name}
+          renderItem={({ item, index }) => {
+            const delay = index * 400;
+            return (
+              <AnimatedTabItem
+                item={item}
+                delay={delay}
+                onPress={() => {
+                  handleSelectCategory(item.name);
+                }}
+                selectedCategory={selectedCategory}
+              />
+            );
+          }}
+        />
+      </View>
+      <Animated.View style={[{ flex: 1 }, animatedContainerStyle]}>
+        <LegendList
+          contentContainerStyle={{
+            width: width - 20,
+            flexGrow: 1,
+            paddingBlockEnd: height / 1.5,
+          }}
+          style={{
+            paddingHorizontal: 16,
+            flexGrow: 0,
+            height: height,
+          }}
+          data={data.stickers}
+          numColumns={2}
+          estimatedItemSize={100}
+          keyExtractor={(item, index) => `${item.name}+${index}`}
+          extraData={selected?.name}
+          recycleItems
+          renderItem={({ item }) => {
+            return (
+              <StickerItem
+                item={item}
+                selected={selected}
+                colorScheme={colorScheme}
+                textStickerWidth={textStickerWidth}
+                onItemPress={onPress}
+              />
+            );
+          }}
+        />
+      </Animated.View>
+    </>
   );
 };
 
@@ -242,7 +331,7 @@ const StickerItem = React.memo(
     onItemPress: (item: SINGLE_STICKER_OPTIONS) => void;
   }) => {
     return (
-      <View className="mb-4">
+      <Animated.View className='mb-4'>
         <TouchableBounce sensory onPress={() => onItemPress(item)}>
           <Canvas
             style={{
@@ -273,13 +362,12 @@ const StickerItem = React.memo(
               <AnimatedImages
                 item={item}
                 textStickerWidth={textStickerWidth}
-                // Don't pass the entire selected object, just what's needed
                 selected={selected}
               />
             )}
           </Canvas>
         </TouchableBounce>
-      </View>
+      </Animated.View>
     );
   },
   (prev, next) => {
@@ -360,7 +448,54 @@ const AnimatedImages = ({
       y={0}
       width={textStickerWidth}
       height={GIF_HEIGHT}
-      fit="contain"
+      fit='contain'
     />
+  );
+};
+
+const AnimatedTabItem = ({
+  item,
+  selectedCategory,
+  delay,
+  onPress,
+}: {
+  item: STICKER_TABS_INTERFACE;
+  selectedCategory: SharedValue<string>;
+  delay: number;
+  onPress?: () => void;
+}) => {
+  const expand = useDerivedValue(
+    () => selectedCategory.get() === item.name,
+    [item, selectedCategory]
+  );
+
+  const PillTextStyle = useAnimatedStyle(() => {
+    return {
+      display: expand.get() && expand.get() ? "flex" : "none",
+      opacity: withTiming(expand.get() && expand.get() ? 1 : 0, {
+        duration: 300,
+      }),
+    };
+  });
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      width: withSpring(expand.get() ? 150 : 50),
+    };
+  });
+
+  return (
+    <TouchableBounce sensory onPress={onPress}>
+      <Animated.View
+        style={animatedStyle}
+        entering={FadeIn.duration(delay)}
+        className='rounded-2xl h-14 flex flex-row gap-3 items-center justify-center overflow-hidden px-2 mx-2 bg-muted-foreground/10'
+      >
+        {item.icon}
+        <AnimatedMuted style={PillTextStyle} className='text-base'>
+          {item.name}
+        </AnimatedMuted>
+      </Animated.View>
+    </TouchableBounce>
   );
 };

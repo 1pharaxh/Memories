@@ -363,7 +363,7 @@ const ColorSelectionSheet = (props: Props) => {
                   <Animated.View
                     style={selectedColorStyle}
                     className={cn(
-                      "w-16 h-14 rounded-full flex items-center justify-center border-2 dark:border-white border-muted-foreground"
+                      "w-14 h-14 rounded-full flex items-center justify-center border-2 dark:border-white border-muted-foreground"
                     )}
                   >
                     <Plus strokeWidth={2} size={30} className='text-white' />

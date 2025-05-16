@@ -76,31 +76,31 @@ export const PRESET_OPTIONS = [
     name: "Filter",
     type: FilterType.Filter,
     sheetTitle: "Choose a filter",
-    icon: <Blend size={17} strokeWidth={2} className="text-white" />,
+    icon: <Blend size={17} strokeWidth={2} className='text-white' />,
   },
   {
     name: "Stickers",
     type: FilterType.Stickers,
     sheetTitle: "Choose a sticker",
-    icon: <Sticker size={17} strokeWidth={2} className="text-white" />,
+    icon: <Sticker size={17} strokeWidth={2} className='text-white' />,
   },
   {
     name: "Music",
     type: FilterType.Music,
     sheetTitle: "Choose music to add",
-    icon: <Music size={17} strokeWidth={2} className="text-white" />,
+    icon: <Music size={17} strokeWidth={2} className='text-white' />,
   },
   {
     name: "Draw",
     type: FilterType.Draw,
     sheetTitle: "Draw",
-    icon: <Brush size={17} strokeWidth={2} className="text-white" />,
+    icon: <Brush size={17} strokeWidth={2} className='text-white' />,
   },
   {
     name: "Crop",
     type: FilterType.Crop,
     sheetTitle: "Crop your image",
-    icon: <Crop size={17} strokeWidth={2} className="text-white" />,
+    icon: <Crop size={17} strokeWidth={2} className='text-white' />,
   },
 ];
 
@@ -210,4 +210,128 @@ export interface SINGLE_STICKER_OPTIONS {
   name: STICKER_TEXT_NAME | string;
   fontName?: FontNames;
   fontSize: number;
+  isGif?: boolean;
 }
+
+export interface STICKER_TABS_INTERFACE {
+  name: string;
+  icon: React.JSX.Element;
+  stickers: SINGLE_STICKER_OPTIONS[];
+}
+
+export const STICKER_TABS: STICKER_TABS_INTERFACE[] = [
+  {
+    name: "Animated texts",
+    icon: <Blend strokeWidth={2} size={30} className='text-muted-foreground' />,
+    stickers: [
+      {
+        type: STICKER_TYPE.TEXT,
+        name: STICKER_TEXT_NAME.GLITCH,
+        fontName: "Got_Heroin",
+        fontSize: 50,
+      },
+      {
+        type: STICKER_TYPE.TEXT,
+        name: STICKER_TEXT_NAME.BLOOM,
+        fontName: "OverusedGrotesk",
+        fontSize: 30,
+      },
+
+      {
+        type: STICKER_TYPE.TEXT,
+        name: STICKER_TEXT_NAME.RIGHTWARD,
+        fontName: "OverusedGrotesk",
+        fontSize: 35,
+      },
+
+      {
+        type: STICKER_TYPE.TEXT,
+        name: STICKER_TEXT_NAME.LEFTWARD,
+        fontName: "OverusedGrotesk",
+        fontSize: 35,
+      },
+
+      {
+        type: STICKER_TYPE.TEXT,
+        name: STICKER_TEXT_NAME.BIG,
+        fontName: "Gyrotrope-David Moles",
+        fontSize: 30,
+      },
+
+      {
+        type: STICKER_TYPE.TEXT,
+        name: STICKER_TEXT_NAME.SMALL,
+        fontName: "Gyrotrope-David Moles",
+        fontSize: 30,
+      },
+    ],
+  },
+  {
+    name: "XYZ Images",
+    icon: <Brush strokeWidth={2} size={30} className='text-muted-foreground' />,
+    stickers: [
+      {
+        type: STICKER_TYPE.IMAGE,
+        name: require("../assets/gifs/Text Please Sticker by V5MT.gif"),
+        isGif: true,
+        fontSize: 30,
+      },
+      {
+        type: STICKER_TYPE.IMAGE,
+        name: require("../assets/gifs/Thank U Sticker by V5MT.gif"),
+        isGif: true,
+        fontSize: 30,
+      },
+      {
+        type: STICKER_TYPE.IMAGE,
+        name: require("../assets/gifs/the wave dancing Sticker.gif"),
+        isGif: true,
+        fontSize: 30,
+      },
+    ],
+  },
+
+  {
+    name: "ABC Images",
+    icon: <Crop strokeWidth={2} size={30} className='text-muted-foreground' />,
+    stickers: [
+      {
+        type: STICKER_TYPE.IMAGE,
+        name: require("../assets/gifs/Art Text Sticker by Matt Osio.gif"),
+        isGif: true,
+        fontSize: 30,
+      },
+      {
+        type: STICKER_TYPE.IMAGE,
+        name: require("../assets/gifs/I Love You Animation Sticker by Matt Osio.gif"),
+        isGif: true,
+        fontSize: 30,
+      },
+      {
+        type: STICKER_TYPE.IMAGE,
+        name: require("../assets/gifs/Meh Over It Sticker by V5MT.gif"),
+        isGif: true,
+        fontSize: 30,
+      },
+    ],
+  },
+
+  {
+    name: "VNG Images",
+    icon: <Crop strokeWidth={2} size={30} className='text-muted-foreground' />,
+    stickers: [
+      {
+        type: STICKER_TYPE.IMAGE,
+        name: require("../assets/gifs/I Love You Animation Sticker by Matt Osio.gif"),
+        isGif: true,
+        fontSize: 30,
+      },
+      {
+        type: STICKER_TYPE.IMAGE,
+        name: require("../assets/gifs/Meh Over It Sticker by V5MT.gif"),
+        isGif: true,
+        fontSize: 30,
+      },
+    ],
+  },
+];

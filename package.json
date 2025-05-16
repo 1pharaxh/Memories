@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@bacons/apple-colors": "^0.0.8",
+    "@legendapp/list": "^1.0.11",
     "@react-native-community/slider": "4.5.5",
     "@react-native-masked-view/masked-view": "^0.3.2",
     "@react-navigation/material-top-tabs": "^7.1.0",
@@ -24,7 +25,6 @@
     "@rn-primitives/slot": "~1.1.0",
     "@rn-primitives/tooltip": "~1.1.0",
     "@rn-primitives/types": "~1.1.0",
-    "@shopify/flash-list": "1.7.3",
     "@shopify/react-native-skia": "1.5.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
