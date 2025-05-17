@@ -75,19 +75,19 @@ export const PRESET_OPTIONS = [
   {
     name: "Filter",
     type: FilterType.Filter,
-    sheetTitle: "Choose a filter",
+    sheetTitle: "Filters",
     icon: <Blend size={17} strokeWidth={2} className='text-white' />,
   },
   {
     name: "Stickers",
     type: FilterType.Stickers,
-    sheetTitle: "Choose a sticker",
+    sheetTitle: "Stickers",
     icon: <Sticker size={17} strokeWidth={2} className='text-white' />,
   },
   {
     name: "Music",
     type: FilterType.Music,
-    sheetTitle: "Choose music to add",
+    sheetTitle: "Music",
     icon: <Music size={17} strokeWidth={2} className='text-white' />,
   },
   {

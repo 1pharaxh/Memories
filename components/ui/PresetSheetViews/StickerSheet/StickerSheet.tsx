@@ -12,7 +12,7 @@ import {
   processTransform2d,
   fitbox,
 } from "@shopify/react-native-skia";
-import VariableFontAnimateText from "../Stickers/VariableFont";
+import VariableFontAnimateText from "../../Stickers/VariableFont";
 import {
   SINGLE_STICKER_OPTIONS,
   STICKER_TABS,
@@ -20,8 +20,8 @@ import {
   STICKER_TEXT_NAME,
   STICKER_TYPE,
 } from "~/lib/constants";
-import GlitchText from "../Stickers/Glitch";
-import BigSmallText from "../Stickers/BigSmall";
+import GlitchText from "../../Stickers/Glitch";
+import BigSmallText from "../../Stickers/BigSmall";
 import { useColorScheme } from "~/lib/useColorScheme";
 import useGlobalStore, {
   GLOBALS_SINGLE_STICKER_OPTIONS,
@@ -31,6 +31,8 @@ import { deflate } from "~/lib/utils";
 import Animated, {
   clamp,
   FadeIn,
+  FadeInLeft,
+  FadeOutLeft,
   makeMutable,
   runOnJS,
   SharedValue,
@@ -45,8 +47,9 @@ import Animated, {
 
 import { useImage } from "expo-image";
 import { LegendList } from "@legendapp/list";
-import { AnimatedMuted } from "../typography";
-import { TAB_BAR_SPRING } from "../TabBarIcon";
+import { AnimatedMuted } from "../../typography";
+import { TAB_BAR_SPRING } from "../../TabBarIcon";
+import TextSetting from "./TextSetting";
 
 const TEXT_PILL_HEIGHT = 72;
 const GIF_HEIGHT = 180;
@@ -219,13 +222,15 @@ const StickerSheet = (props: Props) => {
         height: textHeight,
       });
 
-      addStickers({
-        ...item,
-        matrix,
-        text,
-        width: textWidth,
-        height: textHeight,
-      });
+      if (item.type !== STICKER_TYPE.TEXT) {
+        addStickers({
+          ...item,
+          matrix,
+          text,
+          width: textWidth,
+          height: textHeight,
+        });
+      }
     },
     [addStickers, width, height]
   );
@@ -239,14 +244,6 @@ const StickerSheet = (props: Props) => {
   const animatedContainerStyle = useAnimatedStyle(() => {
     const _ = animatedCounter.get();
     return {
-      transform: [
-        {
-          scale: withSequence(
-            withTiming(0, { duration: 0 }),
-            withSpring(1, TAB_BAR_SPRING)
-          ),
-        },
-      ],
       opacity: withSequence(
         withTiming(0, { duration: 0 }),
         withSpring(1, TAB_BAR_SPRING)
@@ -256,60 +253,69 @@ const StickerSheet = (props: Props) => {
 
   return (
     <>
-      <View className='h-20'>
-        <Animated.FlatList
-          contentContainerStyle={{
-            paddingHorizontal: 16,
-          }}
-          horizontal
-          data={STICKER_TABS}
-          keyExtractor={(item) => item.name}
-          renderItem={({ item, index }) => {
-            const delay = index * 400;
-            return (
-              <AnimatedTabItem
-                item={item}
-                delay={delay}
-                onPress={() => {
-                  handleSelectCategory(item.name);
-                }}
-                selectedCategory={selectedCategory}
-              />
-            );
-          }}
-        />
-      </View>
-      <Animated.View style={[{ flex: 1 }, animatedContainerStyle]}>
-        <LegendList
-          contentContainerStyle={{
-            width: width - 20,
-            flexGrow: 1,
-            paddingBlockEnd: height / 1.5,
-          }}
-          style={{
-            paddingHorizontal: 16,
-            flexGrow: 0,
-            height: height,
-          }}
-          data={data.stickers}
-          numColumns={2}
-          estimatedItemSize={100}
-          keyExtractor={(item, index) => `${item.name}+${index}`}
-          extraData={selected?.name}
-          recycleItems
-          renderItem={({ item }) => {
-            return (
-              <StickerItem
-                item={item}
-                selected={selected}
-                colorScheme={colorScheme}
-                textStickerWidth={textStickerWidth}
-                onItemPress={onPress}
-              />
-            );
-          }}
-        />
-      </Animated.View>
+      {selected?.type !== STICKER_TYPE.TEXT ? (
+        <Animated.View
+          exiting={FadeOutLeft.delay(100)}
+          entering={FadeInLeft.delay(100)}
+        >
+          <View className='h-20'>
+            <Animated.FlatList
+              contentContainerStyle={{
+                paddingHorizontal: 16,
+              }}
+              horizontal
+              data={STICKER_TABS}
+              keyExtractor={(item) => item.name}
+              renderItem={({ item, index }) => {
+                const delay = index * 400;
+                return (
+                  <AnimatedTabItem
+                    item={item}
+                    delay={delay}
+                    onPress={() => {
+                      handleSelectCategory(item.name);
+                    }}
+                    selectedCategory={selectedCategory}
+                  />
+                );
+              }}
+            />
+          </View>
+          <Animated.View style={[{ flex: 1 }, animatedContainerStyle]}>
+            <LegendList
+              contentContainerStyle={{
+                width: width - 20,
+                flexGrow: 1,
+                paddingBlockEnd: height / 1.5,
+              }}
+              style={{
+                paddingHorizontal: 16,
+                flexGrow: 0,
+                height: height,
+              }}
+              data={data.stickers}
+              numColumns={2}
+              estimatedItemSize={100}
+              keyExtractor={(item, index) => `${item.name}+${index}`}
+              extraData={selected?.name}
+              recycleItems
+              renderItem={({ item }) => {
+                return (
+                  <StickerItem
+                    item={item}
+                    selected={selected}
+                    colorScheme={colorScheme}
+                    textStickerWidth={textStickerWidth}
+                    onItemPress={onPress}
+                  />
+                );
+              }}
+            />
+          </Animated.View>
+        </Animated.View>
+      ) : (
+        <TextSetting selected={selected} setSelected={setSelected} />
+      )}
     </>
   );
 };

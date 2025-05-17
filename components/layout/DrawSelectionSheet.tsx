@@ -44,7 +44,7 @@ type Props = {};
 const { width } = Dimensions.get("screen");
 const GRADIENT_BOX_WIDTH = width - 55;
 
-const ColorSelectionSheet = (props: Props) => {
+const DrawSelectionSheet = (props: Props) => {
   const { setDraw, draw, setIsDrawing } = useGlobalStore();
 
   const colors: [string, string, ...string[]] = [
@@ -392,50 +392,48 @@ const ColorSelectionSheet = (props: Props) => {
           {/* Vertical spacing */}
 
           <Separator className='my-6 flex-1' />
-          <View className='flex-1'>
-            <View className='text-start flex-row w-full items-center justify-between'>
-              <View className='h-full flex flex-row items-center justify-start w-2/6'>
-                <Muted className=' text-lg font-semibold'>Stroke width</Muted>
-              </View>
+          <View className='flex-1 flex-col w-full items-start justify-center'>
+            <View className='flex flex-row items-center justify-start '>
+              <Muted className=' text-lg font-semibold'>Stroke width</Muted>
+            </View>
 
-              <View className='w-4/6'>
-                <Slider
-                  value={strokeWidthState}
-                  onValueChange={(e) => {
-                    changeStrokeWidth(e);
-                  }}
-                  minimumValue={0}
-                  maximumValue={48}
-                  minimumTrackTintColor='#FFFFFF'
-                  maximumTrackTintColor='#000000'
-                />
+            <View className='w-full'>
+              <Slider
+                value={strokeWidthState}
+                onValueChange={(e) => {
+                  changeStrokeWidth(e);
+                }}
+                minimumValue={0}
+                maximumValue={48}
+                minimumTrackTintColor='#FFFFFF'
+                maximumTrackTintColor='#000000'
+              />
 
-                <View className='mt-1 flex flex-row w-full items-center justify-between gap-1 px-2.5 text-xs font-medium text-muted-foreground'>
-                  {ticks.map((_, i) => (
+              <View className='mt-1 flex flex-row w-full items-center justify-between gap-1 px-2.5 text-xs font-medium text-muted-foreground'>
+                {ticks.map((_, i) => (
+                  <View
+                    key={i}
+                    className='flex w-0 flex-col items-center justify-center gap-2'
+                  >
                     <View
-                      key={i}
-                      className='flex w-0 flex-col items-center justify-center gap-2'
-                    >
-                      <View
-                        className={cn(
-                          "h-2 w-px bg-muted-foreground/70",
-                          i % skipInterval !== 0 && "h-1"
-                        )}
-                      />
-                      <View
-                        className={cn(i % skipInterval !== 0 && "opacity-0")}
-                      ></View>
-                    </View>
-                  ))}
-                </View>
+                      className={cn(
+                        "h-2 w-px bg-muted-foreground/70",
+                        i % skipInterval !== 0 && "h-1"
+                      )}
+                    />
+                    <View
+                      className={cn(i % skipInterval !== 0 && "opacity-0")}
+                    ></View>
+                  </View>
+                ))}
               </View>
             </View>
           </View>
           {/* Vertical spacing */}
-          <Separator className='my-6 flex-1' />
+          <Separator className='my-2 flex-1 opacity-0' />
 
-          <View className='text-start flex-1 flex-row w-full items-center justify-between'>
-            <View className='h-full flex flex-row items-center justify-start w-2/6'>
+          <View className='flex-1 flex-col w-full items-start justify-center'>
+            <View className='h-12 flex flex-row items-center justify-start w-2/6'>
               <Muted className=' text-lg font-semibold'>Stroke style</Muted>
             </View>
 
@@ -460,7 +458,7 @@ const ColorSelectionSheet = (props: Props) => {
                   </View>
                 </TouchableBounce>
 
-                <Separator orientation='vertical' />
+                <Separator orientation='vertical' className="opacity-0" />
 
                 <TouchableBounce
                   sensory
@@ -489,4 +487,4 @@ const ColorSelectionSheet = (props: Props) => {
   );
 };
 
-export default ColorSelectionSheet;
+export default DrawSelectionSheet;
