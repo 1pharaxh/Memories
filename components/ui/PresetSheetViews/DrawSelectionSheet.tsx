@@ -31,14 +31,14 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
-import DottedBackground from "../ui/DottedBackground";
-import TouchableBounce from "../ui/TouchableBounce";
+import DottedBackground from "../DottedBackground";
+import TouchableBounce from "../TouchableBounce";
 import { cn } from "~/lib/utils";
 import { Canvas, FitBox, Path, rect, vec } from "@shopify/react-native-skia";
-import { Muted } from "../ui/typography";
-import { Separator } from "../ui/separator";
-import { Button } from "../ui/button";
+import { Muted } from "../typography";
+import { Separator } from "../separator";
 import useGlobalStore, { Draw } from "~/store/globalStore";
+import { colors } from "~/lib/constants";
 
 type Props = {};
 const { width } = Dimensions.get("screen");
@@ -47,25 +47,7 @@ const GRADIENT_BOX_WIDTH = width - 55;
 const DrawSelectionSheet = (props: Props) => {
   const { setDraw, draw, setIsDrawing } = useGlobalStore();
 
-  const colors: [string, string, ...string[]] = [
-    "#FF69B4", // Hot Pink
-    "#FF6B6B", // Coral Red
-    "#FF8C42", // Dark Orange
-    "#FFA726", // Orange
-    "#66BB6A", // Light Green
-    "#4FC3F7", // Light Blue
-    "#7986CB", // Blue Grey
-    "#BA68C8", // Purple
-    "#F06292", // Pink
-    "#4DB6AC", // Teal
-    "#9575CD", // Deep Purple
-    "#FF7043", // Deep Orange
-    "#FFB74D", // Amber
-    "#4DD0E1", // Cyan
-    "#81C784", // Green
-    "#7E57C2", // Deep Purple
-    "#FF8A65", // Deep Orange
-  ];
+
   const [strokeWidthState, setstrokeWidthState] = useState<number>(
     draw?.strokeWidth || 5
   );

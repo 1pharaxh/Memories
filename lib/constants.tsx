@@ -117,6 +117,26 @@ export const FONTS = {
   OverusedGrotesk: require("../assets/fonts/Overused-Grotesk/OverusedGrotesk-Medium.ttf"),
 } as const;
 export type FontNames = keyof typeof FONTS;
+export const FONT_TO_FONTNAMES = {
+  "SF-Pro": { name: "Apple", size: 36, yOffshootDividend: 4 },
+  Got_Heroin: { name: "Retro", size: 52, yOffshootDividend: 4 },
+  SuperShiny: { name: "Shiny", size: 42, yOffshootDividend: 4 },
+  SuperWoobly: { name: "Woobly", size: 28, yOffshootDividend: 3 },
+  Streetwear: { name: "Street", size: 32, yOffshootDividend: 2 },
+  GarciaMarquez: { name: "Garcia", size: 40, yOffshootDividend: 3 },
+  "Gyrotrope-David Moles": {
+    name: "Gyrotrope",
+    size: 36,
+    yOffshootDividend: 3,
+  },
+  "Beyond Wonderland": { name: "Wonderland", size: 40, yOffshootDividend: 3 },
+  "Cocaine sans - chris hansen": {
+    name: "Dirty",
+    size: 52,
+    yOffshootDividend: 4,
+  },
+  OverusedGrotesk: { name: "Overused", size: 36, yOffshootDividend: 3 },
+};
 
 export enum STICKER_TYPE {
   TEXT = "text",
@@ -334,4 +354,24 @@ export const STICKER_TABS: STICKER_TABS_INTERFACE[] = [
       },
     ],
   },
+];
+
+export const colors: [string, string, ...string[]] = [
+  "#FF69B4", // Hot Pink
+  "#FF6B6B", // Coral Red
+  "#FF8C42", // Dark Orange
+  "#FFA726", // Orange
+  "#66BB6A", // Light Green
+  "#4FC3F7", // Light Blue
+  "#7986CB", // Blue Grey
+  "#BA68C8", // Purple
+  "#F06292", // Pink
+  "#4DB6AC", // Teal
+  "#9575CD", // Deep Purple
+  "#FF7043", // Deep Orange
+  "#FFB74D", // Amber
+  "#4DD0E1", // Cyan
+  "#81C784", // Green
+  "#7E57C2", // Deep Purple
+  "#FF8A65", // Deep Orange
 ];

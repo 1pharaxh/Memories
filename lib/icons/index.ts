@@ -14,11 +14,15 @@ import { Sticker } from "./Sticker";
 import { Sun } from "./Sun";
 import { Trash2 } from "./Trash2";
 import { UserRound } from "./UserRound";
+import { Plus } from "./Plus";
+import { ChevronDown } from "./ChevronDown";
+import { ChevronUp } from "./ChevronUp";
 
 export {
   ALargeSmall,
   Aperture,
   ArrowLeft,
+  Plus,
   Blend,
   Crop,
   Heart,
@@ -32,4 +36,6 @@ export {
   Trash,
   UserRound,
   Trash2,
+  ChevronDown,
+  ChevronUp,
 };

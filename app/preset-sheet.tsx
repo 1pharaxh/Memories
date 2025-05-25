@@ -12,7 +12,7 @@ interface renderPresetSheetContentProps {
 
 import * as AC from "@bacons/apple-colors";
 import StickerSheet from "~/components/ui/PresetSheetViews/StickerSheet/StickerSheet";
-import DrawSelectionSheet from "~/components/layout/DrawSelectionSheet";
+import DrawSelectionSheet from "~/components/ui/PresetSheetViews/DrawSelectionSheet";
 
 const RenderPresetSheetContent: React.FC<renderPresetSheetContentProps> = memo(
   ({ type }: renderPresetSheetContentProps) => {

@@ -13,7 +13,6 @@ import * as React from "react";
 import { Platform } from "react-native";
 import { FilterType, NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
-import { PortalHost } from "@rn-primitives/portal";
 import * as Form from "~/components/ui/Form";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import * as ScreenOrientation from "expo-screen-orientation";
@@ -100,9 +99,7 @@ export default function RootLayout() {
                 // Filter sheet is vertically scrolled list
                 routeName && routeName === FilterType.Filter
                   ? [0.25]
-                  : routeName && routeName === FilterType.Draw
-                  ? [0.5, 0.75]
-                  : [0.25, 0.5],
+                  : [0.5, 0.75],
 
               headerRight: () => (
                 <Form.Link headerRight href='/(tabs)' dismissTo>
@@ -116,7 +113,6 @@ export default function RootLayout() {
             }}
           />
         </Stack>
-        <PortalHost />
       </ThemeProvider>
     </GestureHandlerRootView>
   );

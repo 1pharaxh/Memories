@@ -57,20 +57,26 @@ type Props = {};
 
 const { width, height } = Dimensions.get("window");
 
-const CenteredSkiaContent = ({
+export const CenteredSkiaContent = ({
   width,
   height,
   children,
-  padding = 0,
+  scale = 1,
 }: {
   width: number;
   height: number;
   children: React.ReactNode;
-  padding?: number;
+  scale?: number;
 }) => {
   // The Group component can be used to transform all children
   return (
-    <Group transform={[{ translateX: width / 2 }, { translateY: height / 2 }]}>
+    <Group
+      transform={[
+        { translateX: (width * scale) / 2 },
+        { translateY: (height * scale) / 2 },
+        { scale: scale },
+      ]}
+    >
       {children}
     </Group>
   );
