@@ -32,8 +32,8 @@ import { Muted } from "../../typography";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PortalHost } from "@rn-primitives/portal";
 import { useColorScheme } from "~/lib/useColorScheme";
-import { CenteredSkiaContent } from "./StickerSheet";
 import GlitchText from "../../Stickers/Glitch";
+import { CenteredSkiaContent } from "../../LegendListColumnCenter";
 const TEXT_PILL_HEIGHT = 60;
 const TEXT_SCALE = 0.7;
 const GRADIENT_BOX_WIDTH = width - 55;
@@ -141,11 +141,11 @@ function TextSetting({ setSelected, selected }: Props) {
           <View className='w-full  px-8 flex items-center justify-center flex-row'>
             <Canvas style={{ width: GRADIENT_BOX_WIDTH, height: 135 }}>
               <GlitchText
-                xCord={90} 
+                xCord={90}
                 yCord={100}
-                fontName="Got_Heroin"
-                fontSize={135} 
-                text="Glitch"
+                fontName='Got_Heroin'
+                fontSize={135}
+                text='Glitch'
               />
             </Canvas>
           </View>

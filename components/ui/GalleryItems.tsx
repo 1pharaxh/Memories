@@ -17,11 +17,9 @@ import {
   useImmersiveOverlayStore,
 } from "~/store/OverlayStore";
 import { WarpEffect } from "./gradient/WarpEffect";
+import { blurhash } from "~/lib/constants";
 const X_OFFSET = 25;
 const TEXT_SIZE = 32;
-
-const blurhash =
-  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
 const { width, height } = Dimensions.get("window");
 
@@ -152,17 +150,17 @@ function GalleryItems({}: Props) {
   });
 
   return (
-    <View className="flex-col justify-end items-center h-fit w-full shadow gap-6">
+    <View className='flex-col justify-end items-center h-fit w-full shadow gap-6'>
       <TouchableBounce onPress={onPress} sensory>
         <WarpEffect displayImmersiveOverlay={isExpanded}>
           <Animated.View
             style={galleryBlobStyle}
-            className="rounded-3xl overflow-hidden "
+            className='rounded-3xl overflow-hidden '
           >
             <ScrollView>
-              <View className="relative">
+              <View className='relative'>
                 <Animated.Text
-                  className="font-extrabold tracking-tighter text-center dark:text-white text-black/70 "
+                  className='font-extrabold tracking-tighter text-center dark:text-white text-black/70 '
                   style={headingTextStyle}
                 >
                   My Pics
@@ -170,7 +168,7 @@ function GalleryItems({}: Props) {
 
                 <Animated.Text
                   style={subHeadingTextStyle}
-                  className="text-2xl font-medium tracking-tighter text-center dark:text-white text-black/70 "
+                  className='text-2xl font-medium tracking-tighter text-center dark:text-white text-black/70 '
                 >
                   April
                 </Animated.Text>
@@ -256,7 +254,7 @@ function GalleryItems({}: Props) {
                       <Animated.View
                         key={index}
                         style={[positions[index], animatedStyles]}
-                        className="bg-green-500 h-48 w-36 absolute rounded-xl overflow-hidden"
+                        className='bg-green-500 h-48 w-36 absolute rounded-xl overflow-hidden'
                       >
                         <Image
                           style={{
@@ -266,7 +264,7 @@ function GalleryItems({}: Props) {
                             flex: 1,
                           }}
                           source={`https://picsum.photos/seed/${index}/3000/2000`}
-                          contentFit="cover"
+                          contentFit='cover'
                           placeholder={blurhash}
                           transition={1000}
                         />
@@ -280,44 +278,44 @@ function GalleryItems({}: Props) {
       </TouchableBounce>
       <Animated.View
         style={buttonRowStyle}
-        className="flex-row  h-fit items-stretch justify-between gap-1 w-3/5"
+        className='flex-row  h-fit items-stretch justify-between gap-1 w-3/5'
       >
         <TouchableBounce sensory>
-          <View className="h-40">
+          <View className='h-40'>
             <Share
               size={24}
               strokeWidth={2}
-              className="dark:text-muted-foreground text-black/70"
+              className='dark:text-muted-foreground text-black/70'
             />
           </View>
         </TouchableBounce>
 
         <TouchableBounce sensory>
-          <View className="h-40">
+          <View className='h-40'>
             <Heart
               size={24}
               strokeWidth={2}
-              className="dark:text-muted-foreground text-black/70"
+              className='dark:text-muted-foreground text-black/70'
             />
           </View>
         </TouchableBounce>
 
         <TouchableBounce sensory>
-          <View className="h-40">
+          <View className='h-40'>
             <Info
               size={24}
               strokeWidth={2}
-              className="dark:text-muted-foreground text-black/70"
+              className='dark:text-muted-foreground text-black/70'
             />
           </View>
         </TouchableBounce>
 
         <TouchableBounce sensory>
-          <View className="h-40">
+          <View className='h-40'>
             <Trash2
               size={24}
               strokeWidth={2}
-              className="dark:text-muted-foreground text-black/70"
+              className='dark:text-muted-foreground text-black/70'
             />
           </View>
         </TouchableBounce>

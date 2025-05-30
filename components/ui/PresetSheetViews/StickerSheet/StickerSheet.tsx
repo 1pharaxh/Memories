@@ -50,6 +50,7 @@ import { LegendList } from "@legendapp/list";
 import { AnimatedMuted } from "../../typography";
 import { TAB_BAR_SPRING } from "../../TabBarIcon";
 import TextSetting from "./TextSetting";
+import LegendListColumnCenter, { CenteredSkiaContent } from "../../LegendListColumnCenter";
 
 const TEXT_PILL_HEIGHT = 72;
 const GIF_HEIGHT = 180;
@@ -57,30 +58,7 @@ type Props = {};
 
 const { width, height } = Dimensions.get("window");
 
-export const CenteredSkiaContent = ({
-  width,
-  height,
-  children,
-  scale = 1,
-}: {
-  width: number;
-  height: number;
-  children: React.ReactNode;
-  scale?: number;
-}) => {
-  // The Group component can be used to transform all children
-  return (
-    <Group
-      transform={[
-        { translateX: (width * scale) / 2 },
-        { translateY: (height * scale) / 2 },
-        { scale: scale },
-      ]}
-    >
-      {children}
-    </Group>
-  );
-};
+
 
 const RenderSticker = (
   item: SINGLE_STICKER_OPTIONS,
@@ -295,7 +273,7 @@ const StickerSheet = (props: Props) => {
                 paddingBlockEnd: height / 1.5,
               }}
               style={{
-                paddingHorizontal: 16,
+                paddingHorizontal: 10,
                 flexGrow: 0,
                 height: height,
               }}
@@ -305,15 +283,17 @@ const StickerSheet = (props: Props) => {
               keyExtractor={(item, index) => `${item.name}+${index}`}
               extraData={selected?.name}
               recycleItems
-              renderItem={({ item }) => {
+              renderItem={({ item, index }) => {
                 return (
-                  <StickerItem
-                    item={item}
-                    selected={selected}
-                    colorScheme={colorScheme}
-                    textStickerWidth={textStickerWidth}
-                    onItemPress={onPress}
-                  />
+                  <LegendListColumnCenter index={index} numColumns={2}>
+                    <StickerItem
+                      item={item}
+                      selected={selected}
+                      colorScheme={colorScheme}
+                      textStickerWidth={textStickerWidth}
+                      onItemPress={onPress}
+                    />
+                  </LegendListColumnCenter>
                 );
               }}
             />
