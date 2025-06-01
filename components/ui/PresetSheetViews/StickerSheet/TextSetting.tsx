@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Dimensions, View, Text, ScrollView } from "react-native";
 import Animated, {
   FadeInRight,
@@ -293,7 +293,7 @@ function TextSetting({ setSelected, selected }: Props) {
                     fontSize
                   );
                   if (!font || font === null) {
-                    return <></>;
+                    return <Fragment key={idx}></Fragment>;
                   }
                   const textWidth = font ? font.getTextWidth(text) + 30 : 160;
                   return (

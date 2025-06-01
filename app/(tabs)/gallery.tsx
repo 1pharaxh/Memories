@@ -40,9 +40,10 @@ import LegendListColumnCenter from "~/components/ui/LegendListColumnCenter";
 import { blurhash } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import TouchableBounce from "~/components/ui/TouchableBounce";
+import { Button } from "~/components/ui/button";
 const { width, height } = Dimensions.get("screen");
 
-const headerHeight = height / 2;
+const headerHeight = height / 1.8;
 const viewWidth = 72;
 const viewHeight = 86;
 const centerX = width / 2;
@@ -229,7 +230,7 @@ function GalleryPage({}: Props) {
       </SafeAreaView> */}
       <EdgeFade position='top' width={width} height={100} />
       <Animated.View
-        className='w-full flex items-center justify-center relative bg-primary/5'
+        className='w-full flex items-center justify-center relative '
         style={[
           {
             position: "absolute",
@@ -283,25 +284,23 @@ function GalleryPage({}: Props) {
             />
           </Animated.View>
         ))}
-        <View className='absolute bottom-2 left-0 w-full z-20 space-y-2'>
-          <Text className='text-xl text-center tracking-tighter font-semibold italic dark:text-white/90 text-black/70'>
-            2025-02-10 // Photo
+        <View className='absolute top-16 left-16 w-full z-20 pt-1'>
+          <Text className='text-xl text-start px-4 tracking-tighter font-semibold italic dark:text-white/90 text-black/70'>
+            Recent favorites
           </Text>
-          <View className='flex w-full items-center justify-center gap-10 flex-row mt-1'>
-            <BlurView
-              intensity={60}
-              tint={colorScheme === "light" ? "dark" : "light"}
-              className='w-20 h-9 rounded-xl overflow-hidden flex items-center justify-center'
-            >
-              <Text className='text-base text-center text-white'>All</Text>
-            </BlurView>
-            <BlurView
-              className='px-4 h-9 rounded-xl overflow-hidden flex items-center justify-center'
-              intensity={60}
-              tint={colorScheme === "light" ? "dark" : "light"}
-            >
-              <Text className='text-base text-center text-white'>Monthly</Text>
-            </BlurView>
+        </View>
+        <View className='absolute bottom-2 left-0 w-full z-20 space-y-2'>
+          <View className='flex w-full items-center justify-start px-4 gap-4 flex-row mt-1'>
+            <Button variant='default' size='sm' className='rounded-xl'>
+              <Text className='text-base text-center text-white'>
+                All Photos
+              </Text>
+            </Button>
+            <Button variant='outline' size='sm' className='rounded-xl bg-none'>
+              <Text className='text-base text-center text-black'>
+                Favorites Only
+              </Text>
+            </Button>
           </View>
         </View>
       </Animated.View>
