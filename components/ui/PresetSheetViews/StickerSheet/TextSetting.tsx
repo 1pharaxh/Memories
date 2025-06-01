@@ -34,6 +34,7 @@ import { PortalHost } from "@rn-primitives/portal";
 import { useColorScheme } from "~/lib/useColorScheme";
 import GlitchText from "../../Stickers/Glitch";
 import { CenteredSkiaContent } from "../../LegendListColumnCenter";
+import EdgeFade from "../../EdgeFade";
 const TEXT_PILL_HEIGHT = 60;
 const TEXT_SCALE = 0.7;
 const GRADIENT_BOX_WIDTH = width - 55;
@@ -261,17 +262,25 @@ function TextSetting({ setSelected, selected }: Props) {
 
             <Separator className='my-6 flex-1' />
 
-            <View className='flex-1 flex-col w-full items-start justify-center gap-2'>
+            <View className='flex-1 flex-col w-full items-start justify-center gap-2 relative'>
               <View className='flex flex-1 flex-row items-center justify-start '>
                 <Muted className='text-lg font-semibold'>Font</Muted>
               </View>
 
+              <EdgeFade height={44} width={90} position='left' />
+
               <ScrollView
                 horizontal
-                contentContainerStyle={{ gap: 20, height: "auto" }}
+                contentContainerStyle={{
+                  gap: 20,
+                  height: "auto",
+                }}
+                style={{
+                  borderRadius: 30,
+                }}
                 showsHorizontalScrollIndicator={false}
               >
-                {Object.keys(FONTS).map((e: string) => {
+                {Object.keys(FONTS).map((e: string, idx) => {
                   const fontSize =
                     FONT_TO_FONTNAMES[e as keyof typeof FONT_TO_FONTNAMES].size;
                   const yOffshootDividend =
@@ -289,7 +298,7 @@ function TextSetting({ setSelected, selected }: Props) {
                   const textWidth = font ? font.getTextWidth(text) + 30 : 160;
                   return (
                     <Canvas
-                      key={e}
+                      key={idx}
                       style={{
                         flex: 1,
                         width: textWidth * TEXT_SCALE,
@@ -322,6 +331,8 @@ function TextSetting({ setSelected, selected }: Props) {
                   );
                 })}
               </ScrollView>
+
+              <EdgeFade height={44} width={90} position='right' />
             </View>
           </View>
         </GestureHandlerRootView>

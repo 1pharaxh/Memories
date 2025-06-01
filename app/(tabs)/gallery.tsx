@@ -227,6 +227,7 @@ function GalleryPage({}: Props) {
           <Overlay />
         </View>
       </SafeAreaView> */}
+      <EdgeFade position='top' width={width} height={100} />
       <Animated.View
         className='w-full flex items-center justify-center relative bg-primary/5'
         style={[
@@ -371,7 +372,7 @@ function GalleryPage({}: Props) {
         <Settings2 strokeWidth={2} size={18} className='text-white ' />
       </BlurView>
 
-      <EdgeFade />
+      <EdgeFade position='bottom' width={width} height={100} />
     </Animated.View>
   );
 }

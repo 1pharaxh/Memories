@@ -1,5 +1,5 @@
 import Stack from "~/components/ui/Stack";
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import React, { memo } from "react";
 
@@ -13,6 +13,7 @@ interface renderPresetSheetContentProps {
 import * as AC from "@bacons/apple-colors";
 import StickerSheet from "~/components/ui/PresetSheetViews/StickerSheet/StickerSheet";
 import DrawSelectionSheet from "~/components/ui/PresetSheetViews/DrawSelectionSheet";
+import EdgeFade from "~/components/ui/EdgeFade";
 
 const RenderPresetSheetContent: React.FC<renderPresetSheetContentProps> = memo(
   ({ type }: renderPresetSheetContentProps) => {
@@ -47,9 +48,26 @@ export default function Page() {
         }}
       />
       {type === FilterType.Filter ? (
-        <ScrollView horizontal contentContainerStyle={{ padding: 24, gap: 32 }}>
-          <RenderPresetSheetContent type={type || ""} />
-        </ScrollView>
+        <View className='relative flex-1'>
+          <EdgeFade
+            height={200}
+            width={90}
+            position='left'
+            style={{ borderRadius: 0 }}
+          />
+          <ScrollView
+            horizontal
+            contentContainerStyle={{ padding: 24, gap: 32 }}
+          >
+            <RenderPresetSheetContent type={type || ""} />
+          </ScrollView>
+          <EdgeFade
+            height={200}
+            width={90}
+            position='right'
+            style={{ borderRadius: 0 }}
+          />
+        </View>
       ) : (
         <RenderPresetSheetContent type={type || ""} />
       )}
