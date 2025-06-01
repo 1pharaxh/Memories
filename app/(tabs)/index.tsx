@@ -104,6 +104,7 @@ export default function HomeScreen() {
       ) : (
         <CameraView
           key={cameraMode}
+          mirror
           ref={cameraRef}
           style={{ flex: 1 }}
           facing={cameraFacing}
