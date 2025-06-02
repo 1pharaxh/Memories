@@ -21,6 +21,7 @@ import {
 
 import Animated, {
   clamp,
+  EntryAnimationsValues,
   Extrapolation,
   FadeIn,
   FadeOut,
@@ -29,6 +30,7 @@ import Animated, {
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
+  withDelay,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
@@ -41,32 +43,71 @@ import { blurhash } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import TouchableBounce from "~/components/ui/TouchableBounce";
 import { Button } from "~/components/ui/button";
+import {
+  Canvas,
+  Rect,
+  useImage,
+  Image as SkImage,
+  SkImage as SkImageType,
+} from "@shopify/react-native-skia";
 const { width, height } = Dimensions.get("screen");
 
 const headerHeight = height / 1.8;
-const viewWidth = 72;
-const viewHeight = 86;
 const centerX = width / 2;
-const centerY = headerHeight / 2 + 10;
-
-const numImages = 8; // Number of surrounding images
-
-const positionArray: { x: number; y: number }[] = [];
-
-const radiusX = 140;
-const radiusY = 130;
-
-for (let i = 0; i < numImages; i++) {
-  const angle = (i / numImages) * 2 * Math.PI;
-
-  const x = centerX + radiusX * Math.cos(angle) - viewWidth / 2;
-  const y = centerY + radiusY * Math.sin(angle) - viewHeight / 2;
-
-  positionArray.push({ x, y });
-}
+const centerY = headerHeight / 2;
+const layoutMap: Record<
+  number,
+  { x: number; y: number; width: number; height: number }
+> = {
+  0: { x: 0.1, y: 0.18, width: 0.18, height: 0.18 },
+  1: { x: 0.35, y: 0.05, width: 0.4, height: 0.15 },
+  2: { x: 0.7, y: 0.1, width: 0.16, height: 0.2 },
+  3: { x: 0.8, y: 0.3, width: 0.22, height: 0.22 },
+  4: { x: 0.75, y: 0.55, width: 0.18, height: 0.22 },
+  5: { x: 0.6, y: 0.75, width: 0.2, height: 0.18 },
+  6: { x: 0.35, y: 0.78, width: 0.22, height: 0.2 },
+  7: { x: 0.1, y: 0.7, width: 0.2, height: 0.22 },
+  8: { x: 0.05, y: 0.45, width: 0.18, height: 0.2 },
+  9: { x: 0.25, y: 0.28, width: 0.16, height: 0.18 },
+  10: { x: 0.6, y: 0.25, width: 0.18, height: 0.2 },
+  11: { x: 0.45, y: 0.65, width: 0.18, height: 0.18 },
+};
+const numImages = 12;
 
 type Props = {};
 function GalleryPage({}: Props) {
+  const LegendListRef = useRef<ScrollView>(null);
+  const [initialScrollToTop, setInitialScrollToTop] = useState<boolean>(false);
+
+  const imagesArr = Array.from({ length: 12 }, (_, idx) => {
+    const layout = layoutMap[idx];
+    const imageFromWeb = useImage(
+      `https://picsum.photos/seed/${idx * 5}/3000/2000`
+    );
+
+    return {
+      x: layout.x * width,
+      y: layout.y * headerHeight,
+      width: layout.width * width,
+      height: layout.height * headerHeight,
+      image: imageFromWeb as SkImageType,
+    };
+  });
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (LegendListRef.current && !initialScrollToTop) {
+      timeout = setTimeout(() => {
+        if (LegendListRef.current) {
+          LegendListRef.current.scrollTo({ x: 0, y: 0, animated: true });
+          setInitialScrollToTop(true);
+          console.log("I RAN");
+        }
+      }, 500);
+    }
+    () => clearTimeout(timeout);
+  }, [LegendListRef.current]);
+
   const scrollYOffset = useSharedValue<number>(0);
   const handleScroll = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -87,132 +128,26 @@ function GalleryPage({}: Props) {
     };
   });
 
-  const LegendListRef = useRef<ScrollView>(null);
-  const [initialScrollToTop, setInitialScrollToTop] = useState<boolean>(false);
-
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    if (LegendListRef.current && !initialScrollToTop) {
-      timeout = setTimeout(() => {
-        if (LegendListRef.current) {
-          LegendListRef.current.scrollTo({ x: 0, y: 0, animated: true });
-          setInitialScrollToTop(true);
-          console.log("I RAN");
-        }
-      }, 500);
-    }
-    () => clearTimeout(timeout);
-  }, [LegendListRef.current]);
-
-  const PhotoMainViewStyle = useAnimatedStyle(() => {
-    const width = interpolate(
-      scrollYOffset.value,
-      [0, headerHeight],
-      [120, 500],
-      Extrapolation.CLAMP
-    );
-
-    const height = interpolate(
-      scrollYOffset.value,
-      [0, headerHeight],
-      [150, 180],
-      Extrapolation.CLAMP
-    );
-
-    const opacity = interpolate(
-      scrollYOffset.value,
-      [headerHeight / 2, headerHeight],
-      [1, 0],
-      Extrapolation.CLAMP
-    );
-
-    const translateY = interpolate(
-      scrollYOffset.value,
-      [0, headerHeight],
-      [0, headerHeight / 2],
-      Extrapolation.CLAMP
-    );
-
-    return {
-      width,
-      height,
-      opacity,
-      transform: [{ translateY }],
-    };
-  });
-
-  const jitterRange = 0;
-
-  const randomOffsets = useMemo(
-    () =>
-      Array.from({ length: numImages }, () => ({
-        x: clamp((Math.random() - 0.5) * jitterRange, 0, width - viewWidth),
-        y: clamp(
-          (Math.random() - 0.5) * jitterRange,
-          0,
-          headerHeight - viewHeight
-        ),
-      })),
-    [numImages]
-  );
-
   const { colorScheme } = useColorScheme();
 
-  const circleImageTransForm = (idx: number) =>
-    useAnimatedStyle(() => {
-      const baseAngle = (idx / numImages) * 2 * Math.PI;
-      const scrollAngle = interpolate(
-        scrollYOffset.value,
-        [0, headerHeight],
-        // PI = 180, 2 Pi = 360
-        [0, Math.PI * 2],
-        Extrapolation.CLAMP
-      );
-      const InterPolatedRadX = interpolate(
-        scrollYOffset.value,
-        [0, headerHeight],
-        [radiusX, radiusX * 5],
-        Extrapolation.CLAMP
-      );
-      const InterPolatedRadY = interpolate(
-        scrollYOffset.value,
-        [0, headerHeight],
-        [radiusY, radiusY * 5],
-        Extrapolation.CLAMP
-      );
-      const angle = baseAngle + scrollAngle;
-      const opacity = interpolate(
-        scrollYOffset.value,
-        [headerHeight / 2, headerHeight],
-        [1, 0],
-        Extrapolation.CLAMP
-      );
+  const textEntering = (_targetValues: EntryAnimationsValues) => {
+    "worklet";
+    const animations = {
+      opacity: withDelay(800, withTiming(1, { duration: 880 })),
+      transform: [
+        { translateY: withDelay(800, withTiming(0, { duration: 880 })) },
+      ],
+    };
+    const initialValues = {
+      opacity: 0,
+      transform: [{ translateY: 0 }],
+    };
+    return {
+      initialValues,
+      animations,
+    };
+  };
 
-      const x =
-        centerX +
-        InterPolatedRadX * Math.cos(angle) -
-        viewWidth / 2 +
-        randomOffsets[idx].x;
-      const y =
-        centerY +
-        InterPolatedRadY * Math.sin(angle) -
-        viewHeight / 2 +
-        randomOffsets[idx].y;
-
-      const translateY = interpolate(
-        scrollYOffset.value,
-        [0, headerHeight],
-        [0, headerHeight / 2],
-        Extrapolation.CLAMP
-      );
-
-      return {
-        top: withSpring(y, { duration: idx * 100 }),
-        left: withSpring(x, { duration: idx * 100 }),
-        opacity,
-        transform: [{ translateY }],
-      };
-    });
   return (
     <Animated.View
       layout={LinearTransition}
@@ -243,50 +178,60 @@ function GalleryPage({}: Props) {
         ]}
       >
         <Animated.View
-          style={PhotoMainViewStyle}
-          className='rounded-xl overflow-hidden z-10 top-[10]'
+          className='z-50 text-center space-y-4 items-center flex flex-col'
+          entering={textEntering}
         >
-          <Image
-            style={{
-              backgroundColor: "#d1d5db",
-              flex: 1,
-            }}
-            source={`https://picsum.photos/seed/1/3000/2000`}
-            contentFit='cover'
-            placeholder={blurhash}
-            transition={1000}
-          />
+          <Text className='text-5xl md:text-7xl z-50 text-black/70 dark:text-white font-calendas italic'>
+            favorites.
+          </Text>
         </Animated.View>
+        <Canvas
+          style={{
+            flex: 1,
+            position: "absolute",
+            height: headerHeight,
+            width: width,
+            zIndex: 1,
+            top: 0,
+            left: 0,
+          }}
+        >
+          {imagesArr.flat().map(({ x, y, width, height, image }, idx) => {
+            const shiftConstantX = useDerivedValue(() => {
+              const res = interpolate(
+                scrollYOffset.get(),
+                [0, headerHeight],
+                [-10, 10],
+                Extrapolation.CLAMP
+              );
+              return res + x;
+            }, [scrollYOffset.get()]);
 
-        {positionArray.map((e, idx) => (
-          <Animated.View
-            key={idx}
-            className='rounded-xl absolute overflow-hidden'
-            style={[
-              {
-                width: viewWidth,
-                height: viewHeight,
-              },
-              circleImageTransForm(idx),
-            ]}
-          >
-            <Image
-              style={{
-                width: 144,
-                height: 192,
-                backgroundColor: "#d1d5db",
-                flex: 1,
-              }}
-              source={`https://picsum.photos/seed/${(idx + 2) * 5}/3000/2000`}
-              contentFit='cover'
-              placeholder={blurhash}
-              transition={1000}
-            />
-          </Animated.View>
-        ))}
+            const shiftConstantY = useDerivedValue(() => {
+              const res = interpolate(
+                scrollYOffset.get(),
+                [0, headerHeight],
+                [-10, 10],
+                Extrapolation.CLAMP
+              );
+              return res + y;
+            }, [scrollYOffset.get()]);
+            return (
+              <SkImage
+                key={idx}
+                image={image}
+                fit='cover'
+                x={shiftConstantX}
+                y={shiftConstantY}
+                width={width}
+                height={height}
+              />
+            );
+          })}
+        </Canvas>
         <View className='absolute top-16 left-16 w-full z-20 pt-1'>
           <Text className='text-xl text-start px-4 tracking-tighter font-semibold italic dark:text-white/90 text-black/70'>
-            Recent favorites
+            Recent
           </Text>
         </View>
         <View className='absolute bottom-2 left-0 w-full z-20 space-y-2'>
