@@ -47,7 +47,6 @@ const GRADIENT_BOX_WIDTH = width - 55;
 const DrawSelectionSheet = (props: Props) => {
   const { setDraw, draw, setIsDrawing } = useGlobalStore();
 
-
   const [strokeWidthState, setstrokeWidthState] = useState<number>(
     draw?.strokeWidth || 5
   );
@@ -223,18 +222,18 @@ const DrawSelectionSheet = (props: Props) => {
         paddingBottom: 100,
       }}
     >
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <View className='w-full  px-8 flex items-center justify-center flex-row'>
+      <View style={{ flex: 1 }}>
+        <View className="w-full  px-8 flex items-center justify-center flex-row">
           <Canvas style={{ width: GRADIENT_BOX_WIDTH, height: 135 }}>
             <FitBox
               src={rect(0, -30, 300, 120)}
               dst={rect(0, 0, GRADIENT_BOX_WIDTH, 120)}
             >
               <Path
-                path='M 10 40 C 80 90, 120 90, 150 40 S 220 -10, 290 40'
-                strokeCap='round'
-                strokeJoin='round'
-                style='stroke'
+                path="M 10 40 C 80 90, 120 90, 150 40 S 220 -10, 290 40"
+                strokeCap="round"
+                strokeJoin="round"
+                style="stroke"
                 color={"black"}
                 strokeWidth={strokeWidth.get()}
               >
@@ -266,16 +265,16 @@ const DrawSelectionSheet = (props: Props) => {
           </Canvas>
         </View>
         {/* Vertical spacing */}
-        <Separator className='mt-2 mb-6' />
-        <View className='flex-1 px-8 flex-col items-center justify-center'>
+        <Separator className="mt-2 mb-6" />
+        <View className="flex-1 px-8 flex-col items-center justify-center">
           {/* Vertical spacing */}
-          <View className='gap-6 flex-1'>
+          <View className="gap-6 flex-1">
             <GestureDetector gesture={gesture}>
               <LinearGradient
                 colors={colors}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
-                className='flex overflow-hidden relative'
+                className="flex overflow-hidden relative"
                 style={[
                   {
                     height: 140,
@@ -290,7 +289,7 @@ const DrawSelectionSheet = (props: Props) => {
                     "w-12 h-12 rounded-full flex items-center justify-center absolute border-2 border-white"
                   )}
                 />
-                <View className=' absolute z-10 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 transform flex flex-row justify-center-center items-center'>
+                <View className=" absolute z-10 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 transform flex flex-row justify-center-center items-center">
                   {TEXT.split("").map((char, idx) => {
                     const style = useAnimatedStyle(() => {
                       const charProgress = interpolate(
@@ -331,8 +330,8 @@ const DrawSelectionSheet = (props: Props) => {
               </LinearGradient>
             </GestureDetector>
 
-            <View className='flex flex-row items-center justify-between w-full'>
-              <View className='flex flex-row gap-3 items-center justify-center'>
+            <View className="flex flex-row items-center justify-between w-full">
+              <View className="flex flex-row gap-3 items-center justify-center">
                 <TouchableBounce
                   onPress={() => {
                     setSelectedColors((prev) => [
@@ -348,11 +347,11 @@ const DrawSelectionSheet = (props: Props) => {
                       "w-14 h-14 rounded-full flex items-center justify-center border-2 dark:border-white border-muted-foreground"
                     )}
                   >
-                    <Plus strokeWidth={2} size={30} className='text-white' />
+                    <Plus strokeWidth={2} size={30} className="text-white" />
                   </Animated.View>
                 </TouchableBounce>
 
-                <Text className='text-muted-foreground text-lg text-center font-semibold'>
+                <Text className="text-muted-foreground text-lg text-center font-semibold">
                   Add colors
                 </Text>
               </View>
@@ -366,20 +365,20 @@ const DrawSelectionSheet = (props: Props) => {
                 <Trash2
                   strokeWidth={2}
                   size={30}
-                  className='text-muted-foreground'
+                  className="text-muted-foreground"
                 />
               </TouchableBounce>
             </View>
           </View>
           {/* Vertical spacing */}
 
-          <Separator className='my-6 flex-1' />
-          <View className='flex-1 flex-col w-full items-start justify-center'>
-            <View className='flex flex-row items-center justify-start '>
-              <Muted className=' text-lg font-semibold'>Stroke width</Muted>
+          <Separator className="my-6 flex-1" />
+          <View className="flex-1 flex-col w-full items-start justify-center">
+            <View className="flex flex-row items-center justify-start ">
+              <Muted className=" text-lg font-semibold">Stroke width</Muted>
             </View>
 
-            <View className='w-full'>
+            <View className="w-full">
               <Slider
                 value={strokeWidthState}
                 onValueChange={(e) => {
@@ -387,15 +386,15 @@ const DrawSelectionSheet = (props: Props) => {
                 }}
                 minimumValue={0}
                 maximumValue={48}
-                minimumTrackTintColor='#FFFFFF'
-                maximumTrackTintColor='#000000'
+                minimumTrackTintColor="#FFFFFF"
+                maximumTrackTintColor="#000000"
               />
 
-              <View className='mt-1 flex flex-row w-full items-center justify-between gap-1 px-2.5 text-xs font-medium text-muted-foreground'>
+              <View className="mt-1 flex flex-row w-full items-center justify-between gap-1 px-2.5 text-xs font-medium text-muted-foreground">
                 {ticks.map((_, i) => (
                   <View
                     key={i}
-                    className='flex w-0 flex-col items-center justify-center gap-2'
+                    className="flex w-0 flex-col items-center justify-center gap-2"
                   >
                     <View
                       className={cn(
@@ -412,35 +411,35 @@ const DrawSelectionSheet = (props: Props) => {
             </View>
           </View>
           {/* Vertical spacing */}
-          <Separator className='my-2 flex-1 opacity-0' />
+          <Separator className="my-2 flex-1 opacity-0" />
 
-          <View className='flex-1 flex-col w-full items-start justify-center'>
-            <View className='h-12 flex flex-row items-center justify-start w-2/6'>
-              <Muted className=' text-lg font-semibold'>Stroke style</Muted>
+          <View className="flex-1 flex-col w-full items-start justify-center">
+            <View className="h-12 flex flex-row items-center justify-start w-2/6">
+              <Muted className=" text-lg font-semibold">Stroke style</Muted>
             </View>
 
-            <View className='w-4/6'>
-              <View className='w-full flex items-center justify-start gap-3 flex-row'>
+            <View className="w-4/6">
+              <View className="w-full flex items-center justify-start gap-3 flex-row">
                 <TouchableBounce
                   sensory
                   onPress={() => {
                     toggleSelectedEffects("discrete");
                   }}
                 >
-                  <View className='rounded-2xl w-14 h-14 relative flex items-center justify-center overflow-hidden'>
+                  <View className="rounded-2xl w-14 h-14 relative flex items-center justify-center overflow-hidden">
                     <Animated.View
                       style={getStyleForEffect("discrete")}
-                      className='w-full h-full absolute top-0 left-0 z-10 bg-muted-foreground/10'
+                      className="w-full h-full absolute top-0 left-0 z-10 bg-muted-foreground/10"
                     />
                     <Signature
                       strokeWidth={2}
                       size={30}
-                      className='text-muted-foreground'
+                      className="text-muted-foreground"
                     />
                   </View>
                 </TouchableBounce>
 
-                <Separator orientation='vertical' className="opacity-0" />
+                <Separator orientation="vertical" className="opacity-0" />
 
                 <TouchableBounce
                   sensory
@@ -448,15 +447,15 @@ const DrawSelectionSheet = (props: Props) => {
                     toggleSelectedEffects("dash");
                   }}
                 >
-                  <View className='rounded-2xl w-14 h-14 relative flex items-center justify-center overflow-hidden'>
+                  <View className="rounded-2xl w-14 h-14 relative flex items-center justify-center overflow-hidden">
                     <Animated.View
                       style={getStyleForEffect("dash")}
-                      className='w-full h-full absolute top-0 left-0 z-10 bg-muted-foreground/10'
+                      className="w-full h-full absolute top-0 left-0 z-10 bg-muted-foreground/10"
                     />
                     <CircleDashed
                       strokeWidth={2}
                       size={30}
-                      className='text-muted-foreground'
+                      className="text-muted-foreground"
                     />
                   </View>
                 </TouchableBounce>
@@ -464,7 +463,7 @@ const DrawSelectionSheet = (props: Props) => {
             </View>
           </View>
         </View>
-      </GestureHandlerRootView>
+      </View>
     </ScrollView>
   );
 };

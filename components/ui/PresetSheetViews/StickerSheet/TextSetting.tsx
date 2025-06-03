@@ -129,7 +129,7 @@ function TextSetting({ setSelected, selected }: Props) {
 
   return (
     <ScrollView
-      keyboardShouldPersistTaps='handled'
+      keyboardShouldPersistTaps="handled"
       contentContainerStyle={{
         paddingBottom: 100,
       }}
@@ -138,30 +138,30 @@ function TextSetting({ setSelected, selected }: Props) {
         entering={FadeInRight.delay(100)}
         exiting={FadeOutRight.delay(100)}
       >
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <View className='w-full  px-8 flex items-center justify-center flex-row'>
+        <View style={{ flex: 1 }}>
+          <View className="w-full  px-8 flex items-center justify-center flex-row">
             <Canvas style={{ width: GRADIENT_BOX_WIDTH, height: 135 }}>
               <GlitchText
                 xCord={90}
                 yCord={100}
-                fontName='Got_Heroin'
+                fontName="Got_Heroin"
                 fontSize={135}
-                text='Glitch'
+                text="Glitch"
               />
             </Canvas>
           </View>
           {/* Vertical spacing */}
-          <Separator className='mt-2 mb-6' />
+          <Separator className="mt-2 mb-6" />
 
-          <View className='flex-1 px-8 flex-col items-center justify-center'>
+          <View className="flex-1 px-8 flex-col items-center justify-center">
             {/* Vertical spacing */}
-            <View className='gap-6 flex-1'>
+            <View className="gap-6 flex-1">
               <GestureDetector gesture={gesture}>
                 <LinearGradient
                   colors={colors}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
-                  className='flex overflow-hidden relative'
+                  className="flex overflow-hidden relative"
                   style={[
                     {
                       height: 140,
@@ -176,7 +176,7 @@ function TextSetting({ setSelected, selected }: Props) {
                       "w-12 h-12 rounded-full flex items-center justify-center absolute border-2 border-white"
                     )}
                   />
-                  <View className=' absolute z-10 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 transform flex flex-row justify-center-center items-center'>
+                  <View className=" absolute z-10 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 transform flex flex-row justify-center-center items-center">
                     {TEXT.split("").map((char, idx) => {
                       const style = useAnimatedStyle(() => {
                         const charProgress = interpolate(
@@ -219,8 +219,8 @@ function TextSetting({ setSelected, selected }: Props) {
                 </LinearGradient>
               </GestureDetector>
 
-              <View className='flex flex-row items-center justify-between w-full'>
-                <View className='flex flex-row gap-3 items-center justify-center'>
+              <View className="flex flex-row items-center justify-between w-full">
+                <View className="flex flex-row gap-3 items-center justify-center">
                   <TouchableBounce
                     onPress={() => {
                       setSelectedColors((prev) => [
@@ -236,11 +236,11 @@ function TextSetting({ setSelected, selected }: Props) {
                         "w-14 h-14 rounded-full flex items-center justify-center border-2 dark:border-white border-muted-foreground"
                       )}
                     >
-                      <Plus strokeWidth={2} size={30} className='text-white' />
+                      <Plus strokeWidth={2} size={30} className="text-white" />
                     </Animated.View>
                   </TouchableBounce>
 
-                  <Text className='text-muted-foreground text-lg text-center font-semibold'>
+                  <Text className="text-muted-foreground text-lg text-center font-semibold">
                     Add colors
                   </Text>
                 </View>
@@ -254,20 +254,20 @@ function TextSetting({ setSelected, selected }: Props) {
                   <Trash2
                     strokeWidth={2}
                     size={30}
-                    className='text-muted-foreground'
+                    className="text-muted-foreground"
                   />
                 </TouchableBounce>
               </View>
             </View>
 
-            <Separator className='my-6 flex-1' />
+            <Separator className="my-6 flex-1" />
 
-            <View className='flex-1 flex-col w-full items-start justify-center gap-2 relative'>
-              <View className='flex flex-1 flex-row items-center justify-start '>
-                <Muted className='text-lg font-semibold'>Font</Muted>
+            <View className="flex-1 flex-col w-full items-start justify-center gap-2 relative">
+              <View className="flex flex-1 flex-row items-center justify-start ">
+                <Muted className="text-lg font-semibold">Font</Muted>
               </View>
 
-              <EdgeFade height={44} width={90} position='left' />
+              <EdgeFade height={44} width={90} position="left" />
 
               <ScrollView
                 horizontal
@@ -307,7 +307,7 @@ function TextSetting({ setSelected, selected }: Props) {
                           colorScheme === "light" ? "white" : "black",
                         borderRadius: 24,
                       }}
-                      className='rounded-3xl overflow-hidden'
+                      className="rounded-3xl overflow-hidden"
                     >
                       <CenteredSkiaContent
                         scale={TEXT_SCALE}
@@ -332,10 +332,10 @@ function TextSetting({ setSelected, selected }: Props) {
                 })}
               </ScrollView>
 
-              <EdgeFade height={44} width={90} position='right' />
+              <EdgeFade height={44} width={90} position="right" />
             </View>
           </View>
-        </GestureHandlerRootView>
+        </View>
       </Animated.View>
     </ScrollView>
   );

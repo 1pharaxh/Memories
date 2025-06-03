@@ -133,7 +133,7 @@ export default function VideoViewComponent(props: VideoViewProps) {
         />
       </View>
 
-      <GestureHandlerRootView style={{ flex: 1, position: "relative" }}>
+      <View style={{ flex: 1, position: "relative" }}>
         <DrawView currentPath={currentPath}>
           <View style={{ flex: 1 }}>
             <Canvas style={{ flex: 1 }} {...rest}>
@@ -175,7 +175,7 @@ export default function VideoViewComponent(props: VideoViewProps) {
             ))}
           </View>
         </DrawView>
-      </GestureHandlerRootView>
+      </View>
     </View>
   );
 }

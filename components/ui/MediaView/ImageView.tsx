@@ -45,10 +45,10 @@ export default function ImageView(props: ImageViewProps) {
   });
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, position: "relative" }}>
+    <View style={{ flex: 1, position: "relative" }}>
       <Animated.View
         style={buttonStyle}
-        className='absolute top-14 left-10 z-10'
+        className="absolute top-14 left-10 z-10"
       >
         <TouchableBounce
           sensory
@@ -57,20 +57,20 @@ export default function ImageView(props: ImageViewProps) {
             setDraw(undefined);
           }}
         >
-          <X strokeWidth={2} size={30} className='text-muted-foreground ' />
+          <X strokeWidth={2} size={30} className="text-muted-foreground " />
         </TouchableBounce>
       </Animated.View>
 
       <Animated.View
         style={buttonStyle}
-        className='absolute top-16 z-10 left-1/2 -translate-x-1/2'
+        className="absolute top-16 z-10 left-1/2 -translate-x-1/2"
       >
-        <H4 className='text-muted-foreground'>Finish drawing</H4>
+        <H4 className="text-muted-foreground">Finish drawing</H4>
       </Animated.View>
 
       <Animated.View
         style={buttonStyle}
-        className='absolute top-14 right-10 z-10'
+        className="absolute top-14 right-10 z-10"
       >
         <TouchableBounce
           sensory
@@ -78,7 +78,7 @@ export default function ImageView(props: ImageViewProps) {
             setIsDrawing(false);
           }}
         >
-          <Check strokeWidth={2} size={30} className='text-muted-foreground ' />
+          <Check strokeWidth={2} size={30} className="text-muted-foreground " />
         </TouchableBounce>
       </Animated.View>
       <DrawView currentPath={currentPath}>
@@ -90,7 +90,7 @@ export default function ImageView(props: ImageViewProps) {
               width={width}
               height={height}
               image={image}
-              fit='cover'
+              fit="cover"
             />
             <ColorMatrix
               matrix={
@@ -105,7 +105,7 @@ export default function ImageView(props: ImageViewProps) {
 
             <Path
               path={currentPath}
-              style='stroke'
+              style="stroke"
               strokeWidth={draw?.strokeWidth}
             >
               {draw?.selectedEffects.includes("discrete") ? (
@@ -141,6 +141,6 @@ export default function ImageView(props: ImageViewProps) {
           ))}
         </View>
       </DrawView>
-    </GestureHandlerRootView>
+    </View>
   );
 }

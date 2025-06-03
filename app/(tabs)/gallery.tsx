@@ -3,14 +3,9 @@ import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { ChevronUp } from "~/lib/icons/ChevronUp";
 import { Settings2 } from "~/lib/icons/Settings2";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Dimensions,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -20,19 +15,25 @@ import {
 } from "react-native";
 
 import Animated, {
-  clamp,
+  Easing,
   EntryAnimationsValues,
   Extrapolation,
   FadeIn,
   FadeOut,
   interpolate,
   LinearTransition,
+  runOnJS,
+  SharedValue,
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
   withDelay,
+  withRepeat,
   withSpring,
   withTiming,
+  ZoomInLeft,
+  ZoomInRight,
+  ZoomOutLeft,
+  ZoomOutRight,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EdgeFade from "~/components/ui/EdgeFade";
@@ -50,58 +51,83 @@ import {
   Image as SkImage,
   SkImage as SkImageType,
 } from "@shopify/react-native-skia";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 const { width, height } = Dimensions.get("screen");
 
 const headerHeight = height / 1.8;
-const centerX = width / 2;
-const centerY = headerHeight / 2;
 const layoutMap: Record<
   number,
-  { x: number; y: number; width: number; height: number }
+  { x: number; y: number; width: number; height: number; depth: number }
 > = {
-  0: { x: 0.1, y: 0.18, width: 0.18, height: 0.18 },
-  1: { x: 0.35, y: 0.05, width: 0.4, height: 0.15 },
-  2: { x: 0.7, y: 0.1, width: 0.16, height: 0.2 },
-  3: { x: 0.8, y: 0.3, width: 0.22, height: 0.22 },
-  4: { x: 0.75, y: 0.55, width: 0.18, height: 0.22 },
-  5: { x: 0.6, y: 0.75, width: 0.2, height: 0.18 },
-  6: { x: 0.35, y: 0.78, width: 0.22, height: 0.2 },
-  7: { x: 0.1, y: 0.7, width: 0.2, height: 0.22 },
-  8: { x: 0.05, y: 0.45, width: 0.18, height: 0.2 },
-  9: { x: 0.25, y: 0.28, width: 0.16, height: 0.18 },
-  10: { x: 0.6, y: 0.25, width: 0.18, height: 0.2 },
-  11: { x: 0.45, y: 0.65, width: 0.18, height: 0.18 },
+  0: { x: 0.05, y: 0.2, width: 0.16, height: 0.16, depth: 4 },
+  1: { x: 0.3, y: 0.13, width: 0.3, height: 0.13, depth: 1 },
+  2: { x: 0.6, y: 0.25, width: 0.14, height: 0.18, depth: 2 },
+  3: { x: 0.85, y: 0.1, width: 0.2, height: 0.28, depth: 5 },
+  4: { x: 0.9, y: 0.35, width: 0.16, height: 0.16, depth: 1 },
+  5: { x: 0.72, y: 0.55, width: 0.18, height: 0.16, depth: 6 },
+  6: { x: -0.05, y: 0.38, width: 0.28, height: 0.12, depth: 12 },
+  7: { x: 0.02, y: 0.55, width: 0.25, height: 0.25, depth: 1 },
+  8: { x: 0.25, y: 0.73, width: 0.16, height: 0.18, depth: 32 },
+  9: { x: 0.9, y: 0.7, width: 0.15, height: 0.16, depth: 21 },
+  10: { x: 0.4, y: 0.6, width: 0.2, height: 0.18, depth: 26 },
+  11: { x: 0.75, y: 0.87, width: 0.2, height: 0.18, depth: 18 },
 };
-const numImages = 12;
+
+const imagesArr = Array.from({ length: 12 }, (_, idx) => {
+  const layout = layoutMap[idx];
+  const imageFromWeb = `https://picsum.photos/seed/${idx * 5}/3000/2000`;
+
+  return {
+    x: layout.x * width,
+    y: layout.y * headerHeight,
+    depth: layout.depth,
+    width: layout.width * width,
+    height: layout.height * headerHeight,
+    image: imageFromWeb,
+  };
+});
+
+const getRandomVector = (x: number, y: number, depth: number) => {
+  "worklet";
+  const seedX = Math.sin(x * 0.134 + y * 0.345 + depth * 0.678) * 10000;
+  const seedY = Math.sin(x * 0.984 + y * 0.123 + depth * 0.456) * 10000;
+
+  // Values between -1 and 1, scaled for movement range
+  const randomX = ((seedX - Math.floor(seedX)) * 2 - 1) * 5; // tweak 1.5 for spread
+  const randomY = ((seedY - Math.floor(seedY)) * 2 - 1) * 5;
+
+  return { randomX, randomY };
+};
+
+const useBreathing = (x: number, y: number, depth: number) => {
+  const breath = useSharedValue(0);
+
+  useEffect(() => {
+    breath.value = withRepeat(
+      withTiming(Math.random() * 0.15 * 50, {
+        duration: 2000,
+        easing: Easing.inOut(Easing.ease),
+      }),
+      -1,
+      true // reverse
+    );
+  }, []);
+
+  return breath;
+};
 
 type Props = {};
 function GalleryPage({}: Props) {
   const LegendListRef = useRef<ScrollView>(null);
   const [initialScrollToTop, setInitialScrollToTop] = useState<boolean>(false);
 
-  const imagesArr = Array.from({ length: 12 }, (_, idx) => {
-    const layout = layoutMap[idx];
-    const imageFromWeb = useImage(
-      `https://picsum.photos/seed/${idx * 5}/3000/2000`
-    );
-
-    return {
-      x: layout.x * width,
-      y: layout.y * headerHeight,
-      width: layout.width * width,
-      height: layout.height * headerHeight,
-      image: imageFromWeb as SkImageType,
-    };
-  });
-
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     if (LegendListRef.current && !initialScrollToTop) {
       timeout = setTimeout(() => {
         if (LegendListRef.current) {
-          LegendListRef.current.scrollTo({ x: 0, y: 0, animated: true });
+          LegendListRef.current.scrollTo({ x: 0, y: 0.4, animated: true });
           setInitialScrollToTop(true);
-          console.log("I RAN");
         }
       }, 500);
     }
@@ -109,9 +135,15 @@ function GalleryPage({}: Props) {
   }, [LegendListRef.current]);
 
   const scrollYOffset = useSharedValue<number>(0);
+  const [showTopEdgeFade, setshowTopEdgeFade] = useState(false);
   const handleScroll = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       scrollYOffset.set(e.nativeEvent.contentOffset.y);
+      if (e.nativeEvent.contentOffset.y > headerHeight - 100) {
+        setshowTopEdgeFade(true);
+      } else {
+        setshowTopEdgeFade(false);
+      }
     },
     []
   );
@@ -148,177 +180,402 @@ function GalleryPage({}: Props) {
     };
   };
 
-  return (
-    <Animated.View
-      layout={LinearTransition}
-      entering={FadeIn.duration(1000)}
-      exiting={FadeOut.duration(1000)}
-      style={[{ flex: 1 }]}
-      className='relative'
-    >
-      {/* <SafeAreaView className='flex-1 justify-center items-center gap-4 px-5'>
-        <Text className='opacity-0'></Text>
-        <GalleryItems />
-        <View style={{ width, height, zIndex: -100, position: "absolute" }}>
-          <Overlay />
-        </View>
-      </SafeAreaView> */}
-      <EdgeFade position='top' width={width} height={100} />
-      <Animated.View
-        className='w-full flex items-center justify-center relative '
-        style={[
+  const ImageStyle = (
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    depth: number
+  ) => {
+    const breath = useBreathing(x, y, depth);
+
+    return useAnimatedStyle(() => {
+      const { randomX, randomY } = getRandomVector(x, y, depth);
+
+      const scrollFactor = interpolate(
+        scrollYOffset.get(),
+        [0, headerHeight],
+        [0, 50], // how far they move
+        Extrapolation.CLAMP
+      );
+
+      return {
+        position: "absolute",
+        top: y,
+        left: x,
+        width: width,
+        height: height,
+        transform: [
           {
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: headerHeight,
+            translateX: withSpring(
+              scrollFactor * randomX * depth + breath.get(),
+              {
+                damping: 10 + Math.abs(randomX) * depth * 5,
+              }
+            ),
           },
-          HeaderAnimatedStyle,
-        ]}
-      >
+          {
+            translateY: withSpring(
+              scrollFactor * randomY * depth + breath.get(),
+              {
+                damping: 10 + Math.abs(randomY) * depth * 5,
+              }
+            ),
+          },
+        ],
+      };
+    });
+  };
+
+  const [selectedImage, setSelectedImage] = useState<
+    | {
+        x: number;
+        y: number;
+        depth: number;
+        width: number;
+        height: number;
+        image: string;
+      }
+    | undefined
+  >(undefined);
+
+  const gestureHandler = Gesture.Tap().onEnd((e) => {
+    const tapX = e.x;
+    const tapY = e.y;
+    if (tapY > headerHeight - 50) return;
+
+    let closestImage = null;
+    let minDistance = Infinity;
+
+    for (const img of imagesArr) {
+      const centerX = img.x + img.width / 2;
+      const centerY = img.y + img.height / 2;
+
+      const dx = centerX - tapX;
+      const dy = centerY - tapY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestImage = img;
+      }
+    }
+
+    if (closestImage) {
+      runOnJS(setSelectedImage)(closestImage);
+    }
+  });
+
+  const [tabs, setTabs] = useState<"all" | "favorites">("all");
+
+  return (
+    <View className="flex-1">
+      {tabs === "all" && !selectedImage ? (
         <Animated.View
-          className='z-50 text-center space-y-4 items-center flex flex-col'
-          entering={textEntering}
+          layout={LinearTransition}
+          entering={FadeIn.duration(1000)}
+          exiting={FadeOut.duration(1000)}
+          style={[{ flex: 1 }]}
+          className="relative"
         >
-          <Text className='text-5xl md:text-7xl z-50 text-black/70 dark:text-white font-calendas italic'>
-            favorites.
-          </Text>
-        </Animated.View>
-        <Canvas
-          style={{
-            flex: 1,
-            position: "absolute",
-            height: headerHeight,
-            width: width,
-            zIndex: 1,
-            top: 0,
-            left: 0,
-          }}
-        >
-          {imagesArr.flat().map(({ x, y, width, height, image }, idx) => {
-            const shiftConstantX = useDerivedValue(() => {
-              const res = interpolate(
-                scrollYOffset.get(),
-                [0, headerHeight],
-                [-10, 10],
-                Extrapolation.CLAMP
-              );
-              return res + x;
-            }, [scrollYOffset.get()]);
+          {showTopEdgeFade ? (
+            <EdgeFade position="top" width={width} height={100} />
+          ) : (
+            <></>
+          )}
 
-            const shiftConstantY = useDerivedValue(() => {
-              const res = interpolate(
-                scrollYOffset.get(),
-                [0, headerHeight],
-                [-10, 10],
-                Extrapolation.CLAMP
-              );
-              return res + y;
-            }, [scrollYOffset.get()]);
-            return (
-              <SkImage
-                key={idx}
-                image={image}
-                fit='cover'
-                x={shiftConstantX}
-                y={shiftConstantY}
-                width={width}
-                height={height}
-              />
-            );
-          })}
-        </Canvas>
-        <View className='absolute top-16 left-16 w-full z-20 pt-1'>
-          <Text className='text-xl text-start px-4 tracking-tighter font-semibold italic dark:text-white/90 text-black/70'>
-            Recent
-          </Text>
-        </View>
-        <View className='absolute bottom-2 left-0 w-full z-20 space-y-2'>
-          <View className='flex w-full items-center justify-start px-4 gap-4 flex-row mt-1'>
-            <Button variant='default' size='sm' className='rounded-xl'>
-              <Text className='text-base text-center text-white'>
-                All Photos
-              </Text>
-            </Button>
-            <Button variant='outline' size='sm' className='rounded-xl bg-none'>
-              <Text className='text-base text-center text-black'>
-                Favorites Only
-              </Text>
-            </Button>
-          </View>
-        </View>
-      </Animated.View>
-
-      {/* LegendList: Static, but content starts below header */}
-      <LegendList
-        refScrollView={LegendListRef}
-        onScroll={handleScroll}
-        keyExtractor={(item) => `${item}_me`}
-        style={{
-          flex: 1,
-          width: width,
-          height: height,
-          paddingHorizontal: 4,
-          zIndex: 10,
-        }}
-        bounces={false}
-        contentContainerStyle={{
-          paddingTop: headerHeight + 4,
-          paddingBottom: 50,
-        }}
-        numColumns={2}
-        estimatedItemSize={50}
-        recycleItems
-        data={Array.from({ length: 10 }, (_, i) => i)}
-        renderItem={({ index }) => (
-          <LegendListColumnCenter index={index} numColumns={2}>
-            <View
-              className=' my-[2px] rounded-3xl overflow-hidden'
-              style={{ width: width / 2 - 6, height: width / 2 + 100 }}
+          <GestureDetector gesture={gestureHandler}>
+            <Animated.View
+              className="w-full flex items-center justify-center relative"
+              style={[
+                {
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: headerHeight,
+                  zIndex: 9999,
+                  overflow: "hidden",
+                },
+                HeaderAnimatedStyle,
+              ]}
             >
-              <Image
-                style={{
-                  backgroundColor: "#d1d5db",
-                  flex: 1,
-                }}
-                source={`https://picsum.photos/seed/${index + 10}/3000/2000`}
-                contentFit='cover'
-                placeholder={blurhash}
-                transition={1000}
+              <EdgeFade height={200} width={width} position="top" />
+              <EdgeFade
+                height={200}
+                width={width}
+                style={{ bottom: -2, borderRadius: 0 }}
+                position="bottom"
               />
+              <EdgeFade
+                height={headerHeight}
+                width={50}
+                position="left"
+                style={{ borderRadius: 0 }}
+              />
+              <EdgeFade
+                height={headerHeight}
+                width={50}
+                style={{ borderRadius: 0 }}
+                position="right"
+              />
+
+              <Animated.View
+                className="z-50 text-center space-y-4 items-center flex flex-col"
+                entering={textEntering}
+              >
+                <Text className="text-base text-black/70 dark:text-white">
+                  Recent
+                </Text>
+
+                <Text className="text-5xl md:text-7xl text-black/70 dark:text-white font-calendas italic">
+                  favorites.
+                </Text>
+              </Animated.View>
+
+              {imagesArr.map((props, idx) => (
+                <GalleryImage
+                  key={idx}
+                  {...props}
+                  scrollYOffset={scrollYOffset}
+                />
+              ))}
+
+              <View className="absolute bottom-2 left-0 w-full z-[9999] space-y-2">
+                <View className="flex w-full items-center justify-start px-4 gap-4 flex-row mt-1">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="rounded-xl "
+                    onPress={() => {
+                      setTabs("all");
+                    }}
+                  >
+                    <Text className="text-base text-center dark:text-black/70 text-white">
+                      All Photos
+                    </Text>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-xl bg-none"
+                    onPress={() => {
+                      setTabs("favorites");
+                    }}
+                  >
+                    <Text className="text-base text-center text-black/70 dark:text-white">
+                      Favorites Only
+                    </Text>
+                  </Button>
+                </View>
+              </View>
+            </Animated.View>
+          </GestureDetector>
+          {/* LegendList: Static, but content starts below header */}
+          <LegendList
+            refScrollView={LegendListRef}
+            onScroll={handleScroll}
+            keyExtractor={(item) => `${item}_me`}
+            style={{
+              flex: 1,
+              width: width,
+              height: height,
+              paddingHorizontal: 4,
+              zIndex: 10,
+            }}
+            bounces={false}
+            contentContainerStyle={{
+              paddingTop: headerHeight - 2,
+              paddingBottom: 50,
+            }}
+            numColumns={2}
+            estimatedItemSize={50}
+            recycleItems
+            data={Array.from({ length: 10 }, (_, i) => i)}
+            renderItem={({ index }) => (
+              <LegendListColumnCenter index={index} numColumns={2}>
+                <View
+                  className=" my-[2px] rounded-3xl overflow-hidden"
+                  style={{ width: width / 2 - 6, height: width / 2 + 100 }}
+                >
+                  <Image
+                    style={{
+                      backgroundColor: "#d1d5db",
+                      flex: 1,
+                    }}
+                    source={`https://picsum.photos/seed/${
+                      index + 10
+                    }/3000/2000`}
+                    contentFit="cover"
+                    placeholder={blurhash}
+                    transition={1000}
+                  />
+                </View>
+              </LegendListColumnCenter>
+            )}
+          ></LegendList>
+
+          <BlurView
+            className="h-10 w-20 rounded-full absolute top-16 right-5 overflow-hidden flex items-center justify-center z-[9999]"
+            intensity={60}
+            tint={colorScheme === "light" ? "dark" : "light"}
+          >
+            <Text className="text-base text-center text-white">Select</Text>
+          </BlurView>
+
+          <BlurView
+            className="h-10 w-10 rounded-full absolute top-16 right-28 overflow-hidden flex items-center justify-center z-[9999]"
+            intensity={60}
+            tint={colorScheme === "light" ? "dark" : "light"}
+          >
+            <Settings2 strokeWidth={2} size={18} className="text-white " />
+          </BlurView>
+
+          <EdgeFade position="bottom" width={width} height={100} />
+        </Animated.View>
+      ) : tabs === "favorites" && !selectedImage ? (
+        <Animated.View
+          layout={LinearTransition}
+          key={tabs}
+          entering={ZoomInRight.duration(1000)}
+          exiting={ZoomOutRight.duration(1000)}
+          style={[{ flex: 1 }]}
+          className="relative"
+        >
+          <BlurView
+            className="h-10 w-10 rounded-full absolute top-16 left-5 overflow-hidden flex items-center justify-center z-[9999]"
+            intensity={60}
+            onTouchEnd={() => {
+              setTabs("all");
+              setSelectedImage(undefined);
+            }}
+            tint={colorScheme === "light" ? "dark" : "light"}
+          >
+            <ChevronUp
+              strokeWidth={2}
+              size={30}
+              className="text-white -rotate-90"
+            />
+          </BlurView>
+
+          <SafeAreaView className="flex-1 justify-center items-center gap-4 px-5">
+            <Text className="opacity-0"></Text>
+            <GalleryItems />
+            <View style={{ width, height, zIndex: -100, position: "absolute" }}>
+              <Overlay />
             </View>
-          </LegendListColumnCenter>
-        )}
-      ></LegendList>
+          </SafeAreaView>
+        </Animated.View>
+      ) : (
+        <Animated.View
+          layout={LinearTransition}
+          key={selectedImage ? "key" : "triggerChange"}
+          entering={ZoomInLeft.duration(1000)}
+          exiting={ZoomOutLeft.duration(1000)}
+          style={[{ flex: 1 }]}
+          className="relative"
+        >
+          <BlurView
+            className="h-10 w-10 rounded-full absolute top-16 left-5 overflow-hidden flex items-center justify-center z-[9999]"
+            intensity={60}
+            onTouchEnd={() => {
+              setTabs("all");
+            }}
+            tint={colorScheme === "light" ? "dark" : "light"}
+          >
+            <ChevronUp
+              strokeWidth={2}
+              onTouchEnd={() => {
+                setSelectedImage(undefined);
+              }}
+              size={30}
+              className="text-white -rotate-90"
+            />
+          </BlurView>
 
-      <BlurView
-        className='h-10 w-10 rounded-full absolute top-16 left-5 overflow-hidden flex items-center justify-center z-10'
-        intensity={60}
-        tint={colorScheme === "light" ? "dark" : "light"}
-      >
-        <ChevronUp strokeWidth={2} size={30} className='text-white ' />
-      </BlurView>
-
-      <BlurView
-        className='h-10 w-20 rounded-full absolute top-16 right-5 overflow-hidden flex items-center justify-center z-10'
-        intensity={60}
-        tint={colorScheme === "light" ? "dark" : "light"}
-      >
-        <Text className='text-base text-center text-white'>Select</Text>
-      </BlurView>
-
-      <BlurView
-        className='h-10 w-10 rounded-full absolute top-16 right-28 overflow-hidden flex items-center justify-center z-10'
-        intensity={60}
-        tint={colorScheme === "light" ? "dark" : "light"}
-      >
-        <Settings2 strokeWidth={2} size={18} className='text-white ' />
-      </BlurView>
-
-      <EdgeFade position='bottom' width={width} height={100} />
-    </Animated.View>
+          <Image
+            style={{ backgroundColor: "#d1d5db", flex: 1 }}
+            source={selectedImage?.image}
+            contentFit="contain"
+            placeholder={blurhash}
+            transition={1000}
+          />
+        </Animated.View>
+      )}
+    </View>
   );
 }
 
 export default GalleryPage;
+
+function GalleryImage({
+  x,
+  y,
+  width,
+  height,
+  depth,
+  image,
+  scrollYOffset,
+}: {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  depth: number;
+  image: string;
+  scrollYOffset: SharedValue<number>;
+}) {
+  const breath = useBreathing(x, y, depth);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const { randomX, randomY } = getRandomVector(x, y, depth);
+
+    const scrollFactor = interpolate(
+      scrollYOffset.value,
+      [0, headerHeight],
+      [0, 50],
+      Extrapolation.CLAMP
+    );
+
+    return {
+      position: "absolute",
+      top: y,
+      left: x,
+      width: width,
+      height: height,
+      transform: [
+        {
+          translateX: withSpring(
+            scrollFactor * randomX * depth + breath.value,
+            {
+              damping: 10 + Math.abs(randomX) * depth * 5,
+            }
+          ),
+        },
+        {
+          translateY: withSpring(
+            scrollFactor * randomY * depth + breath.value,
+            {
+              damping: 10 + Math.abs(randomY) * depth * 5,
+            }
+          ),
+        },
+      ],
+    };
+  });
+
+  return (
+    <Animated.View
+      style={[animatedStyle]}
+      className="rounded-xl overflow-hidden"
+    >
+      <Image
+        style={{ backgroundColor: "#d1d5db", flex: 1 }}
+        source={image}
+        contentFit="cover"
+        placeholder={blurhash}
+        transition={1000}
+      />
+    </Animated.View>
+  );
+}
