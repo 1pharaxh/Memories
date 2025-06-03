@@ -8,10 +8,11 @@ type Props = ViewProps & {
   height: number;
   width: number;
   position: "top" | "bottom" | "left" | "right";
+  darkOverride?: readonly [string, string, ...string[]];
 };
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 const EdgeFade = (props: Props) => {
-  const { position, height, width, ...rest } = props;
+  const { darkOverride, position, height, width, ...rest } = props;
   const { colorScheme } = useColorScheme();
 
   const positionStyle = useMemo(() => {
@@ -43,20 +44,24 @@ const EdgeFade = (props: Props) => {
         case "top":
           return ["black", "rgba(0,0,0,0.5)", "transparent"] as const;
         case "left":
-          return [
-            // #3a3a3c -> transparent
-            "rgba(58,58,60,1)",
-            "rgba(58,58,60,0.6)",
-            "rgba(58,58,60,0.3)",
-            "rgba(58,58,60,0)",
-          ] as const;
+          return darkOverride
+            ? darkOverride
+            : ([
+                // #3a3a3c -> transparent
+                "rgba(58,58,60,1)",
+                "rgba(58,58,60,0.6)",
+                "rgba(58,58,60,0.3)",
+                "rgba(58,58,60,0)",
+              ] as const);
         case "right":
-          return [
-            "rgba(58,58,60,0)",
-            "rgba(58,58,60,0.3)",
-            "rgba(58,58,60,0.6)",
-            "rgba(58,58,60,1)",
-          ] as const;
+          return darkOverride
+            ? darkOverride
+            : ([
+                "rgba(58,58,60,0)",
+                "rgba(58,58,60,0.3)",
+                "rgba(58,58,60,0.6)",
+                "rgba(58,58,60,1)",
+              ] as const);
         default:
           return ["transparent", "rgba(0,0,0,0.5)", "black"] as const;
       }
@@ -77,7 +82,7 @@ const EdgeFade = (props: Props) => {
     <AnimatedLinearGradient
       colors={colors}
       style={[positionStyle, rest.style]}
-      pointerEvents="none"
+      pointerEvents='none'
       start={["right", "left"].includes(position) ? { x: 0, y: 0 } : undefined}
       end={["right", "left"].includes(position) ? { x: 1, y: 0 } : undefined}
     />
