@@ -436,29 +436,27 @@ function GalleryPage({}: Props) {
       ) : tabs === "favorites" && !selectedImage ? (
         <Animated.View
           layout={LinearTransition}
-          key={tabs}
           entering={ZoomInRight.duration(1000)}
           exiting={ZoomOutRight.duration(1000)}
           style={[{ flex: 1 }]}
           className="relative"
         >
-          <BlurView
-            className="h-10 w-10 rounded-full absolute top-16 left-5 overflow-hidden flex items-center justify-center z-[9999]"
-            intensity={60}
-            onTouchEnd={() => {
-              setTabs("all");
-              setSelectedImage(undefined);
-            }}
-            tint={colorScheme === "light" ? "dark" : "light"}
-          >
-            <ChevronUp
-              strokeWidth={2}
-              size={30}
-              className="text-white -rotate-90"
-            />
-          </BlurView>
-
           <SafeAreaView className="flex-1 justify-center items-center gap-4 px-5">
+            <BlurView
+              className="h-10 w-10 rounded-full absolute top-16 left-5 overflow-hidden flex items-center justify-center z-[9999]"
+              intensity={60}
+              onTouchEnd={() => {
+                setTabs("all");
+                setSelectedImage(undefined);
+              }}
+              tint={colorScheme === "light" ? "dark" : "light"}
+            >
+              <ChevronUp
+                strokeWidth={2}
+                size={30}
+                className="text-white -rotate-90"
+              />
+            </BlurView>
             <Text className="opacity-0"></Text>
             <GalleryItems />
             <View style={{ width, height, zIndex: -100, position: "absolute" }}>
