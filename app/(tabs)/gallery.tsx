@@ -126,7 +126,7 @@ function GalleryPage({}: Props) {
     if (LegendListRef.current && !initialScrollToTop) {
       timeout = setTimeout(() => {
         if (LegendListRef.current) {
-          LegendListRef.current.scrollTo({ x: 0, y: 0.4, animated: true });
+          LegendListRef.current.scrollTo({ x: 0, y: -0.4, animated: true });
           setInitialScrollToTop(true);
         }
       }, 500);
@@ -180,53 +180,6 @@ function GalleryPage({}: Props) {
     };
   };
 
-  const ImageStyle = (
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    depth: number
-  ) => {
-    const breath = useBreathing(x, y, depth);
-
-    return useAnimatedStyle(() => {
-      const { randomX, randomY } = getRandomVector(x, y, depth);
-
-      const scrollFactor = interpolate(
-        scrollYOffset.get(),
-        [0, headerHeight],
-        [0, 50], // how far they move
-        Extrapolation.CLAMP
-      );
-
-      return {
-        position: "absolute",
-        top: y,
-        left: x,
-        width: width,
-        height: height,
-        transform: [
-          {
-            translateX: withSpring(
-              scrollFactor * randomX * depth + breath.get(),
-              {
-                damping: 10 + Math.abs(randomX) * depth * 5,
-              }
-            ),
-          },
-          {
-            translateY: withSpring(
-              scrollFactor * randomY * depth + breath.get(),
-              {
-                damping: 10 + Math.abs(randomY) * depth * 5,
-              }
-            ),
-          },
-        ],
-      };
-    });
-  };
-
   const [selectedImage, setSelectedImage] = useState<
     | {
         x: number;
@@ -269,24 +222,24 @@ function GalleryPage({}: Props) {
   const [tabs, setTabs] = useState<"all" | "favorites">("all");
 
   return (
-    <View className='flex-1'>
+    <View className="flex-1">
       {tabs === "all" && !selectedImage ? (
         <Animated.View
           layout={LinearTransition}
           entering={FadeIn.duration(1000)}
           exiting={FadeOut.duration(1000)}
           style={[{ flex: 1 }]}
-          className='relative'
+          className="relative"
         >
           {showTopEdgeFade ? (
-            <EdgeFade position='top' width={width} height={100} />
+            <EdgeFade position="top" width={width} height={100} />
           ) : (
             <></>
           )}
 
           <GestureDetector gesture={gestureHandler}>
             <Animated.View
-              className='w-full flex items-center justify-center relative'
+              className="w-full flex items-center justify-center relative"
               style={[
                 {
                   position: "absolute",
@@ -300,18 +253,18 @@ function GalleryPage({}: Props) {
                 HeaderAnimatedStyle,
               ]}
             >
-              <EdgeFade height={200} width={width} position='top' />
+              <EdgeFade height={200} width={width} position="top" />
               <EdgeFade
                 height={200}
                 width={width}
                 style={{ bottom: -2, borderRadius: 0 }}
-                position='bottom'
+                position="bottom"
               />
               <EdgeFade
                 height={headerHeight}
                 width={50}
                 darkOverride={["black", "rgba(0,0,0,0.5)", "transparent"]}
-                position='left'
+                position="left"
                 style={{ borderRadius: 0 }}
               />
               <EdgeFade
@@ -319,18 +272,18 @@ function GalleryPage({}: Props) {
                 width={50}
                 darkOverride={["transparent", "rgba(0,0,0,0.5)", "black"]}
                 style={{ borderRadius: 0 }}
-                position='right'
+                position="right"
               />
 
               <Animated.View
-                className='z-50 text-center space-y-4 items-center flex flex-col'
+                className="z-50 text-center space-y-4 items-center flex flex-col"
                 entering={textEntering}
               >
-                <Text className='text-base text-black/70 dark:text-white'>
+                <Text className="text-base text-black/70 dark:text-white">
                   Recent
                 </Text>
 
-                <Text className='text-5xl md:text-7xl text-black/70 dark:text-white font-calendas italic'>
+                <Text className="text-5xl md:text-7xl text-black/70 dark:text-white font-calendas italic">
                   favorites.
                 </Text>
               </Animated.View>
@@ -344,29 +297,29 @@ function GalleryPage({}: Props) {
                 />
               ))}
 
-              <View className='absolute bottom-2 left-0 w-full z-[9999] space-y-2'>
-                <View className='flex w-full items-center justify-start px-4 gap-4 flex-row mt-1'>
+              <View className="absolute bottom-2 left-0 w-full z-[9999] space-y-2">
+                <View className="flex w-full items-center justify-start px-4 gap-4 flex-row mt-1">
                   <Button
-                    variant='default'
-                    size='sm'
-                    className='rounded-xl '
+                    variant="default"
+                    size="sm"
+                    className="rounded-xl "
                     onPress={() => {
                       setTabs("all");
                     }}
                   >
-                    <Text className='text-base text-center dark:text-black/70 text-white'>
+                    <Text className="text-base text-center dark:text-black/70 text-white">
                       All Photos
                     </Text>
                   </Button>
                   <Button
-                    variant='outline'
-                    size='sm'
-                    className='rounded-xl bg-none'
+                    variant="outline"
+                    size="sm"
+                    className="rounded-xl bg-none"
                     onPress={() => {
                       setTabs("favorites");
                     }}
                   >
-                    <Text className='text-base text-center text-black/70 dark:text-white'>
+                    <Text className="text-base text-center text-black/70 dark:text-white">
                       Favorites Only
                     </Text>
                   </Button>
@@ -398,7 +351,7 @@ function GalleryPage({}: Props) {
             renderItem={({ index }) => (
               <LegendListColumnCenter index={index} numColumns={2}>
                 <View
-                  className=' my-[2px] rounded-3xl overflow-hidden'
+                  className=" my-[2px] rounded-3xl overflow-hidden"
                   style={{ width: width / 2 - 6, height: width / 2 + 100 }}
                 >
                   <Image
@@ -409,7 +362,7 @@ function GalleryPage({}: Props) {
                     source={`https://picsum.photos/seed/${
                       index + 10
                     }/3000/2000`}
-                    contentFit='cover'
+                    contentFit="cover"
                     placeholder={blurhash}
                     transition={1000}
                   />
@@ -419,22 +372,22 @@ function GalleryPage({}: Props) {
           ></LegendList>
 
           <BlurView
-            className='h-10 w-20 rounded-full absolute top-16 right-5 overflow-hidden flex items-center justify-center z-[9999]'
+            className="h-10 w-20 rounded-full absolute top-16 right-5 overflow-hidden flex items-center justify-center z-[9999]"
             intensity={60}
             tint={colorScheme === "light" ? "dark" : "light"}
           >
-            <Text className='text-base text-center text-white'>Select</Text>
+            <Text className="text-base text-center text-white">Select</Text>
           </BlurView>
 
           <BlurView
-            className='h-10 w-10 rounded-full absolute top-16 right-28 overflow-hidden flex items-center justify-center z-[9999]'
+            className="h-10 w-10 rounded-full absolute top-16 right-28 overflow-hidden flex items-center justify-center z-[9999]"
             intensity={60}
             tint={colorScheme === "light" ? "dark" : "light"}
           >
-            <Settings2 strokeWidth={2} size={18} className='text-white ' />
+            <Settings2 strokeWidth={2} size={18} className="text-white " />
           </BlurView>
 
-          <EdgeFade position='bottom' width={width} height={100} />
+          <EdgeFade position="bottom" width={width} height={100} />
         </Animated.View>
       ) : tabs === "favorites" && !selectedImage ? (
         <Animated.View
@@ -442,11 +395,11 @@ function GalleryPage({}: Props) {
           style={[{ flex: 1 }]}
           entering={FadeIn.duration(500)}
           exiting={FadeOut.duration(500)}
-          className='relative'
+          className="relative"
         >
-          <SafeAreaView className='flex-1 justify-center items-center gap-4 px-5'>
+          <SafeAreaView className="flex-1 justify-center items-center gap-4 px-5">
             <BlurView
-              className='h-10 w-10 rounded-full absolute top-16 left-5 overflow-hidden flex items-center justify-center z-[9999]'
+              className="h-10 w-10 rounded-full absolute top-16 left-5 overflow-hidden flex items-center justify-center z-[9999]"
               intensity={60}
               onTouchEnd={() => {
                 setTabs("all");
@@ -457,10 +410,10 @@ function GalleryPage({}: Props) {
               <ChevronUp
                 strokeWidth={2}
                 size={30}
-                className='text-white -rotate-90'
+                className="text-white -rotate-90"
               />
             </BlurView>
-            <Text className='opacity-0'></Text>
+            <Text className="opacity-0"></Text>
             <GalleryItems />
             <View style={{ width, height, zIndex: -100, position: "absolute" }}>
               <Overlay />
@@ -473,10 +426,10 @@ function GalleryPage({}: Props) {
           entering={FadeIn.duration(500)}
           exiting={FadeOut.duration(500)}
           style={[{ flex: 1 }]}
-          className='relative'
+          className="relative"
         >
           <BlurView
-            className='h-10 w-10 rounded-full absolute top-16 left-5 overflow-hidden flex items-center justify-center z-[9999]'
+            className="h-10 w-10 rounded-full absolute top-16 left-5 overflow-hidden flex items-center justify-center z-[9999]"
             intensity={60}
             onTouchEnd={() => {
               setTabs("all");
@@ -489,14 +442,14 @@ function GalleryPage({}: Props) {
                 setSelectedImage(undefined);
               }}
               size={30}
-              className='text-white -rotate-90'
+              className="text-white -rotate-90"
             />
           </BlurView>
 
           <Image
             style={{ backgroundColor: "#d1d5db", flex: 1 }}
             source={selectedImage?.image}
-            contentFit='contain'
+            contentFit="contain"
             placeholder={blurhash}
             transition={1000}
           />
@@ -569,7 +522,7 @@ function GalleryImage({
   return (
     <Animated.View
       style={[animatedStyle]}
-      className='rounded-xl overflow-hidden'
+      className="rounded-xl overflow-hidden"
     >
       <Image
         style={{
@@ -577,7 +530,7 @@ function GalleryImage({
           flex: 1,
         }}
         source={image}
-        contentFit='cover'
+        contentFit="cover"
         placeholder={blurhash}
         transition={1000}
       />
