@@ -8,6 +8,7 @@ import {
   Image,
   LinearGradient,
   Path,
+  RuntimeShader,
   Skia,
   useImage,
   vec,
@@ -43,6 +44,15 @@ export default function ImageView(props: ImageViewProps) {
   const buttonStyle = useAnimatedStyle(() => {
     return { opacity: withSpring(isDrawing ? 1 : 0) };
   });
+
+  const source = Skia.RuntimeEffect.Make(`
+    uniform shader image;
+    half4 main(float2 coord) {
+      coord.x += 2 * sin(coord.y / 10) * 5;
+      return image.eval(coord);
+    }
+   
+  `)!;
 
   return (
     <View style={{ flex: 1, position: "relative" }}>
@@ -84,6 +94,7 @@ export default function ImageView(props: ImageViewProps) {
       <DrawView currentPath={currentPath}>
         <View style={{ flex: 1 }}>
           <Canvas style={{ flex: 1 }} {...rest}>
+            <RuntimeShader source={source} />
             <Image
               x={0}
               y={0}

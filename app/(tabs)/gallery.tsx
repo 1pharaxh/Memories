@@ -30,10 +30,6 @@ import Animated, {
   withRepeat,
   withSpring,
   withTiming,
-  ZoomInLeft,
-  ZoomInRight,
-  ZoomOutLeft,
-  ZoomOutRight,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EdgeFade from "~/components/ui/EdgeFade";
@@ -42,15 +38,7 @@ import { Overlay } from "~/components/ui/gradient/overlay";
 import LegendListColumnCenter from "~/components/ui/LegendListColumnCenter";
 import { blurhash } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
-import TouchableBounce from "~/components/ui/TouchableBounce";
 import { Button } from "~/components/ui/button";
-import {
-  Canvas,
-  Rect,
-  useImage,
-  Image as SkImage,
-  SkImage as SkImageType,
-} from "@shopify/react-native-skia";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 const { width, height } = Dimensions.get("screen");
 
@@ -120,6 +108,19 @@ type Props = {};
 function GalleryPage({}: Props) {
   const LegendListRef = useRef<ScrollView>(null);
   const [initialScrollToTop, setInitialScrollToTop] = useState<boolean>(false);
+  const [showTopEdgeFade, setshowTopEdgeFade] = useState(false);
+  const [tabs, setTabs] = useState<"all" | "favorites">("all");
+  const [selectedImage, setSelectedImage] = useState<
+    | {
+        x: number;
+        y: number;
+        depth: number;
+        width: number;
+        height: number;
+        image: string;
+      }
+    | undefined
+  >(undefined);
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -135,7 +136,6 @@ function GalleryPage({}: Props) {
   }, [LegendListRef.current]);
 
   const scrollYOffset = useSharedValue<number>(0);
-  const [showTopEdgeFade, setshowTopEdgeFade] = useState(false);
   const handleScroll = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       scrollYOffset.set(e.nativeEvent.contentOffset.y);
@@ -180,18 +180,6 @@ function GalleryPage({}: Props) {
     };
   };
 
-  const [selectedImage, setSelectedImage] = useState<
-    | {
-        x: number;
-        y: number;
-        depth: number;
-        width: number;
-        height: number;
-        image: string;
-      }
-    | undefined
-  >(undefined);
-
   const gestureHandler = Gesture.Tap().onEnd((e) => {
     const tapX = e.x;
     const tapY = e.y;
@@ -218,8 +206,6 @@ function GalleryPage({}: Props) {
       runOnJS(setSelectedImage)(closestImage);
     }
   });
-
-  const [tabs, setTabs] = useState<"all" | "favorites">("all");
 
   return (
     <View className="flex-1">

@@ -42,6 +42,7 @@ export default function TabLayout() {
                 <Sparkles size={25} strokeWidth={1.7} className="text-white" />
               );
             },
+            lazy: true,
           }}
         />
 
@@ -50,9 +51,11 @@ export default function TabLayout() {
           options={{
             title: "Snap",
             swipeEnabled: photo || video ? false : true,
+
             tabBarIcon: ({ focused, color }) => (
               <Aperture size={25} strokeWidth={1.7} className="text-white" />
             ),
+            lazy: true,
           }}
         />
 
@@ -69,6 +72,7 @@ export default function TabLayout() {
                 <UserRound size={25} strokeWidth={1.7} className="text-white" />
               );
             },
+            lazy: true,
           }}
         />
       </MaterialTopTabs>
