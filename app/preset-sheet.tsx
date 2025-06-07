@@ -6,6 +6,7 @@ import React, { memo } from "react";
 import FilterIcons from "~/components/ui/PresetSheetViews/FilterIcons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { FilterType } from "~/lib/constants";
+import GridSelector from "~/components/ui/GridSelector";
 interface renderPresetSheetContentProps {
   type: string;
 }
@@ -24,6 +25,8 @@ const RenderPresetSheetContent: React.FC<renderPresetSheetContentProps> = memo(
         return <StickerSheet />;
       case FilterType.Draw:
         return <DrawSelectionSheet />;
+      case FilterType.Music:
+        return <GridSelector />;
       default:
         return null;
     }
