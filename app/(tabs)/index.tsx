@@ -1,10 +1,10 @@
 import {
-  CameraView,
-  CameraType,
-  CameraMode,
-  FlashMode,
-  useCameraPermissions,
-} from "expo-camera";
+  Camera,
+  useCameraDevice,
+  useCameraFormat,
+  useCameraPermission,
+  useMicrophonePermission,
+} from "react-native-vision-camera";
 import { router } from "expo-router";
 import * as React from "react";
 import { Text, View, Pressable } from "react-native";
@@ -20,14 +20,20 @@ import useGlobalStore from "~/store/globalStore";
 import MediaView from "~/components/ui/MediaView/MediaView";
 
 export default function HomeScreen() {
-  const cameraRef = React.useRef<CameraView>(null);
+  const cameraRef = React.useRef<Camera>(null);
   const [cameraTorch, setCameraTorch] = React.useState<boolean>(false);
-  const [cameraFlash, setCameraFlash] = React.useState<FlashMode>("off");
+  const [cameraFlash, setCameraFlash] = React.useState<"on" | "off">("off");
   const [cameraFacing, setCameraFacing] = React.useState<"front" | "back">(
     "back"
   );
   const [cameraZoom, setCameraZoom] = React.useState<number>(0);
-  const [permission, requestPermission] = useCameraPermissions();
+
+  const { hasPermission: permission, requestPermission } =
+    useCameraPermission();
+  const {
+    hasPermission: permissionMicrophone,
+    requestPermission: requestPermissionMicrophone,
+  } = useMicrophonePermission();
 
   const {
     setHandleTakePicture,
@@ -43,10 +49,10 @@ export default function HomeScreen() {
   } = useGlobalStore();
 
   const handleTakePicture = React.useCallback(async () => {
-    const response = await cameraRef.current?.takePictureAsync({
-      quality: 1,
+    const response = await cameraRef.current?.takePhoto({
+      flash: cameraFlash,
     });
-    setPhoto(response!.uri);
+    setPhoto(response!.path);
   }, []);
 
   const handleTakeVideo = React.useCallback(async () => {
@@ -55,11 +61,13 @@ export default function HomeScreen() {
       setIsRecording(false);
     } else {
       setIsRecording(true);
-      const response = await cameraRef.current?.recordAsync({
-        codec: "hvc1",
-        maxDuration: 30,
+      cameraRef.current?.startRecording({
+        onRecordingFinished: (video) => setVideo(video.path),
+        onRecordingError: (error) => console.error(error),
+        flash: cameraFlash,
+        videoCodec: "h264",
+        fileType: "mov",
       });
-      setVideo(response!.uri);
     }
   }, [isRecording]);
 
@@ -71,6 +79,11 @@ export default function HomeScreen() {
   if (photo) return <MediaView type="picture" />;
   if (video) return <MediaView type="video" />;
 
+  const device = useCameraDevice("back");
+  const format = useCameraFormat(device, [
+    { videoStabilizationMode: "cinematic-extended" },
+  ]);
+
   return (
     <Animated.View
       layout={LinearTransition}
@@ -78,7 +91,7 @@ export default function HomeScreen() {
       exiting={FadeOut.duration(1000)}
       style={{ flex: 1 }}
     >
-      {!!!permission?.granted ? (
+      {!!!permission ? (
         <View className="flex-1 justify-center items-center gap-4">
           <Text className="text-white font-bold text-4xl">
             Camera permission 😋
@@ -93,6 +106,7 @@ export default function HomeScreen() {
           <Pressable
             onPress={() => {
               requestPermission();
+              requestPermissionMicrophone();
             }}
             className="bg-primary px-4 py-2 rounded-lg"
           >
@@ -102,20 +116,19 @@ export default function HomeScreen() {
           </Pressable>
         </View>
       ) : (
-        <CameraView
+        <Camera
           key={cameraMode}
-          mirror
           ref={cameraRef}
           style={{ flex: 1 }}
-          facing={cameraFacing}
-          mode={cameraMode}
-          videoStabilizationMode="cinematic"
+          device={device!}
+          video={cameraMode === "video"}
+          videoStabilizationMode={"cinematic-extended"}
           focusable
-          videoQuality="2160p"
+          format={format}
+          fps={60}
+          videoBitRate="extra-high"
           zoom={cameraZoom}
-          enableTorch={cameraTorch}
-          flash={cameraFlash}
-          onCameraReady={() => console.log("camera is ready")}
+          isActive={true}
         >
           <View className="p-2 mt-28">
             <RecordingCounter />
@@ -129,7 +142,7 @@ export default function HomeScreen() {
               setCameraFlash={setCameraFlash}
             />
           </View>
-        </CameraView>
+        </Camera>
       )}
     </Animated.View>
   );

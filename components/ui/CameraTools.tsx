@@ -1,16 +1,15 @@
 import { View } from "react-native";
 import IconButton from "./IconButton";
-import { FlashMode } from "expo-camera";
 import useGlobalStore from "~/store/globalStore";
 
 interface CameraToolsProps {
   cameraZoom: number;
-  cameraFlash: FlashMode;
+  cameraFlash: "on" | "off";
   cameraTorch: boolean;
   setCameraZoom: React.Dispatch<React.SetStateAction<number>>;
   setCameraFacing: React.Dispatch<React.SetStateAction<"front" | "back">>;
   setCameraTorch: React.Dispatch<React.SetStateAction<boolean>>;
-  setCameraFlash: React.Dispatch<React.SetStateAction<FlashMode>>;
+  setCameraFlash: React.Dispatch<React.SetStateAction<"on" | "off">>;
 }
 export default function CameraTools({
   cameraZoom,

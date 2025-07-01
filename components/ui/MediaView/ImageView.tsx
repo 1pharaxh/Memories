@@ -58,11 +58,12 @@ export default function ImageView(props: ImageViewProps) {
       true
     );
   }, []);
-  const uniforms = useDerivedValue(
+  const FractalGlassUniforms = useDerivedValue(
     () => ({
       NUM_STRIPES: 25,
-      STRENGTH: 1,
-      SOFTNESS: 0.0005,
+      STRENGTH: 20,
+      SOFTNESS: 0.005,
+      resolution: [width, height],
     }),
     [progress]
   );
@@ -73,10 +74,11 @@ export default function ImageView(props: ImageViewProps) {
   uniform float NUM_STRIPES;   // number of bands across the screen
   uniform float STRENGTH;      // max displacement in pixels
   uniform float SOFTNESS;
+  uniform float2 resolution;
 
   float displacement(float x, float num_stripes, float strength) {
-    float modulus = 1.0 / num_stripes;
-    return mod(x, modulus) * strength;
+    float modulus = resolution.x / num_stripes;
+    return mod(x, modulus) * (strength / modulus);
   }
 
   float fractal_glass(float x) {
@@ -88,16 +90,55 @@ export default function ImageView(props: ImageViewProps) {
     return x + d;
   }
 
-  half4 main(float2 xy) {
+  float4 main(float2 xy) {
     float2 adjustedXY = xy;
-    // scale x inwards (e.g., 0.8 = 125% wider image)
-    adjustedXY.x *= 0.95;  
-
+     adjustedXY.x =  adjustedXY.x * 0.97;
     adjustedXY.x = fractal_glass(adjustedXY.x);
 
     return image.eval(adjustedXY);
   }
 
+`)!;
+
+  const LofiUniforms = useDerivedValue(
+    () => ({
+      NUM_STRIPES: 25,
+      STRENGTH: 20,
+      SOFTNESS: 0.005,
+      resolution: [width, height],
+    }),
+    [progress]
+  );
+
+  const LofiSource = Skia.RuntimeEffect.Make(`
+  uniform shader image;
+
+  uniform float NUM_STRIPES;   // number of bands across the screen
+  uniform float STRENGTH;      // max displacement in pixels
+  uniform float SOFTNESS;
+  uniform float2 resolution;
+
+  float displacement(float x, float num_stripes, float strength) {
+    float modulus = resolution.x / num_stripes;
+    return mod(x, modulus) * (strength / modulus);
+  }
+
+  float fractal_glass(float x) {
+    float d = 0.0;
+    for (int i = -5; i <= 5; i++) {
+       d += displacement(x + float(i) * SOFTNESS, NUM_STRIPES, STRENGTH);
+    }
+    d = d / 11.0;
+    return x + d;
+  }
+
+  float4 main(float2 xy) {
+    float2 adjustedXY = xy;
+     adjustedXY.x =  adjustedXY.x * 0.97;
+    adjustedXY.x = fractal_glass(adjustedXY.x);
+
+    return image.eval(adjustedXY);
+  }
 
 `)!;
 
@@ -105,7 +146,7 @@ export default function ImageView(props: ImageViewProps) {
     <View style={{ flex: 1, position: "relative" }}>
       <Animated.View
         style={buttonStyle}
-        className='absolute top-14 left-10 z-10'
+        className="absolute top-14 left-10 z-10"
       >
         <TouchableBounce
           sensory
@@ -114,20 +155,20 @@ export default function ImageView(props: ImageViewProps) {
             setDraw(undefined);
           }}
         >
-          <X strokeWidth={2} size={30} className='text-muted-foreground ' />
+          <X strokeWidth={2} size={30} className="text-muted-foreground " />
         </TouchableBounce>
       </Animated.View>
 
       <Animated.View
         style={buttonStyle}
-        className='absolute top-16 z-10 left-1/2 -translate-x-1/2'
+        className="absolute top-16 z-10 left-1/2 -translate-x-1/2"
       >
-        <H4 className='text-muted-foreground'>Finish drawing</H4>
+        <H4 className="text-muted-foreground">Finish drawing</H4>
       </Animated.View>
 
       <Animated.View
         style={buttonStyle}
-        className='absolute top-14 right-10 z-10'
+        className="absolute top-14 right-10 z-10"
       >
         <TouchableBounce
           sensory
@@ -135,20 +176,23 @@ export default function ImageView(props: ImageViewProps) {
             setIsDrawing(false);
           }}
         >
-          <Check strokeWidth={2} size={30} className='text-muted-foreground ' />
+          <Check strokeWidth={2} size={30} className="text-muted-foreground " />
         </TouchableBounce>
       </Animated.View>
       <DrawView currentPath={currentPath}>
         <View style={{ flex: 1 }}>
           <Canvas style={{ flex: 1 }} {...rest}>
-            <RuntimeShader source={FractalGlassSource} uniforms={uniforms} />
+            <RuntimeShader
+              source={FractalGlassSource}
+              uniforms={FractalGlassUniforms}
+            />
             <Image
               x={0}
               y={0}
               width={width}
               height={height}
               image={image}
-              fit='cover'
+              fit="cover"
             />
             <ColorMatrix
               matrix={
@@ -163,7 +207,7 @@ export default function ImageView(props: ImageViewProps) {
 
             <Path
               path={currentPath}
-              style='stroke'
+              style="stroke"
               strokeWidth={draw?.strokeWidth}
             >
               {draw?.selectedEffects.includes("discrete") ? (
