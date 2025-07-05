@@ -65,8 +65,8 @@ export default function HomeScreen() {
         onRecordingFinished: (video) => setVideo(video.path),
         onRecordingError: (error) => console.error(error),
         flash: cameraFlash,
-        videoCodec: "h264",
-        fileType: "mov",
+        videoCodec: "h265",
+        fileType: "mp4",
       });
     }
   }, [isRecording]);
@@ -76,13 +76,13 @@ export default function HomeScreen() {
     setHandleTakeVideo(handleTakeVideo);
   }, [handleTakePicture, handleTakeVideo]);
 
-  if (photo) return <MediaView type="picture" />;
-  if (video) return <MediaView type="video" />;
-
   const device = useCameraDevice("back");
   const format = useCameraFormat(device, [
     { videoStabilizationMode: "cinematic-extended" },
   ]);
+
+  if (photo) return <MediaView type="picture" />;
+  if (video) return <MediaView type="video" />;
 
   return (
     <Animated.View
@@ -116,21 +116,25 @@ export default function HomeScreen() {
           </Pressable>
         </View>
       ) : (
-        <Camera
-          key={cameraMode}
-          ref={cameraRef}
-          style={{ flex: 1 }}
-          device={device!}
-          video={cameraMode === "video"}
-          videoStabilizationMode={"cinematic-extended"}
-          focusable
-          format={format}
-          fps={60}
-          videoBitRate="extra-high"
-          zoom={cameraZoom}
-          isActive={true}
-        >
-          <View className="p-2 mt-28">
+        <>
+          <Camera
+            key={cameraMode}
+            ref={cameraRef}
+            style={{ flex: 1 }}
+            audio={cameraMode === "video"}
+            device={device!}
+            photo={cameraMode === "picture"}
+            video={cameraMode === "video"}
+            videoStabilizationMode={"cinematic-extended"}
+            focusable
+            className="absolute"
+            format={format}
+            fps={60}
+            videoBitRate="extra-high"
+            zoom={cameraZoom}
+            isActive={true}
+          ></Camera>
+          <View className="p-2 mt-28 absolute top-0 right-0">
             <RecordingCounter />
             <CameraTools
               cameraZoom={cameraZoom}
@@ -142,7 +146,7 @@ export default function HomeScreen() {
               setCameraFlash={setCameraFlash}
             />
           </View>
-        </Camera>
+        </>
       )}
     </Animated.View>
   );
