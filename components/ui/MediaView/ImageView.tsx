@@ -1,12 +1,14 @@
-import { Dimensions, Text, View } from "react-native";
+import { Dimensions, PixelRatio, Text, View } from "react-native";
 import {
   Canvas,
   CanvasProps,
   ColorMatrix,
   DashPathEffect,
   DiscretePathEffect,
+  Group,
   Image,
   LinearGradient,
+  Paint,
   Path,
   RuntimeShader,
   Skia,
@@ -15,6 +17,7 @@ import {
 } from "@shopify/react-native-skia";
 import { Check } from "~/lib/icons/Check";
 import { X } from "~/lib/icons/X";
+const pd = PixelRatio.get();
 
 import useGlobalStore from "~/store/globalStore";
 import { GestureHandler } from "../GestureHandler";
@@ -60,10 +63,11 @@ export default function ImageView(props: ImageViewProps) {
   }, []);
   const FractalGlassUniforms = useDerivedValue(
     () => ({
-      NUM_STRIPES: 25,
-      STRENGTH: 20,
+      NUM_STRIPES: 10,
+      STRENGTH: 50,
       SOFTNESS: 0.005,
       resolution: [width, height],
+      pd: pd,
     }),
     [progress]
   );
@@ -94,48 +98,7 @@ export default function ImageView(props: ImageViewProps) {
     float2 adjustedXY = xy;
      adjustedXY.x =  adjustedXY.x * 0.97;
     adjustedXY.x = fractal_glass(adjustedXY.x);
-
-    return image.eval(adjustedXY);
-  }
-
-`)!;
-
-  const LofiUniforms = useDerivedValue(
-    () => ({
-      NUM_STRIPES: 25,
-      STRENGTH: 20,
-      SOFTNESS: 0.005,
-      resolution: [width, height],
-    }),
-    [progress]
-  );
-
-  const LofiSource = Skia.RuntimeEffect.Make(`
-  uniform shader image;
-
-  uniform float NUM_STRIPES;   // number of bands across the screen
-  uniform float STRENGTH;      // max displacement in pixels
-  uniform float SOFTNESS;
-  uniform float2 resolution;
-
-  float displacement(float x, float num_stripes, float strength) {
-    float modulus = resolution.x / num_stripes;
-    return mod(x, modulus) * (strength / modulus);
-  }
-
-  float fractal_glass(float x) {
-    float d = 0.0;
-    for (int i = -5; i <= 5; i++) {
-       d += displacement(x + float(i) * SOFTNESS, NUM_STRIPES, STRENGTH);
-    }
-    d = d / 11.0;
-    return x + d;
-  }
-
-  float4 main(float2 xy) {
-    float2 adjustedXY = xy;
-     adjustedXY.x =  adjustedXY.x * 0.97;
-    adjustedXY.x = fractal_glass(adjustedXY.x);
+    
 
     return image.eval(adjustedXY);
   }
@@ -182,56 +145,66 @@ export default function ImageView(props: ImageViewProps) {
       <DrawView currentPath={currentPath}>
         <View style={{ flex: 1 }}>
           <Canvas style={{ flex: 1 }} {...rest}>
-            <RuntimeShader
-              source={FractalGlassSource}
-              uniforms={FractalGlassUniforms}
-            />
-            <Image
-              x={0}
-              y={0}
-              width={width}
-              height={height}
-              image={image}
-              fit="cover"
-            />
-            <ColorMatrix
-              matrix={
-                filter && filter.colorMatrix.length > 0
-                  ? filter.colorMatrix
-                  : [
-                      1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
-                      0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
-                    ]
-              }
-            />
-
-            <Path
-              path={currentPath}
-              style="stroke"
-              strokeWidth={draw?.strokeWidth}
-            >
-              {draw?.selectedEffects.includes("discrete") ? (
-                <DiscretePathEffect
-                  length={10}
-                  deviation={draw?.discretePathDeviation || 10}
+            <Group transform={[{ scale: 1 / pd }]}>
+              <Group
+                layer={
+                  <Paint>
+                    <RuntimeShader
+                      source={FractalGlassSource}
+                      uniforms={FractalGlassUniforms}
+                    />
+                  </Paint>
+                }
+                transform={[{ scale: pd }]}
+              >
+                <Image
+                  x={0}
+                  y={0}
+                  width={width}
+                  height={height}
+                  image={image}
+                  fit="cover"
                 />
-              ) : null}
-
-              {draw?.selectedEffects.includes("dash") ? (
-                <DashPathEffect
-                  intervals={[
-                    draw?.dashPathEffectIntervals || 10,
-                    draw?.dashPathEffectIntervals || 10,
-                  ]}
+                <ColorMatrix
+                  matrix={
+                    filter && filter.colorMatrix.length > 0
+                      ? filter.colorMatrix
+                      : [
+                          1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+                          0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+                        ]
+                  }
                 />
-              ) : null}
 
-              <LinearGradient
-                start={vec(0, 0)}
-                end={vec(width, height)}
-                colors={draw?.selectedColors || ["black"]}
-              />
-            </Path>
+                <Path
+                  path={currentPath}
+                  style="stroke"
+                  strokeWidth={draw?.strokeWidth}
+                >
+                  {draw?.selectedEffects.includes("discrete") ? (
+                    <DiscretePathEffect
+                      length={10}
+                      deviation={draw?.discretePathDeviation || 10}
+                    />
+                  ) : null}
+
+                  {draw?.selectedEffects.includes("dash") ? (
+                    <DashPathEffect
+                      intervals={[
+                        draw?.dashPathEffectIntervals || 10,
+                        draw?.dashPathEffectIntervals || 10,
+                      ]}
+                    />
+                  ) : null}
+
+                  <LinearGradient
+                    start={vec(0, 0)}
+                    end={vec(width, height)}
+                    colors={draw?.selectedColors || ["black"]}
+                  />
+                </Path>
+              </Group>
+            </Group>
 
             {stickers?.map((e, idx) => (
               <RenderStickers item={e} matrix={e.matrix} key={idx} />
