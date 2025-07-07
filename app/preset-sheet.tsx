@@ -51,23 +51,29 @@ export default function Page() {
         }}
       />
       {type === FilterType.Filter ? (
-        <View className='relative flex-1'>
+        <View className="relative flex-1">
           <EdgeFade
             height={200}
             width={90}
-            position='left'
+            position="left"
             style={{ borderRadius: 0 }}
           />
           <ScrollView
             horizontal
-            contentContainerStyle={{ padding: 24, gap: 32 }}
+            contentContainerStyle={{
+              paddingLeft: 24,
+              paddingRight: 24,
+              gap: 32,
+              alignItems: "flex-start",
+              justifyContent: "center",
+            }}
           >
             <RenderPresetSheetContent type={type || ""} />
           </ScrollView>
           <EdgeFade
             height={200}
             width={90}
-            position='right'
+            position="right"
             style={{ borderRadius: 0 }}
           />
         </View>

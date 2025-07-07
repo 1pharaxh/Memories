@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import IconButton from "./IconButton";
 import useGlobalStore from "~/store/globalStore";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 interface CameraToolsProps {
   cameraZoom: number;
@@ -61,8 +62,8 @@ export default function CameraTools({
         disabled={isRecording}
         onPress={() => {
           // increment by .01
-          if (cameraZoom < 1) {
-            setCameraZoom((prevValue) => prevValue + 0.01);
+          if (cameraZoom < 3) {
+            setCameraZoom((prevValue) => prevValue + 0.5);
           }
         }}
         iosName={"plus.magnifyingglass"}
@@ -72,7 +73,7 @@ export default function CameraTools({
         onPress={() => {
           // decrement by .01
           if (cameraZoom > 0) {
-            setCameraZoom((prevValue) => prevValue - 0.01);
+            setCameraZoom((prevValue) => prevValue - 0.5);
           }
         }}
         iosName={"minus.magnifyingglass"}
@@ -92,6 +93,15 @@ export default function CameraTools({
         }}
         iosName={cameraMode === "video" ? "video.circle" : "camera.circle"}
       />
+
+      <IconButton
+        disabled={isRecording}
+        onPress={() => {}}
+        iosName={"minus.magnifyingglass"}
+        sfView={false}
+      >
+        <MaterialIcons name="60fps" size={24} color="white" />
+      </IconButton>
     </View>
   );
 }

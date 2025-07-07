@@ -1,4 +1,4 @@
-import { ComponentProps } from "react";
+import { Children, ComponentProps } from "react";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { SFSymbol, SymbolView } from "expo-symbols";
@@ -15,6 +15,8 @@ interface IconButtonProps {
   height?: number;
   tintColor?: string;
   disabled?: boolean;
+  sfView?: boolean;
+  children?: React.ReactNode;
 }
 export default function IconButton({
   onPress,
@@ -24,6 +26,8 @@ export default function IconButton({
   width,
   tintColor = "white",
   disabled = false,
+  sfView = true,
+  children,
 }: IconButtonProps) {
   return (
     <TouchableOpacity
@@ -33,20 +37,24 @@ export default function IconButton({
       className="bg-black/50 rounded-full w-12 h-12 flex items-center justify-center"
       style={[containerStyle]}
     >
-      <SymbolView
-        name={iosName}
-        size={ICON_SIZE}
-        // type="hierarchical"
-        style={
-          width && height //this won't scale :(
-            ? {
-                width,
-                height,
-              }
-            : {}
-        }
-        tintColor={tintColor}
-      />
+      {sfView ? (
+        <SymbolView
+          name={iosName}
+          size={ICON_SIZE}
+          // type="hierarchical"
+          style={
+            width && height //this won't scale :(
+              ? {
+                  width,
+                  height,
+                }
+              : {}
+          }
+          tintColor={tintColor}
+        />
+      ) : (
+        children
+      )}
     </TouchableOpacity>
   );
 }

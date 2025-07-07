@@ -1,4 +1,10 @@
-import { SkMatrix, SkPath } from "@shopify/react-native-skia";
+import {
+  DataSourceParam,
+  SkImage,
+  SkMatrix,
+  SkPath,
+  SkRuntimeEffect,
+} from "@shopify/react-native-skia";
 import { DerivedValue } from "react-native-reanimated";
 import {
   Mutable,
@@ -60,20 +66,6 @@ const createActionSlice: StateCreator<ActionSlice, [], [], ActionSlice> = (
   setHandleTakeVideo: (e) => set({ handleTakeVideo: e }),
 });
 
-/*Store to keep and pass image filter related information*/
-
-interface ShaderSlice {
-  fragmentShader: string;
-  setfragmentShader: (e: string) => void;
-}
-
-const createShaderSlice: StateCreator<ShaderSlice, [], [], ShaderSlice> = (
-  set
-) => ({
-  fragmentShader: "",
-  setfragmentShader: (e) => set({ fragmentShader: e }),
-});
-
 /* WORK IN PROGRESS */
 
 export interface XYPosition {
@@ -83,7 +75,9 @@ export interface XYPosition {
 
 export interface Filter {
   name: string;
-  colorMatrix: number[];
+  primaryShader: SkRuntimeEffect | null;
+  secondaryShader: SkRuntimeEffect | null;
+  lutImage: DataSourceParam | null;
 }
 
 export interface Crop {
@@ -129,8 +123,10 @@ const createPresetSlice: StateCreator<PresetSlice, [], [], PresetSlice> = (
   set
 ) => ({
   filter: {
+    lutImage: null,
     name: "",
-    colorMatrix: [],
+    primaryShader: null,
+    secondaryShader: null,
   },
   crop: {
     position: { x: 0, y: 0 },
@@ -166,12 +162,11 @@ const createPresetSlice: StateCreator<PresetSlice, [], [], PresetSlice> = (
 /*Global store builds upon and combines all the slices*/
 
 const useGlobalStore = create<
-  MediaSlice & CameraSlice & ActionSlice & ShaderSlice & PresetSlice
+  MediaSlice & CameraSlice & ActionSlice & PresetSlice
 >()((...a) => ({
   ...createMediaSlice(...a),
   ...createCameraSlice(...a),
   ...createActionSlice(...a),
-  ...createShaderSlice(...a),
   ...createPresetSlice(...a),
 }));
 

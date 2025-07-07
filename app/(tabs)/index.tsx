@@ -1,6 +1,8 @@
 import {
   Camera,
+  getCameraDevice,
   useCameraDevice,
+  useCameraDevices,
   useCameraFormat,
   useCameraPermission,
   useMicrophonePermission,
@@ -76,10 +78,27 @@ export default function HomeScreen() {
     setHandleTakeVideo(handleTakeVideo);
   }, [handleTakePicture, handleTakeVideo]);
 
-  const device = useCameraDevice("back");
-  const format = useCameraFormat(device, [
-    { videoStabilizationMode: "cinematic-extended" },
-  ]);
+  const devices = Camera.getAvailableCameraDevices();
+
+  const device = getCameraDevice(devices, cameraFacing, {
+    physicalDevices: [
+      "ultra-wide-angle-camera",
+      "wide-angle-camera",
+      "telephoto-camera",
+    ],
+  });
+
+  const availableFormats = device?.formats ?? [];
+
+  const sixtyFpsFormat = React.useMemo(() => {
+    return (
+      availableFormats.find(
+        (f) =>
+          f.maxFps > 50 &&
+          f.videoStabilizationModes.includes("cinematic-extended")
+      ) ?? availableFormats[0]
+    );
+  }, [availableFormats]);
 
   if (photo) return <MediaView type="picture" />;
   if (video) return <MediaView type="video" />;
@@ -128,7 +147,7 @@ export default function HomeScreen() {
             videoStabilizationMode={"cinematic-extended"}
             focusable
             className="absolute"
-            format={format}
+            format={sixtyFpsFormat}
             fps={60}
             videoBitRate="extra-high"
             zoom={cameraZoom}

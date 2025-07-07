@@ -3,6 +3,8 @@ import { Crop } from "./icons/Crop";
 import { Music } from "./icons/Music";
 import { Brush } from "./icons/Brush";
 import { Sticker } from "./icons/Sticker";
+import { FractalGlass, GreyScaleRgbShift, lutWithFilmGrain } from "./shaders";
+import { Filter } from "~/store/globalStore";
 
 export const NAV_THEME = {
   light: {
@@ -23,46 +25,6 @@ export const NAV_THEME = {
   },
 };
 
-export const FILTER_PRESETS = [
-  {
-    name: "Summer",
-    colorMatrix: [
-      1.1, 0, 0, 0, 0, 0, 1.05, 0, 0, 0, 0, 0, 0.9, 0, 0, 0, 0, 0, 1, 0,
-    ],
-
-    gradientColors: ["#FFC300", "#FF5733"],
-  },
-  {
-    name: "Winter",
-    colorMatrix: [
-      0.9, 0, 0, 0, 0, 0, 0.95, 0, 0, 0, 0, 0, 1.1, 0, 0, 0, 0, 0, 1, 0,
-    ],
-    gradientColors: ["#00BFFF", "#00FFFF"],
-  },
-  {
-    name: "Vintage",
-    colorMatrix: [
-      0.393, 0.769, 0.189, 0, 0, 0.349, 0.686, 0.168, 0, 0, 0.272, 0.534, 0.131,
-      0, 0, 0, 0, 0, 1, 0,
-    ],
-    gradientColors: ["#FFD700", "#A0522D"],
-  },
-  {
-    name: "Nighttime",
-    colorMatrix: [
-      0.3, 0, 0, 0, 0, 0, 0.3, 0, 0, 0, 0, 0, 0.7, 0, 0, 0, 0, 0, 1, 0,
-    ],
-    gradientColors: ["#800080", "#000033"],
-  },
-  {
-    name: "Neon",
-    colorMatrix: [
-      1.5, 0, 0, 0, -0.2, 0, 1.5, 0, 0, -0.2, 0, 0, 1.5, 0, -0.2, 0, 0, 0, 1, 0,
-    ],
-    gradientColors: ["#FF00FF", "#00FFFF"],
-  },
-];
-
 export enum FilterType {
   Filter = "Filter",
   Music = "Music",
@@ -76,31 +38,31 @@ export const PRESET_OPTIONS = [
     name: "Filter",
     type: FilterType.Filter,
     sheetTitle: "Filters",
-    icon: <Blend size={17} strokeWidth={2} className='text-white' />,
+    icon: <Blend size={17} strokeWidth={2} className="text-white" />,
   },
   {
     name: "Stickers",
     type: FilterType.Stickers,
     sheetTitle: "Stickers",
-    icon: <Sticker size={17} strokeWidth={2} className='text-white' />,
+    icon: <Sticker size={17} strokeWidth={2} className="text-white" />,
   },
   {
     name: "Music",
     type: FilterType.Music,
     sheetTitle: "Music",
-    icon: <Music size={17} strokeWidth={2} className='text-white' />,
+    icon: <Music size={17} strokeWidth={2} className="text-white" />,
   },
   {
     name: "Draw",
     type: FilterType.Draw,
     sheetTitle: "Draw",
-    icon: <Brush size={17} strokeWidth={2} className='text-white' />,
+    icon: <Brush size={17} strokeWidth={2} className="text-white" />,
   },
   {
     name: "Crop",
     type: FilterType.Crop,
     sheetTitle: "Crop your image",
-    icon: <Crop size={17} strokeWidth={2} className='text-white' />,
+    icon: <Crop size={17} strokeWidth={2} className="text-white" />,
   },
 ];
 
@@ -244,7 +206,7 @@ export interface STICKER_TABS_INTERFACE {
 export const STICKER_TABS: STICKER_TABS_INTERFACE[] = [
   {
     name: "Animated texts",
-    icon: <Blend strokeWidth={2} size={30} className='text-muted-foreground' />,
+    icon: <Blend strokeWidth={2} size={30} className="text-muted-foreground" />,
     stickers: [
       {
         type: STICKER_TYPE.TEXT,
@@ -290,7 +252,7 @@ export const STICKER_TABS: STICKER_TABS_INTERFACE[] = [
   },
   {
     name: "XYZ Images",
-    icon: <Brush strokeWidth={2} size={30} className='text-muted-foreground' />,
+    icon: <Brush strokeWidth={2} size={30} className="text-muted-foreground" />,
     stickers: [
       {
         type: STICKER_TYPE.IMAGE,
@@ -315,7 +277,7 @@ export const STICKER_TABS: STICKER_TABS_INTERFACE[] = [
 
   {
     name: "ABC Images",
-    icon: <Crop strokeWidth={2} size={30} className='text-muted-foreground' />,
+    icon: <Crop strokeWidth={2} size={30} className="text-muted-foreground" />,
     stickers: [
       {
         type: STICKER_TYPE.IMAGE,
@@ -340,7 +302,7 @@ export const STICKER_TABS: STICKER_TABS_INTERFACE[] = [
 
   {
     name: "VNG Images",
-    icon: <Crop strokeWidth={2} size={30} className='text-muted-foreground' />,
+    icon: <Crop strokeWidth={2} size={30} className="text-muted-foreground" />,
     stickers: [
       {
         type: STICKER_TYPE.IMAGE,
@@ -376,4 +338,58 @@ export const colors: [string, string, ...string[]] = [
   "#81C784", // Green
   "#7E57C2", // Deep Purple
   "#FF8A65", // Deep Orange
+];
+
+export const FILTER_PRESETS: Filter[] = [
+  {
+    name: "None",
+    primaryShader: null,
+    secondaryShader: null,
+    lutImage: null,
+  },
+  {
+    name: "Fractal",
+    primaryShader: FractalGlass,
+    secondaryShader: lutWithFilmGrain,
+    lutImage: require("../assets/images/luts/kodak_5295_fuji_3510.png"),
+  },
+  {
+    name: "Gray scale",
+    primaryShader: GreyScaleRgbShift,
+    secondaryShader: lutWithFilmGrain,
+    lutImage: require("../assets/images/luts/kodak_5295_fuji_3510.png"),
+  },
+
+  {
+    name: "Luts 1",
+    primaryShader: null,
+    secondaryShader: lutWithFilmGrain,
+    lutImage: require("../assets/images/luts/candlelight.png"),
+  },
+  {
+    name: "Luts 2",
+    primaryShader: null,
+    secondaryShader: lutWithFilmGrain,
+    lutImage: require("../assets/images/luts/drop_blues.png"),
+  },
+  {
+    name: "Luts 3",
+    primaryShader: null,
+    secondaryShader: lutWithFilmGrain,
+    lutImage: require("../assets/images/luts/edgy_amber.png"),
+  },
+
+  {
+    name: "Luts 4",
+    primaryShader: null,
+    secondaryShader: lutWithFilmGrain,
+    lutImage: require("../assets/images/luts/futuristic_bleak.png"),
+  },
+
+  {
+    name: "Luts 5",
+    primaryShader: null,
+    secondaryShader: lutWithFilmGrain,
+    lutImage: require("../assets/images/luts/kodak_5295_fuji_3510.png"),
+  },
 ];
