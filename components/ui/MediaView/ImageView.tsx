@@ -67,28 +67,22 @@ export default function ImageView(props: ImageViewProps) {
       true
     );
   }, []);
-  const PrimaryUniforms = useDerivedValue(
-    () => ({
-      NUM_STRIPES: 5,
-      STRENGTH: 50,
-      SOFTNESS: 0.005,
-      resolution: [width, height],
-      pd: pd,
-      shift: 10,
-      progress: progress.value,
-    }),
-    [progress]
-  );
+  const PrimaryUniforms = {
+    NUM_STRIPES: 5,
+    STRENGTH: 50,
+    SOFTNESS: 0.005,
+    resolution: [width, height],
+    pd: pd,
+    shift: 10,
+    progress: progress.value,
+  };
 
-  const SecondaryUniforms = useDerivedValue(
-    () => ({
-      resolution: [width, height],
-      progress: progress.value,
-      filmGrainMultiplyer: 0.2,
-      grainScale: 0.8,
-    }),
-    [progress]
-  );
+  const SecondaryUniforms = {
+    resolution: [width, height],
+    progress: progress.value,
+    filmGrainMultiplyer: 0.2,
+    grainScale: 0.8,
+  };
 
   // Memoize shader components to prevent recreation
   const primaryShaderComponent = useMemo(() => {
