@@ -4,11 +4,17 @@ import {
   CanvasProps,
   ColorMatrix,
   DiscretePathEffect,
+  Fill,
   fitbox,
+  Group,
   Image,
+  ImageShader,
   Path,
   rect,
+  RuntimeShader,
+  Shader,
   Skia,
+  useImage,
   useVideo,
 } from "@shopify/react-native-skia";
 import { Dimensions, View } from "react-native";
@@ -86,7 +92,32 @@ export default function VideoViewComponent(props: VideoViewProps) {
 
   const src = rect(0, 0, width, height);
   const dst = rect(0, 0, width, height);
-  const transform = fitbox("cover", src, dst, rotation);
+  const transform = fitbox("none", src, dst, rotation);
+
+  const lutsImage = useImage(
+    require("./../../../assets/images/luts/kodak_5295_fuji_3510.png")
+  );
+
+  const source = Skia.RuntimeEffect.Make(`
+  uniform shader image;
+  uniform shader lutsImage;
+
+  float4 main(float2 xy) {
+    vec4 color = image.eval(xy);
+
+    int r = int(color.r * 255.0 / 4);
+    int g = int(color.g * 255.0 / 4);
+    int b = int(color.b * 255.0 / 4);
+    
+    float lutX = float(int(mod(float(b), 8.0)) * 64 + r);
+    float lutY = float(int((b / 8) * 64 + g));
+    
+    vec4 lutsColor = lutsImage.eval(float2(lutX, lutY));
+
+    return lutsColor;
+  }
+
+`)!;
 
   const resetAndClose = async () => {
     setVideo("");
@@ -134,47 +165,45 @@ export default function VideoViewComponent(props: VideoViewProps) {
       </View>
 
       <View style={{ flex: 1, position: "relative" }}>
-        <DrawView currentPath={currentPath}>
-          <View style={{ flex: 1 }}>
-            <Canvas style={{ flex: 1 }} {...rest}>
-              <Image
-                image={currentFrame}
-                x={0}
-                y={0}
-                width={width}
-                height={height}
-                transform={transform}
-              />
-              <ColorMatrix
-                matrix={
-                  filter && filter.colorMatrix.length > 0
-                    ? filter.colorMatrix
-                    : [
-                        1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
-                        0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
-                      ]
-                }
-              />
+        <View style={{ flex: 1 }}>
+          <Canvas style={{ flex: 1 }} {...rest}>
+            <Group transform={transform}>
+              <Fill />
 
-              <Path
-                path={currentPath}
-                color="#61DAFB"
-                style="stroke"
-                strokeWidth={2}
-              >
-                <DiscretePathEffect length={10} deviation={2} />
-              </Path>
+              <Shader source={source} uniforms={{}}>
+                <ImageShader
+                  image={currentFrame}
+                  x={0}
+                  y={0}
+                  width={width}
+                  height={height}
+                />
+                <ImageShader
+                  fit="none"
+                  image={lutsImage}
+                  rect={{ x: 0, y: 0, width: 512, height: 512 }}
+                />
+              </Shader>
+            </Group>
 
-              {stickers?.map((e, idx) => (
-                <RenderStickers item={e} matrix={e.matrix} key={idx} />
-              ))}
-            </Canvas>
+            <Path
+              path={currentPath}
+              color="#61DAFB"
+              style="stroke"
+              strokeWidth={2}
+            >
+              <DiscretePathEffect length={10} deviation={2} />
+            </Path>
 
             {stickers?.map((e, idx) => (
-              <GestureHandler debug key={idx} sticker={e} />
+              <RenderStickers item={e} matrix={e.matrix} key={idx} />
             ))}
-          </View>
-        </DrawView>
+          </Canvas>
+
+          {stickers?.map((e, idx) => (
+            <GestureHandler debug key={idx} sticker={e} />
+          ))}
+        </View>
       </View>
     </View>
   );
