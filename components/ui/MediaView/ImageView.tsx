@@ -32,12 +32,12 @@ import Animated, {
   withSequence,
   useDerivedValue,
   withRepeat,
+  cancelAnimation,
 } from "react-native-reanimated";
 import DrawView from "../DrawView";
 import TouchableBounce from "../TouchableBounce";
 import { H4 } from "../typography";
 import { useEffect, useMemo } from "react";
-import { GreyScaleRgbShift, lutWithFilmGrain } from "~/lib/shaders";
 
 type ImageViewProps = Omit<CanvasProps, "children"> & {};
 const { width, height } = Dimensions.get("window");
@@ -61,28 +61,26 @@ export default function ImageView(props: ImageViewProps) {
 
   const progress = useSharedValue(0);
   useEffect(() => {
-    progress.value = withRepeat(
-      withSequence(withTiming(0), withTiming(100)),
-      -1,
-      true
+    progress.set(
+      withRepeat(withSequence(withTiming(50), withTiming(0)), -1, false)
     );
+
+    () => {
+      cancelAnimation(progress);
+    };
   }, []);
-  const PrimaryUniforms = {
+
+  const uniform = useDerivedValue(() => ({
     NUM_STRIPES: 5,
     STRENGTH: 50,
     SOFTNESS: 0.005,
     resolution: [width, height],
     pd: pd,
     shift: 10,
-    progress: progress.value,
-  };
-
-  const SecondaryUniforms = {
-    resolution: [width, height],
-    progress: progress.value,
+    progress: progress.get(),
     filmGrainMultiplyer: 0.2,
     grainScale: 0.8,
-  };
+  }));
 
   // Memoize shader components to prevent recreation
   const primaryShaderComponent = useMemo(() => {
@@ -92,7 +90,7 @@ export default function ImageView(props: ImageViewProps) {
       <Paint>
         <RuntimeShader
           source={filter.primaryShader}
-          uniforms={PrimaryUniforms}
+          uniforms={uniform}
         />
       </Paint>
     );
@@ -102,7 +100,7 @@ export default function ImageView(props: ImageViewProps) {
     if (!filter?.secondaryShader) return null;
 
     return (
-      <Shader source={filter.secondaryShader} uniforms={SecondaryUniforms}>
+      <Shader source={filter.secondaryShader} uniforms={uniform}>
         <ImageShader
           image={image}
           x={0}
